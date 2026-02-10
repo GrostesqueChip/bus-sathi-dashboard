@@ -21,6 +21,7 @@ import autoTable from 'jspdf-autotable';
 interface DriverStatsChartsProps {
   trips: Trip[];
   topN?: number;
+  driverCapacities?: Record<string, string>;
 }
 
 interface DriverStats {
@@ -44,8 +45,7 @@ const COLORS = [
   '#6366f1', // indigo
   '#06b6d4', // cyan
 ];
-
-export default function DriverStatsCharts({ trips, topN = 10 }: DriverStatsChartsProps) {
+export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }: DriverStatsChartsProps) {
   // Calculate driver statistics
   const driverStatsMap = new Map<string, DriverStats>();
 
@@ -226,27 +226,29 @@ export default function DriverStatsCharts({ trips, topN = 10 }: DriverStatsChart
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rank
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Driver Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Trips
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Distance
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Avg Distance
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Avg Speed
-              </th>
-              {/* This is the new Header for your Delete buttons */}
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Rank
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Driver Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Total Trips
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Total Distance
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Avg Distance
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Avg Speed
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Vehicle Type
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -270,6 +272,24 @@ export default function DriverStatsCharts({ trips, topN = 10 }: DriverStatsChart
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {driver.averageSpeed > 0 ? `${driver.averageSpeed.toFixed(2)} km/h` : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {(() => {
+                      if (!driverCapacities) return 'Loading...';
+                      
+                      // 1. Try matching by Driver ID
+                      if (driverCapacities[driver.driverId]) {
+                        return driverCapacities[driver.driverId];
+                      }
+
+                      // 2. Try matching by Name (Cleaned up)
+                      const cleanName = driver.driverName.toLowerCase().trim();
+                      if (driverCapacities[cleanName]) {
+                        return driverCapacities[cleanName];
+                      }
+
+                      return 'N/A';
+                    })()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                   <button 

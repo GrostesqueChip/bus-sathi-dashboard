@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DriverStatsCharts from '@/components/DriverStatsCharts';
 import { downloadMultipleTripsAsZip } from '@/utils/csvExport';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 function Home() {
@@ -39,11 +39,43 @@ function Home() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
-
+  const [filterType, setFilterType] = useState('all');
+  const [driverCapacities, setDriverCapacities] = useState<Record<string, string>>({});
   useEffect(() => {
     loadTrips();
     loadStats();
+    loadDriverDetails();
   }, []);
+  // ADD THIS FUNCTION:
+const loadDriverDetails = async () => {
+    try {
+      console.log("🚀 Starting to fetch driver details...");
+      const querySnapshot = await getDocs(collection(db, "drivers"));
+      const capacityMap: Record<string, string> = {};
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const capacity = data.vehicleCapacity || 'Unknown';
+        
+        // Debugging Log: Check your browser console (F12) to see these!
+        console.log(`Found Driver: ${data.name} | ID: ${doc.id} | Capacity: ${capacity}`);
+
+        // 1. Map ID -> Capacity
+        capacityMap[doc.id] = capacity;
+        
+        // 2. Map Clean Name -> Capacity (Lowercase & Trimmed)
+        if (data.name) {
+          const cleanName = data.name.toString().toLowerCase().trim();
+          capacityMap[cleanName] = capacity;
+        }
+      });
+      
+      console.log("✅ Final Capacity Map:", capacityMap);
+      setDriverCapacities(capacityMap);
+    } catch (err) {
+      console.error("❌ Error loading drivers:", err);
+    }
+  };
 
   const loadTrips = async () => {
     try {
@@ -107,8 +139,20 @@ function Home() {
       const endTimestamp = new Date(endDate).setHours(23, 59, 59, 999);
       matchesDateRange = matchesDateRange && trip.startTime <= endTimestamp;
     }
+// 1. Try to find capacity by ID
+    let driverCapacity = driverCapacities[trip.driverId];
+
+    // 2. If ID fails, try to find capacity by Name (lowercase & trimmed)
+    if (!driverCapacity) {
+       const cleanName = trip.driverName.toLowerCase().trim();
+       driverCapacity = driverCapacities[cleanName];
+    }
+
+    // 3. Compare with the dropdown value (Use the result from above)
+    // NOTICE: We removed the "const driverCapacity = ..." line that was here!
+    const matchesType = filterType === 'all' || (driverCapacity || '') === filterType;
     
-    return matchesSearch && matchesDriver && matchesDateRange;
+    return matchesSearch && matchesDriver && matchesDateRange && matchesType;
   });
 
   const handleDownloadFiltered = async () => {
@@ -174,8 +218,15 @@ function Home() {
         </div>
       </div>
 
-      {/* Driver Statistics Charts */}
-      {trips.length > 0 && <DriverStatsCharts trips={trips} topN={10} />}
+    {/* Driver Statistics Charts */}
+          {/* UPDATE THIS LINE: */}
+          {trips.length > 0 && (
+            <DriverStatsCharts 
+              trips={trips} 
+              topN={10} 
+              driverCapacities={driverCapacities} // <--- Pass the data here
+            />
+          )}
 
       {/* Filters */}
       <div className="card">
@@ -208,6 +259,22 @@ function Home() {
                     {driver.driverName || driver.driverEmail}
                   </option>
                 ))}
+              </select>
+            </div>
+            {/* New Filter: Vehicle Type */}
+            <div className="md:w-64">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Filter by Vehicle Type
+              </label>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="all">All Vehicle Types</option>
+                <option value="32 to 52 seater (HPV)">32 to 52 seater (HPV)</option>
+                <option value="17 to 21 seater (MPV)">17 to 21 seater (MPV)</option>
+                <option value="5 to 13 seater (LPV)">5 to 13 seater (LPV)</option>
               </select>
             </div>
           </div>
