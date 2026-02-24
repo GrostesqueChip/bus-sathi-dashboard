@@ -10,9 +10,46 @@ import DriverStatsCharts from '@/components/DriverStatsCharts';
 import { downloadMultipleTripsAsZip } from '@/utils/csvExport';
 import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+// Paste this near the top of both files (under imports)
+const getMovingRatio = (points: any[]) => {
+  if (!points || points.length < 2) return 1; 
+  
+  let movingCount = 0;
+  let validComparisons = 0;
 
+  for (let i = 1; i < points.length; i++) {
+    const p1 = points[i - 1];
+    const p2 = points[i];
+
+    // Force values to be numbers in case Firebase saved them as strings
+    const lat1 = Number(p1.lat || p1.latitude);
+    const lon1 = Number(p1.lng || p1.longitude);
+    const lat2 = Number(p2.lat || p2.latitude);
+    const lon2 = Number(p2.lng || p2.longitude);
+
+    if (lat1 && lon1 && lat2 && lon2 && !isNaN(lat1)) {
+       validComparisons++;
+       
+       const R = 6371e3; 
+       const dLat = (lat2 - lat1) * Math.PI / 180;
+       const dLon = (lon2 - lon1) * Math.PI / 180;
+       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                 Math.sin(dLon/2) * Math.sin(dLon/2);
+       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+       const distanceMeters = R * c;
+
+       // Dropped threshold to 3 meters to catch slow traffic creeping
+       if (distanceMeters > 3) {
+         movingCount++;
+       }
+    }
+  }
+  
+  return validComparisons > 0 ? (movingCount / validComparisons) : 1;
+};
+// ---------------------------------------------------------
 function Home() {
-  // Function to delete a single trip from the recent list
   const handleDeleteTrip = async (tripId: string) => {
     const confirm = window.confirm("🗑️ Are you sure you want to delete this trip record?");
     if (!confirm) return;
@@ -26,6 +63,7 @@ function Home() {
       alert("Error: You might not have permission.");
     }
   };
+  
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,16 +79,37 @@ function Home() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [driverCapacities, setDriverCapacities] = useState<Record<string, string>>({});
+  const [totalRegisteredDrivers, setTotalRegisteredDrivers] = useState(0);
+  const [activeYesterday, setActiveYesterday] = useState<string[]>([]);
   useEffect(() => {
     loadTrips();
     loadStats();
     loadDriverDetails();
   }, []);
+  useEffect(() => {
+    if (trips.length === 0) return;
+
+    // 1. Figure out exact timestamps for "Yesterday"
+    const now = new Date();
+    const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+    const endOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() - 1;
+
+    // 2. Filter trips that happened yesterday
+    const yesterdayTrips = trips.filter(
+      (trip) => trip.startTime >= startOfYesterday && trip.startTime <= endOfYesterday
+    );
+
+    // 3. Extract unique driver names
+    const uniqueDrivers = Array.from(new Set(yesterdayTrips.map((t) => t.driverName || t.driverEmail)));
+    setActiveYesterday(uniqueDrivers);
+  }, [trips]);
+  // -----------------------------------------
   // ADD THIS FUNCTION:
 const loadDriverDetails = async () => {
     try {
       console.log("🚀 Starting to fetch driver details...");
       const querySnapshot = await getDocs(collection(db, "drivers"));
+      setTotalRegisteredDrivers(querySnapshot.size);
       const capacityMap: Record<string, string> = {};
       
       querySnapshot.forEach((doc) => {
@@ -107,7 +166,27 @@ const loadDriverDetails = async () => {
       return 'Invalid date';
     }
   };
+const calculateTripTimes = (trip: Trip) => {
+    const durationMs = trip.endTime ? (trip.endTime - trip.startTime) : 0;
+    if (durationMs <= 0 || !trip.routePoints || trip.routePoints.length === 0) {
+      return { moving: 'N/A', idle: 'N/A' };
+    }
+    
+    // Use our new ultra-accurate math
+    const ratio = getMovingRatio(trip.routePoints);
+    
+    const formatMs = (ms: number) => {
+      const m = Math.floor(ms / 60000);
+      const hrs = Math.floor(m / 60);
+      const mins = m % 60;
+      return hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+    };
 
+    return {
+      moving: formatMs(durationMs * ratio),
+      idle: formatMs(durationMs * (1 - ratio))
+    };
+  };
   const calculateDuration = (startTime: number, endTime: number | null) => {
     if (!endTime) return 'N/A';
     const durationMs = endTime - startTime;
@@ -120,8 +199,20 @@ const loadDriverDetails = async () => {
     }
     return `${minutes}m`;
   };
+  // --- MY GHOST TRIP LOGIC ---
+  const validTrips = trips.filter(trip => {
+    // 1. Must have at least 2 points to calculate anything
+    if (!trip.routePoints || trip.routePoints.length < 2) return false;
+    
+    // 2. If distance is under 100 meters AND duration is under 2 minutes, it's a glitch/accidental tap
+    const durationMs = trip.endTime ? (trip.endTime - trip.startTime) : 0;
+    if (trip.totalDistance < 0.1 && durationMs < 120000) return false;
 
-  const filteredTrips = trips.filter(trip => {
+    return true; // It's a real trip!
+  });
+
+  // Now we run your search filters ONLY on the valid trips
+  const filteredTrips = validTrips.filter(trip => {
     const matchesSearch = 
       trip.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       trip.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,7 +220,6 @@ const loadDriverDetails = async () => {
     
     const matchesDriver = filterDriver === 'all' || trip.driverId === filterDriver;
     
-    // Date range filtering
     let matchesDateRange = true;
     if (startDate) {
       const startTimestamp = new Date(startDate).getTime();
@@ -139,21 +229,17 @@ const loadDriverDetails = async () => {
       const endTimestamp = new Date(endDate).setHours(23, 59, 59, 999);
       matchesDateRange = matchesDateRange && trip.startTime <= endTimestamp;
     }
-// 1. Try to find capacity by ID
-    let driverCapacity = driverCapacities[trip.driverId];
 
-    // 2. If ID fails, try to find capacity by Name (lowercase & trimmed)
+    let driverCapacity = driverCapacities[trip.driverId];
     if (!driverCapacity) {
        const cleanName = trip.driverName.toLowerCase().trim();
        driverCapacity = driverCapacities[cleanName];
     }
-
-    // 3. Compare with the dropdown value (Use the result from above)
-    // NOTICE: We removed the "const driverCapacity = ..." line that was here!
     const matchesType = filterType === 'all' || (driverCapacity || '') === filterType;
     
     return matchesSearch && matchesDriver && matchesDateRange && matchesType;
   });
+
 
   const handleDownloadFiltered = async () => {
     if (filteredTrips.length === 0) {
@@ -199,30 +285,59 @@ const loadDriverDetails = async () => {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+        
+        {/* NEW CARD 1: Registered Drivers */}
+        <div className="card bg-gray-50 border border-gray-100">
+          <h3 className="text-gray-600 text-sm font-medium mb-2">Registered Drivers</h3>
+          <p className="text-3xl font-bold text-gray-800">{totalRegisteredDrivers}</p>
+        </div>
+
+      {/* NEW CARD 2: Active Yesterday (Clickable Link) */}
+        <Link 
+          href="/active-drivers" 
+          className="card bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors block cursor-pointer group"
+        >
+          <div className="flex justify-between items-start">
+            <h3 className="text-blue-800 text-sm font-medium mb-2">Active Yesterday</h3>
+            <span className="text-blue-500 text-xs flex items-center gap-1 font-medium group-hover:text-blue-700 transition-colors">
+              View All
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          </div>
+          <p className="text-3xl font-bold text-blue-600">{activeYesterday.length}</p>
+        </Link>
+
+        {/* Existing Card 1 */}
         <div className="card">
           <h3 className="text-gray-600 text-sm font-medium mb-2">Total Trips</h3>
           <p className="text-3xl font-bold text-primary-600">{stats.totalTrips}</p>
         </div>
+        
+        {/* Existing Card 2 */}
         <div className="card">
           <h3 className="text-gray-600 text-sm font-medium mb-2">Total Distance</h3>
           <p className="text-3xl font-bold text-primary-600">
             {stats.totalDistance.toFixed(2)} km
           </p>
         </div>
+        
+        {/* Existing Card 3 */}
         <div className="card">
-          <h3 className="text-gray-600 text-sm font-medium mb-2">Average Distance</h3>
+          <h3 className="text-gray-600 text-sm font-medium mb-2">Avg Distance</h3>
           <p className="text-3xl font-bold text-primary-600">
             {stats.averageDistance.toFixed(2)} km
           </p>
         </div>
-      </div>
+      </div>  
 
     {/* Driver Statistics Charts */}
           {/* UPDATE THIS LINE: */}
           {trips.length > 0 && (
             <DriverStatsCharts 
-              trips={trips} 
+              trips={validTrips} 
               topN={10} 
               driverCapacities={driverCapacities} // <--- Pass the data here
             />
@@ -393,21 +508,24 @@ const loadDriverDetails = async () => {
                     Duration
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Moving Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Idle Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Distance
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Points
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
+
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredTrips.map((trip) => (
+                {filteredTrips.map((trip) => {
+                  const times = calculateTripTimes(trip);
+                  return ( //
                   <tr key={trip.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {trip.id}
@@ -424,23 +542,18 @@ const loadDriverDetails = async () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {calculateDuration(trip.startTime, trip.endTime)}
                     </td>
+                    {/* --- PASTE THESE TWO NEW CELLS HERE --- */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                      {times.moving}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-500 font-medium">
+                      {times.idle}
+                    </td>
+                    {/* -------------------------------------- */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {trip.totalDistance.toFixed(2)} km
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {trip.routePoints.length}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          trip.status === 'COMPLETED'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {trip.status}
-                      </span>
-                    </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-4">
                    <Link
@@ -459,7 +572,8 @@ const loadDriverDetails = async () => {
                     </div>
                     </td>
                   </tr>
-                ))}
+                );
+                })}
               </tbody>
             </table>
           </div>

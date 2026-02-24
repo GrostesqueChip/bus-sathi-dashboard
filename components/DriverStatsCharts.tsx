@@ -23,7 +23,43 @@ interface DriverStatsChartsProps {
   topN?: number;
   driverCapacities?: Record<string, string>;
 }
+const getMovingRatio = (points: any[]) => {
+  if (!points || points.length < 2) return 1; 
+  
+  let movingCount = 0;
+  let validComparisons = 0;
 
+  for (let i = 1; i < points.length; i++) {
+    const p1 = points[i - 1];
+    const p2 = points[i];
+
+    // Force values to be numbers in case Firebase saved them as strings
+    const lat1 = Number(p1.lat || p1.latitude);
+    const lon1 = Number(p1.lng || p1.longitude);
+    const lat2 = Number(p2.lat || p2.latitude);
+    const lon2 = Number(p2.lng || p2.longitude);
+
+    if (lat1 && lon1 && lat2 && lon2 && !isNaN(lat1)) {
+       validComparisons++;
+       
+       const R = 6371e3; 
+       const dLat = (lat2 - lat1) * Math.PI / 180;
+       const dLon = (lon2 - lon1) * Math.PI / 180;
+       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                 Math.sin(dLon/2) * Math.sin(dLon/2);
+       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+       const distanceMeters = R * c;
+
+       // Dropped threshold to 3 meters to catch slow traffic creeping
+       if (distanceMeters > 3) {
+         movingCount++;
+       }
+    }
+  }
+  
+  return validComparisons > 0 ? (movingCount / validComparisons) : 1;
+};
 interface DriverStats {
   driverId: string;
   driverName: string;
@@ -31,6 +67,9 @@ interface DriverStats {
   totalDistance: number;
   averageDistance: number;
   averageSpeed: number;
+  totalIdleTimeMs: number; 
+  totalDurationMs: number;   // <--- ADD THIS
+  totalMovingTimeMs: number;
 }
 
 const COLORS = [
@@ -54,26 +93,21 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
     
 // NEW LOGIC: Calculate Average Moving Speed (Filters out stops)
     let tripSpeed = 0;
+    let tripIdleMs = 0;
+    let tripMovingMs = 0;
+    const durationMs = (trip.endTime && trip.endTime > trip.startTime) ? (trip.endTime - trip.startTime) : 0;
+    if (durationMs > 0) {
+       // Use our new math
+       if (trip.routePoints && trip.routePoints.length > 0) {
+          const ratio = getMovingRatio(trip.routePoints);
+          tripMovingMs = durationMs * ratio;
+          tripIdleMs = durationMs * (1 - ratio);
+       } else {
+          tripMovingMs = durationMs; // fallback
+       }
 
-    // Method A: If we have GPS points, calculate average of "Moving Speeds"
-    if (trip.routePoints && trip.routePoints.length > 0) {
-      // 1. Filter out speeds that are 0 or very small (idling/parking)
-      // Note: Adjust the '> 1' threshold depending on if your data is km/h or m/s
-      const movingPoints = trip.routePoints.filter((p: any) => (p.speed || 0) > 1);
-
-      if (movingPoints.length > 0) {
-        // 2. Sum up all the moving speeds
-        const totalMovingSpeed = movingPoints.reduce((sum: number, p: any) => sum + (p.speed || 0), 0);
-        
-        // 3. Divide by the count of moving points only
-        tripSpeed = totalMovingSpeed / movingPoints.length;
-      }
-    } 
-    
-    // Method B: Fallback if no GPS points are available (Old way)
-    if (tripSpeed === 0 && trip.endTime && trip.endTime > trip.startTime) {
-       const durationHours = (trip.endTime - trip.startTime) / 3600000;
-       tripSpeed = trip.totalDistance / durationHours;
+       const durationHours = durationMs / 3600000;
+       tripSpeed = durationHours > 0 ? (trip.totalDistance / durationHours) : 0;
     }
 
     if (existing) {
@@ -81,6 +115,8 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
       existing.totalDistance += trip.totalDistance;
       existing.averageDistance = existing.totalDistance / existing.totalTrips;
       existing.averageSpeed = (existing.averageSpeed * (existing.totalTrips - 1) + tripSpeed) / existing.totalTrips;
+      existing.totalIdleTimeMs += tripIdleMs;     // <--- NEW
+      existing.totalMovingTimeMs += tripMovingMs;
     } else {
       driverStatsMap.set(trip.driverId, {
         driverName: trip.driverName,
@@ -89,10 +125,22 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
         totalDistance: trip.totalDistance,
         averageDistance: trip.totalDistance,
         averageSpeed: tripSpeed,
+        totalIdleTimeMs: tripIdleMs,     // <--- NEW
+        totalMovingTimeMs: tripMovingMs,
+        totalDurationMs: durationMs, //<--- NEW
+      
       });
     }
   });
 
+  // Helper to format milliseconds to "Xh Ym" for the table
+  const formatMs = (ms: number) => {
+    if (!ms || ms <= 0) return '0m';
+    const totalMins = Math.floor(ms / 60000);
+    const hours = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
   // Convert to array and sort
   const allDriverStats = Array.from(driverStatsMap.values());
   
@@ -245,10 +293,13 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
                   Avg Speed
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Vehicle Type
+                  Total Moving
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Actions
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Total Idle
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                  Vehicle Type
                 </th>
               </tr>
             </thead>
@@ -273,6 +324,12 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {driver.averageSpeed > 0 ? `${driver.averageSpeed.toFixed(2)} km/h` : 'N/A'}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                  {formatMs(driver.totalMovingTimeMs)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">
+                    {formatMs(driver.totalIdleTimeMs)}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {(() => {
                       if (!driverCapacities) return 'Loading...';
@@ -291,14 +348,7 @@ export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }
                       return 'N/A';
                     })()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                  <button 
-                  onClick={() => handleDeleteDriverTrips(driver.driverId, driver.driverName)}
-                  className="text-red-600 hover:text-red-900 font-medium">
-                  
-                  Delete Trips
-                  </button>
-                  </td>
+
                 </tr>
               ))}
             </tbody>

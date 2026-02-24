@@ -8,7 +8,40 @@ import { TripService } from '@/services/tripService';
 import { format } from 'date-fns';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { downloadCSV } from '@/utils/csvExport';
+const getMovingRatio = (points: any[]) => {
+  if (!points || points.length < 2) return 1; 
+  
+  let movingCount = 0;
+  let validComparisons = 0;
 
+  for (let i = 1; i < points.length; i++) {
+    const p1 = points[i - 1];
+    const p2 = points[i];
+
+    const lat1 = Number(p1.lat || p1.latitude);
+    const lon1 = Number(p1.lng || p1.longitude);
+    const lat2 = Number(p2.lat || p2.latitude);
+    const lon2 = Number(p2.lng || p2.longitude);
+
+    if (lat1 && lon1 && lat2 && lon2 && !isNaN(lat1)) {
+       validComparisons++;
+       
+       const R = 6371e3; 
+       const dLat = (lat2 - lat1) * Math.PI / 180;
+       const dLon = (lon2 - lon1) * Math.PI / 180;
+       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                 Math.sin(dLon/2) * Math.sin(dLon/2);
+       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+       const distanceMeters = R * c;
+
+       if (distanceMeters > 3) {
+         movingCount++;
+       }
+    }
+  }
+  return validComparisons > 0 ? (movingCount / validComparisons) : 1;
+};
 // Dynamically import map component to avoid SSR issues with Leaflet
 const TripMap = dynamic(() => import('@/components/TripMap'), {
   ssr: false,
@@ -183,7 +216,25 @@ const calculateAverageSpeed = () => {
       </div>
     );
   }
+// ---> PASTE ALL THE MATH HERE! <---
+  const durationMs = trip.endTime ? (trip.endTime - trip.startTime) : 0;
+  const ratio = getMovingRatio(trip.routePoints || []);
+  const movingMs = durationMs * ratio;
+  const idleMs = durationMs * (1 - ratio);
 
+  const durationHours = durationMs / 3600000;
+  const movingHours = movingMs / 3600000;
+
+  const journeySpeed = durationHours > 0 ? (trip.totalDistance / durationHours) : 0;
+  const movingSpeed = movingHours > 0 ? (trip.totalDistance / movingHours) : 0;
+
+  const formatMs = (ms: number) => {
+    const m = Math.floor(ms / 60000);
+    const hrs = Math.floor(m / 60);
+    const mins = m % 60;
+    return hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+  };
+  // ---> END OF MATH <---
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -262,12 +313,20 @@ const calculateAverageSpeed = () => {
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">Route Points</h3>
-            <p className="text-lg">{trip.routePoints.length} points</p>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Moving Time</h3>
+            <p className="text-lg text-green-600 font-semibold">{formatMs(movingMs)}</p>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">Average Speed</h3>
-            <p className="text-lg">{calculateAverageSpeed()}</p>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Idle Time</h3>
+            <p className="text-lg text-orange-500 font-semibold">{formatMs(idleMs)}</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Avg Speed (Journey)</h3>
+            <p className="text-lg font-semibold">{journeySpeed.toFixed(2)} km/h</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Avg Speed (Moving)</h3>
+            <p className="text-lg text-blue-600 font-semibold">{movingSpeed.toFixed(2)} km/h</p>
           </div>
         </div>
       </div>
@@ -339,6 +398,8 @@ const calculateAverageSpeed = () => {
               })}
             </tbody>
           </table>
+              
+          
         </div>
       </div>
     </div>
