@@ -31,6 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Check if user has admin claim
       if (user) {
+        const allowedAdmins = [
+          'admin@bussathi.com',
+          'ias@tracker.com',
+          'jammu@tracker.com',
+          'kashmir@tracker.com'
+        ];
         const idTokenResult = await user.getIdTokenResult();
         setIsAdmin(!!idTokenResult.claims.admin);
       } else {
