@@ -10,6 +10,7 @@ import DriverStatsCharts from '@/components/DriverStatsCharts';
 import { downloadMultipleTripsAsZip } from '@/utils/csvExport';
 import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+
 // Paste this near the top of both files (under imports)
 const getMovingRatio = (points: any[]) => {
   if (!points || points.length < 2) return 1; 
@@ -63,7 +64,8 @@ function Home() {
       alert("Error: You might not have permission.");
     }
   };
-  
+  const [driverRegions, setDriverRegions] = useState<Record<string, string>>({});
+  const [filterRegion, setFilterRegion] = useState('all');
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
