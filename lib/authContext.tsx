@@ -1,12 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  User,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
@@ -20,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  isAdmin: true, // 👈 DEV DEFAULT
+  isAdmin: false,
   login: async () => {},
   logout: async () => {},
 });
@@ -28,13 +23,20 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // 🔥 DEV MODE: any logged-in user = admin
-  const isAdmin = true;
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      
+      // Check if user has admin claim
+      if (user) {
+        const idTokenResult = await user.getIdTokenResult();
+        setIsAdmin(!!idTokenResult.claims.admin);
+      } else {
+        setIsAdmin(false);
+      }
+      
       setLoading(false);
     });
 
@@ -42,17 +44,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      // Force token refresh to get latest claims
+      await result.user.getIdToken(true);
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to login');
+    }
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to logout');
+    }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, isAdmin, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
