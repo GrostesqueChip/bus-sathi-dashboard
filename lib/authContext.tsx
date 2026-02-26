@@ -29,10 +29,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       
-      // Check if user has admin claim
+// Check if user has admin claim OR is on the VIP list
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
-        setIsAdmin(!!idTokenResult.claims.admin);
+        const hasFirebaseBadge = !!idTokenResult.claims.admin;
+        
+        // --- OUR NEW VIP LIST ---
+        const vipEmails = [
+          'admin@bussathi.com',
+          'admin@tracker.com',
+          'admin@jammu.com',
+          'admin@kashmir.com'
+        ];
+        const isVipUser = vipEmails.includes(user.email || '');
+        // ------------------------
+
+        // Let them in if they have the badge OR are on the VIP list
+        setIsAdmin(hasFirebaseBadge || isVipUser);
       } else {
         setIsAdmin(false);
       }
