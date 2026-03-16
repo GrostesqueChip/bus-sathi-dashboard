@@ -1,39 +1,22 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Trip } from '@/types/trip';
+import Link from 'next/link';
+import { ExternalLink, Zap, Timer, Clock } from 'lucide-react';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
 } from 'recharts';
-import { collection, query, where, getDocs, writeBatch, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase'; 
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
-interface DriverStatsChartsProps {
-  trips: Trip[];
-  topN?: number;
-  driverCapacities?: Record<string, string>;
-}
+
 const getMovingRatio = (points: any[]) => {
   if (!points || points.length < 2) return 1; 
-  
   let movingCount = 0;
   let validComparisons = 0;
 
   for (let i = 1; i < points.length; i++) {
     const p1 = points[i - 1];
     const p2 = points[i];
-
-    // Force values to be numbers in case Firebase saved them as strings
     const lat1 = Number(p1.lat || p1.latitude);
     const lon1 = Number(p1.lng || p1.longitude);
     const lat2 = Number(p2.lat || p2.latitude);
@@ -41,320 +24,187 @@ const getMovingRatio = (points: any[]) => {
 
     if (lat1 && lon1 && lat2 && lon2 && !isNaN(lat1)) {
        validComparisons++;
-       
        const R = 6371e3; 
        const dLat = (lat2 - lat1) * Math.PI / 180;
        const dLon = (lon2 - lon1) * Math.PI / 180;
-       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                 Math.sin(dLon/2) * Math.sin(dLon/2);
+       const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
        const distanceMeters = R * c;
 
-       // Dropped threshold to 3 meters to catch slow traffic creeping
-       if (distanceMeters > 3) {
-         movingCount++;
-       }
+       if (distanceMeters > 3) movingCount++;
     }
   }
-  
   return validComparisons > 0 ? (movingCount / validComparisons) : 1;
 };
-interface DriverStats {
-  driverId: string;
-  driverName: string;
-  totalTrips: number;
-  totalDistance: number;
-  averageDistance: number;
-  averageSpeed: number;
-  totalIdleTimeMs: number; 
-  totalDurationMs: number;   // <--- ADD THIS
-  totalMovingTimeMs: number;
+
+const formatMs = (ms: number) => {
+  if (!ms || ms <= 0) return '0m';
+  const totalMins = Math.floor(ms / 60000);
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+};
+
+interface Props {
+  trips: Trip[];
+  driverCapacities: Record<string, string>;
 }
 
-const COLORS = [
-  '#3b82f6', // blue
-  '#10b981', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // purple
-  '#ec4899', // pink
-  '#14b8a6', // teal
-  '#f97316', // orange
-  '#6366f1', // indigo
-  '#06b6d4', // cyan
-];
-export default function DriverStatsCharts({ trips, topN = 10, driverCapacities }: DriverStatsChartsProps) {
-  // Calculate driver statistics
-  const driverStatsMap = new Map<string, DriverStats>();
+export default function DriverStatsCharts({ trips, driverCapacities }: Props) {
 
-  trips.forEach((trip) => {
-    const existing = driverStatsMap.get(trip.driverId);
-    
-// NEW LOGIC: Calculate Average Moving Speed (Filters out stops)
-    let tripSpeed = 0;
-    let tripIdleMs = 0;
-    let tripMovingMs = 0;
-    const durationMs = (trip.endTime && trip.endTime > trip.startTime) ? (trip.endTime - trip.startTime) : 0;
-    if (durationMs > 0) {
-       // Use our new math
-       if (trip.routePoints && trip.routePoints.length > 0) {
-          const ratio = getMovingRatio(trip.routePoints);
-          tripMovingMs = durationMs * ratio;
-          tripIdleMs = durationMs * (1 - ratio);
-       } else {
-          tripMovingMs = durationMs; // fallback
-       }
+  const distanceDistribution = useMemo(() => {
+    let short = 0; 
+    let medium = 0; 
+    let long = 0; 
 
-       const durationHours = durationMs / 3600000;
-       tripSpeed = durationHours > 0 ? (trip.totalDistance / durationHours) : 0;
-    }
-
-    if (existing) {
-      existing.totalTrips += 1;
-      existing.totalDistance += trip.totalDistance;
-      existing.averageDistance = existing.totalDistance / existing.totalTrips;
-      existing.averageSpeed = (existing.averageSpeed * (existing.totalTrips - 1) + tripSpeed) / existing.totalTrips;
-      existing.totalIdleTimeMs += tripIdleMs;     // <--- NEW
-      existing.totalMovingTimeMs += tripMovingMs;
-    } else {
-      driverStatsMap.set(trip.driverId, {
-        driverName: trip.driverName,
-        driverId: trip.driverId,
-        totalTrips: 1,
-        totalDistance: trip.totalDistance,
-        averageDistance: trip.totalDistance,
-        averageSpeed: tripSpeed,
-        totalIdleTimeMs: tripIdleMs,     // <--- NEW
-        totalMovingTimeMs: tripMovingMs,
-        totalDurationMs: durationMs, //<--- NEW
-      
-      });
-    }
-  });
-
-  // Helper to format milliseconds to "Xh Ym" for the table
-  const formatMs = (ms: number) => {
-    if (!ms || ms <= 0) return '0m';
-    const totalMins = Math.floor(ms / 60000);
-    const hours = Math.floor(totalMins / 60);
-    const mins = totalMins % 60;
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-  };
-  // Convert to array and sort
-  const allDriverStats = Array.from(driverStatsMap.values());
-  
-  // Get top N drivers by total distance
-  const topDriversByDistance = [...allDriverStats]
-    .sort((a, b) => b.totalDistance - a.totalDistance)
-    .slice(0, topN);
-
-  // Get top N drivers by number of trips
-  const topDriversByTrips = [...allDriverStats]
-    .sort((a, b) => b.totalTrips - a.totalTrips)
-    .slice(0, topN);
-
-  // Get top N drivers by average speed
-  const topDriversBySpeed = [...allDriverStats]
-    .filter((d) => d.averageSpeed > 0)
-    .sort((a, b) => b.averageSpeed - a.averageSpeed)
-    .slice(0, topN);
-
-  // Prepare data for pie chart (total trips distribution)
-  const pieData = topDriversByTrips.map((driver) => ({
-    name: driver.driverName,
-    value: driver.totalTrips,
-  }));
-
-// NEW: Deletes trips for ANY specific driver
-  const handleDeleteDriverTrips = async (driverId: string, driverName: string) => {
-    const confirm = window.confirm(`⚠️ Are you sure you want to delete ALL trip data for "${driverName}"? This cannot be undone.`);
-    if (!confirm) return;
-
-    try {
-      // Find trips belonging to this specific ID
-      const q = query(collection(db, 'trips'), where('driverId', '==', driverId));
-      const snapshot = await getDocs(q);
-      
-      if (snapshot.empty) return alert("No trip data found for this driver!");
-
-      const batch = writeBatch(db);
-      snapshot.docs.forEach((d) => batch.delete(doc(db, 'trips', d.id)));
-      await batch.commit();
-
-      alert(`✅ All trip data for ${driverName} has been deleted.`);
-      window.location.reload(); 
-    } catch (err) {
-      console.error(err);
-      alert("Error: Check your permissions or Firebase connection.");
-    }
-  };
-  // Function to generate the PDF
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Bus Sathi - Driver Performance Report", 14, 15);
-    
-    const rows = topDriversByDistance.map((d, i) => [
-      i + 1, d.driverName, d.totalTrips, `${d.totalDistance.toFixed(2)} km`, `${d.averageSpeed.toFixed(2)} km/h`
-    ]);
-
-    autoTable(doc, {
-      head: [['Rank', 'Driver', 'Trips', 'Distance', 'Avg Speed']],
-      body: rows,
-      startY: 25,
+    trips.forEach(trip => {
+      if (trip.totalDistance < 15) short++;
+      else if (trip.totalDistance <= 50) medium++;
+      else long++;
     });
 
-    doc.save("Bus-Sathi-Report.pdf");
-  };
+    return [
+      { category: 'Short (<15km)', trips: short, color: '#3b82f6' },
+      { category: 'Medium (15-50km)', trips: medium, color: '#f59e0b' },
+      { category: 'Long (>50km)', trips: long, color: '#ef4444' }
+    ];
+  }, [trips]);
 
-  if (trips.length === 0) {
-    return (
-      <div className="text-center text-gray-500 py-8">
-        No trip data available for charts
-      </div>
-    );
-  }
+  const vehicleData = useMemo(() => {
+    let heavy = 0, medium = 0, light = 0;
+    trips.forEach(trip => {
+      const cap = driverCapacities[trip.driverId] || '';
+      if (cap.toLowerCase().includes('hpv')) heavy++;
+      else if (cap.toLowerCase().includes('mpv')) medium++;
+      else light++; 
+    });
+
+    return [
+      { name: 'Heavy Buses', value: heavy || 1, color: '#ef4444' }, 
+      { name: 'Medium Buses', value: medium || 1, color: '#3b82f6' }, 
+      { name: 'Light Vans', value: light || 1, color: '#f59e0b' } 
+    ];
+  }, [trips, driverCapacities]);
+
+  const topDrivers = useMemo(() => {
+    const driverMap: Record<string, { 
+      id: string, name: string, distance: number, trips: number,
+      movingMs: number, idleMs: number, durationHours: number
+    }> = {};
+    
+    trips.forEach(t => {
+      if (!driverMap[t.driverId]) {
+        driverMap[t.driverId] = { 
+          id: t.driverId, name: t.driverName || 'Unknown', distance: 0, 
+          trips: 0, movingMs: 0, idleMs: 0, durationHours: 0
+        };
+      }
+      
+      const drv = driverMap[t.driverId];
+      drv.distance += t.totalDistance;
+      drv.trips += 1;
+
+      const durMs = (t.endTime && t.endTime > t.startTime) ? (t.endTime - t.startTime) : 0;
+      if (durMs > 0) {
+        drv.durationHours += (durMs / 3600000);
+        if (t.routePoints && t.routePoints.length > 0) {
+          const ratio = getMovingRatio(t.routePoints);
+          drv.movingMs += (durMs * ratio);
+          drv.idleMs += (durMs * (1 - ratio));
+        } else {
+          drv.movingMs += durMs;
+        }
+      }
+    });
+
+    return Object.values(driverMap)
+      .sort((a, b) => b.distance - a.distance)
+      .slice(0, 10);
+  }, [trips]);
 
   return (
-    <div className="space-y-6">
-      {/* Top Charts - Distance and Trip Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Top Drivers by Total Distance */}
-        <div className="card lg:col-span-2">
-          <h2 className="text-xl font-bold mb-4">Top {topN} Drivers by Total Distance</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={topDriversByDistance}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="driverName" 
-                angle={-45} 
-                textAnchor="end" 
-                height={100}
-                interval={0}
-              />
-              <YAxis label={{ value: 'Distance (km)', angle: -90, position: 'insideLeft' }} />
-              <Tooltip 
-                formatter={(value: number | undefined) => value ? [`${value.toFixed(2)} km`, 'Total Distance'] : ['0 km', 'Total Distance']}
-              />
-              <Legend />
-              <Bar dataKey="totalDistance" fill="#3b82f6" name="Total Distance (km)" />
-            </BarChart>
-          </ResponsiveContainer>
+    <div className="space-y-8 mt-2">
+      
+      {/* 1. ADVANCED TOP 10 LEADERBOARD (NOW AT THE VERY TOP!) */}
+      <div className="border border-gray-100 rounded-2xl shadow-sm bg-white overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+          <h2 className="text-sm font-black text-gray-800 uppercase tracking-widest">Top 10 Drivers (Distance)</h2>
         </div>
-
-        {/* Trip Distribution Pie Chart */}
-        <div className="card lg:col-span-1">
-          <h2 className="text-xl font-bold mb-4">Trip Distribution (Top {topN})</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value: number | undefined) => value ? [`${value} trips`, 'Total Trips'] : ['0 trips', 'Total Trips']} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Driver Statistics Table */}
-      <div className="card">
-        <h2 className="text-xl font-bold mb-4">Driver Performance Summary</h2>
+        
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead className="bg-white">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Rank
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Driver Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Total Trips
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Total Distance
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Avg Distance
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Avg Speed
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Total Moving
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Total Idle
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Vehicle Type
-                </th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Rank</th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Driver</th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Trips</th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Distance</th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1"><Zap size={12}/> Avg Speed</th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest"><div className="flex items-center gap-1 text-emerald-600"><Timer size={12}/> Moving</div></th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest"><div className="flex items-center gap-1 text-red-500"><Clock size={12}/> Idle</div></th>
+                <th className="px-5 py-3 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Action</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {topDriversByDistance.map((driver, index) => (
-                <tr key={driver.driverName} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {index + 1}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {driver.driverName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {driver.totalTrips}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {driver.totalDistance.toFixed(2)} km
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {driver.averageDistance.toFixed(2)} km
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {driver.averageSpeed > 0 ? `${driver.averageSpeed.toFixed(2)} km/h` : 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                  {formatMs(driver.totalMovingTimeMs)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">
-                    {formatMs(driver.totalIdleTimeMs)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {(() => {
-                      if (!driverCapacities) return 'Loading...';
-                      
-                      // 1. Try matching by Driver ID
-                      if (driverCapacities[driver.driverId]) {
-                        return driverCapacities[driver.driverId];
-                      }
-
-                      // 2. Try matching by Name (Cleaned up)
-                      const cleanName = driver.driverName.toLowerCase().trim();
-                      if (driverCapacities[cleanName]) {
-                        return driverCapacities[cleanName];
-                      }
-
-                      return 'N/A';
-                    })()}
-                  </td>
-
-                </tr>
-              ))}
+            <tbody className="bg-white divide-y divide-gray-50">
+              {topDrivers.map((driver, index) => {
+                const avgSpeed = driver.durationHours > 0 ? (driver.distance / driver.durationHours) : 0;
+                return (
+                  <tr key={driver.id} className="hover:bg-blue-50/30 transition-colors">
+                    <td className="px-5 py-3 whitespace-nowrap text-sm font-black text-gray-400">#{index + 1}</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm font-bold text-gray-900">{driver.name}</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm text-gray-500 font-medium">{driver.trips}</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm text-blue-600 font-black">{driver.distance.toFixed(1)} km</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm font-bold text-amber-500">{avgSpeed.toFixed(1)} km/h</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm font-bold text-emerald-600">{formatMs(driver.movingMs)}</td>
+                    <td className="px-5 py-3 whitespace-nowrap text-sm font-bold text-red-500">{formatMs(driver.idleMs)}</td>
+                    <td className="px-5 py-3 whitespace-nowrap">
+                      <Link href={`/driver-report/${driver.id}`} className="flex items-center w-max gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-gray-600 hover:text-blue-700 rounded-lg text-xs font-bold transition-colors">
+                        View Report <ExternalLink size={12} />
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* 2. CHARTS ROW (NOW PUSHED BELOW THE TABLE) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="border border-gray-100 rounded-2xl p-4 shadow-sm bg-slate-50">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Trip Length Distribution</h2>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={distanceDistribution} layout="vertical" margin={{ top: 10, right: 20, left: 10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
+              <XAxis type="number" tick={{fontSize: 10}} tickLine={false} axisLine={false} />
+              <YAxis dataKey="category" type="category" width={110} tick={{fontSize: 10, fontWeight: 'bold', fill: '#64748b'}} tickLine={false} axisLine={false} />
+              <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+              <Bar dataKey="trips" radius={[0, 4, 4, 0]} barSize={32}>
+                {distanceDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="border border-gray-100 rounded-2xl p-4 shadow-sm bg-slate-50 relative">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Vehicle Mix</h2>
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie data={vehicleData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
+                {vehicleData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+              </Pie>
+              <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="absolute bottom-4 left-0 w-full flex justify-center gap-4 text-[10px] font-bold text-gray-500 uppercase">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> Heavy</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Medium</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> Light</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

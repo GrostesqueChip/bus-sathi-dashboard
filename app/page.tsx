@@ -4,25 +4,22 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Trip } from '@/types/trip';
 import { TripService } from '@/services/tripService';
-import { format } from 'date-fns';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DriverStatsCharts from '@/components/DriverStatsCharts';
-import { downloadMultipleTripsAsZip } from '@/utils/csvExport';
-import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
+import RegionAnalytics from '@/components/RegionAnalytics';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { format } from 'date-fns';
+import { Activity, Users, Route, Map, Zap, Clock, Award, Timer, Bus, PieChart, BarChart2, History, ArrowRight } from 'lucide-react';
 
-// Paste this near the top of both files (under imports)
 const getMovingRatio = (points: any[]) => {
   if (!points || points.length < 2) return 1; 
-  
   let movingCount = 0;
   let validComparisons = 0;
 
   for (let i = 1; i < points.length; i++) {
     const p1 = points[i - 1];
     const p2 = points[i];
-
-    // Force values to be numbers in case Firebase saved them as strings
     const lat1 = Number(p1.lat || p1.latitude);
     const lon1 = Number(p1.lng || p1.longitude);
     const lat2 = Number(p2.lat || p2.latitude);
@@ -30,583 +27,342 @@ const getMovingRatio = (points: any[]) => {
 
     if (lat1 && lon1 && lat2 && lon2 && !isNaN(lat1)) {
        validComparisons++;
-       
        const R = 6371e3; 
        const dLat = (lat2 - lat1) * Math.PI / 180;
        const dLon = (lon2 - lon1) * Math.PI / 180;
-       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                 Math.sin(dLon/2) * Math.sin(dLon/2);
+       const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
        const distanceMeters = R * c;
 
-       // Dropped threshold to 3 meters to catch slow traffic creeping
-       if (distanceMeters > 3) {
-         movingCount++;
-       }
+       if (distanceMeters > 3) movingCount++;
     }
   }
-  
   return validComparisons > 0 ? (movingCount / validComparisons) : 1;
 };
-// ---------------------------------------------------------
-function Home() {
-  const handleDeleteTrip = async (tripId: string) => {
-    const confirm = window.confirm("🗑️ Are you sure you want to delete this trip record?");
-    if (!confirm) return;
 
-    try {
-      await deleteDoc(doc(db, "trips", tripId));
-      alert("Trip deleted successfully.");
-      window.location.reload(); // Refresh the list
-    } catch (error) {
-      console.error("Error deleting trip:", error);
-      alert("Error: You might not have permission.");
-    }
-  };
-  const [driverRegions, setDriverRegions] = useState<Record<string, string>>({});
-  const [filterRegion, setFilterRegion] = useState('all');
+const formatMs = (ms: number) => {
+  if (!ms || ms <= 0) return '0m';
+  const totalMins = Math.floor(ms / 60000);
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+};
+
+function Home() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState({
-    totalTrips: 0,
-    totalDistance: 0,
-    averageDistance: 0,
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterDriver, setFilterDriver] = useState('all');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [filterType, setFilterType] = useState('all');
+  const [stats, setStats] = useState({ totalTrips: 0, totalDistance: 0, averageDistance: 0 });
+  const [totalDrivers, setTotalDrivers] = useState(0);
+  const [activeCount, setActiveCount] = useState(0);
   const [driverCapacities, setDriverCapacities] = useState<Record<string, string>>({});
-  const [totalRegisteredDrivers, setTotalRegisteredDrivers] = useState(0);
-  const [activeYesterday, setActiveYesterday] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics'>('overview');
+  
+  // Quick Notes Data
+  const [peakTime, setPeakTime] = useState('N/A');
+  const [mainRegion, setMainRegion] = useState('N/A');
+  const [topEarner, setTopEarner] = useState('N/A');
+  const [totalHoursToday, setTotalHoursToday] = useState('0');
+  const [longestTrip, setLongestTrip] = useState('0');
+  const [mainVehicle, setMainVehicle] = useState('N/A');
+  const [fleetUsage, setFleetUsage] = useState('0');
+
   useEffect(() => {
-    loadTrips();
-    loadStats();
-    loadDriverDetails();
-  }, []);
-  useEffect(() => {
-    if (trips.length === 0) return;
+    const loadDashboard = async () => {
+      try {
+        setLoading(true);
+        const [tripsData, statsData] = await Promise.all([
+          TripService.getAllTrips(),
+          TripService.getTripStats()
+        ]);
+        setTrips(tripsData);
+        setStats(statsData);
 
-    // 1. Figure out exact timestamps for "Yesterday"
-    const now = new Date();
-    const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
-    const endOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() - 1;
-
-    // 2. Filter trips that happened yesterday
-    const yesterdayTrips = trips.filter(
-      (trip) => trip.startTime >= startOfYesterday && trip.startTime <= endOfYesterday
-    );
-
-    // 3. Extract unique driver names
-    const uniqueDrivers = Array.from(new Set(yesterdayTrips.map((t) => t.driverName || t.driverEmail)));
-    setActiveYesterday(uniqueDrivers);
-  }, [trips]);
-  // -----------------------------------------
-  // ADD THIS FUNCTION:
-const loadDriverDetails = async () => {
-    try {
-      console.log("🚀 Starting to fetch driver details...");
-      const querySnapshot = await getDocs(collection(db, "drivers"));
-      setTotalRegisteredDrivers(querySnapshot.size);
-      
-      const capacityMap: Record<string, string> = {};
-      const regionMap: Record<string, string> = {}; // <-- NEW
-      
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const capacity = data.vehicleCapacity || 'Unknown';
+        const querySnapshot = await getDocs(collection(db, "drivers"));
+        const driverCount = querySnapshot.size;
+        setTotalDrivers(driverCount);
         
-        // --- NEW: Grab region and convert Srinagar to Kashmir ---
-        const rawRegion = data.region || 'Unknown';
-        const finalRegion = rawRegion.toLowerCase().includes('srinagar') ? 'Kashmir' : rawRegion;
-        // --------------------------------------------------------
-
-        // 1. Map ID
-        capacityMap[doc.id] = capacity;
-        regionMap[doc.id] = finalRegion; // <-- NEW
+        const capacityMap: Record<string, string> = {};
+        const regionMap: Record<string, string> = {};
         
-        // 2. Map Clean Name
-        if (data.name) {
-          const cleanName = data.name.toString().toLowerCase().trim();
-          capacityMap[cleanName] = capacity;
-          regionMap[cleanName] = finalRegion; // <-- NEW
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          capacityMap[doc.id] = data.vehicleCapacity || 'Unknown';
+          regionMap[doc.id] = data.region || 'Unknown';
+          if (data.name) {
+            capacityMap[data.name.toString().toLowerCase().trim()] = data.vehicleCapacity || 'Unknown';
+            regionMap[data.name.toString().toLowerCase().trim()] = data.region || 'Unknown';
+          }
+        });
+        setDriverCapacities(capacityMap);
+
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000); 
+        const recentTrips = tripsData.filter((t: Trip) => t.startTime >= oneDayAgo);
+        const uniqueDrivers = new Set(recentTrips.map((t: Trip) => t.driverId));
+        setActiveCount(uniqueDrivers.size);
+
+        if (recentTrips.length > 0) {
+          let jammu = 0, kashmir = 0;
+          const hours = new Array(24).fill(0);
+          const driverDistances: Record<string, number> = {};
+          let totalMs = 0;
+          let maxSingleTrip = 0;
+          let heavy = 0, medium = 0, light = 0;
+
+          recentTrips.forEach((t: Trip) => {
+            const r = regionMap[t.driverId] || 'Unknown';
+            if (r.toLowerCase().includes('jammu')) jammu++;
+            else kashmir++;
+
+            const hour = new Date(t.startTime).getHours();
+            hours[hour]++;
+            if (t.endTime && t.startTime) totalMs += (t.endTime - t.startTime);
+
+            const dName = t.driverName || 'Unknown';
+            driverDistances[dName] = (driverDistances[dName] || 0) + t.totalDistance;
+            if (t.totalDistance > maxSingleTrip) maxSingleTrip = t.totalDistance;
+
+            const cap = capacityMap[t.driverId] || capacityMap[t.driverName.toLowerCase().trim()] || '';
+            if (cap.toLowerCase().includes('hpv')) heavy++;
+            else if (cap.toLowerCase().includes('mpv')) medium++;
+            else light++;
+          });
+
+          setMainRegion(jammu > kashmir ? 'Jammu Division' : 'Kashmir Division');
+
+          const busiestHour = hours.indexOf(Math.max(...hours));
+          const ampm = busiestHour >= 12 ? 'PM' : 'AM';
+          const displayHour = busiestHour % 12 || 12;
+          setPeakTime(`${displayHour}:00 ${ampm}`);
+
+          let maxDist = 0;
+          let bestDriver = 'N/A';
+          for (const [name, dist] of Object.entries(driverDistances)) {
+            if (dist > maxDist) { maxDist = dist; bestDriver = name; }
+          }
+          setTopEarner(bestDriver);
+          setTotalHoursToday((totalMs / 3600000).toFixed(1));
+          setLongestTrip(maxSingleTrip.toFixed(1));
+
+          if (heavy >= medium && heavy >= light) setMainVehicle('Heavy Buses');
+          else if (medium >= heavy && medium >= light) setMainVehicle('Medium Buses');
+          else setMainVehicle('Light Vans');
+
+          if (driverCount > 0) {
+            setFleetUsage(((uniqueDrivers.size / driverCount) * 100).toFixed(1));
+          }
         }
-      });
-      
-      setDriverCapacities(capacityMap);
-      setDriverRegions(regionMap); // <-- NEW
-    } catch (err) {
-      console.error("❌ Error loading drivers:", err);
-    }
-  };
-
-  const loadTrips = async () => {
-    try {
-      setLoading(true);
-      const data = await TripService.getAllTrips();
-      setTrips(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load trips. Please check your Firebase configuration.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadStats = async () => {
-    try {
-      const statsData = await TripService.getTripStats();
-      setStats(statsData);
-    } catch (err) {
-      console.error('Failed to load stats:', err);
-    }
-  };
-
-  const formatDate = (timestamp: number) => {
-    try {
-      return format(new Date(timestamp), 'MMM dd, yyyy HH:mm');
-    } catch {
-      return 'Invalid date';
-    }
-  };
-const calculateTripTimes = (trip: Trip) => {
-    const durationMs = trip.endTime ? (trip.endTime - trip.startTime) : 0;
-    if (durationMs <= 0 || !trip.routePoints || trip.routePoints.length === 0) {
-      return { moving: 'N/A', idle: 'N/A' };
-    }
-    
-    // Use our new ultra-accurate math
-    const ratio = getMovingRatio(trip.routePoints);
-    
-    const formatMs = (ms: number) => {
-      const m = Math.floor(ms / 60000);
-      const hrs = Math.floor(m / 60);
-      const mins = m % 60;
-      return hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+      } catch (err) {
+        console.error("Error loading dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
     };
+    loadDashboard();
+  }, []);
 
-    return {
-      moving: formatMs(durationMs * ratio),
-      idle: formatMs(durationMs * (1 - ratio))
-    };
-  };
-  const calculateDuration = (startTime: number, endTime: number | null) => {
-    if (!endTime) return 'N/A';
-    const durationMs = endTime - startTime;
-    const minutes = Math.floor(durationMs / 60000);
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    
-    if (hours > 0) {
-      return `${hours}h ${remainingMinutes}m`;
-    }
-    return `${minutes}m`;
-  };
-  // --- MY GHOST TRIP LOGIC ---
-  const validTrips = trips.filter(trip => {
-    // 1. Must have at least 2 points to calculate anything
-    if (!trip.routePoints || trip.routePoints.length < 2) return false;
-    
-    // 2. If distance is under 100 meters AND duration is under 2 minutes, it's a glitch/accidental tap
-    const durationMs = trip.endTime ? (trip.endTime - trip.startTime) : 0;
-    if (trip.totalDistance < 0.1 && durationMs < 120000) return false;
-
-    return true; // It's a real trip!
-  });
-
-  // Now we run your search filters ONLY on the valid trips
-  const filteredTrips = validTrips.filter(trip => {
-    const matchesSearch = 
-      trip.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trip.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trip.driverEmail.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDriver = filterDriver === 'all' || trip.driverId === filterDriver;
-    
-    let matchesDateRange = true;
-    if (startDate) {
-      const startTimestamp = new Date(startDate).getTime();
-      matchesDateRange = matchesDateRange && trip.startTime >= startTimestamp;
-    }
-    if (endDate) {
-      const endTimestamp = new Date(endDate).setHours(23, 59, 59, 999);
-      matchesDateRange = matchesDateRange && trip.startTime <= endTimestamp;
-    }
-
-    let driverCapacity = driverCapacities[trip.driverId];
-    if (!driverCapacity) {
-       const cleanName = trip.driverName.toLowerCase().trim();
-       driverCapacity = driverCapacities[cleanName];
-    }
-    const matchesType = filterType === 'all' || (driverCapacity || '') === filterType;
-    
-    return matchesSearch && matchesDriver && matchesDateRange && matchesType;
-  });
-
-
-  const handleDownloadFiltered = async () => {
-    if (filteredTrips.length === 0) {
-      alert('No trips to download');
-      return;
-    }
-    
-    setIsDownloading(true);
-    try {
-      await downloadMultipleTripsAsZip(filteredTrips);
-    } catch (error) {
-      console.error('Error downloading trips:', error);
-      alert('Failed to download trips. Please try again.');
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const uniqueDrivers = Array.from(new Set(trips.map(t => t.driverId)))
-    .map(id => trips.find(t => t.driverId === id))
-    .filter(Boolean) as Trip[];
+  const validTrips = trips.filter(trip => trip.routePoints && trip.routePoints.length > 1);
+  const recent10Trips = [...validTrips].sort((a, b) => b.startTime - a.startTime).slice(0, 10);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading trips...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <h2 className="text-red-800 font-semibold mb-2">Error Loading Data</h2>
-        <p className="text-red-600">{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-[600px] gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
+        <p className="text-gray-500 font-bold tracking-widest uppercase text-sm">Loading System Data...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
-        
-{/* NEW CARD 1: Registered Drivers (Now Clickable!) */}
-        <Link 
-          href="/registered-drivers" 
-          className="card bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors block cursor-pointer group"
-        >
-          <div className="flex justify-between items-start">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Registered Drivers</h3>
-            <span className="text-gray-500 text-xs flex items-center gap-1 font-medium group-hover:text-gray-700 transition-colors">
-              View All
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-gray-800">{totalRegisteredDrivers}</p>
-        </Link>
-      {/* NEW CARD 2: Active Yesterday (Clickable Link) */}
-        <Link 
-          href="/active-drivers" 
-          className="card bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors block cursor-pointer group"
-        >
-          <div className="flex justify-between items-start">
-            <h3 className="text-blue-800 text-sm font-medium mb-2">Active Yesterday</h3>
-            <span className="text-blue-500 text-xs flex items-center gap-1 font-medium group-hover:text-blue-700 transition-colors">
-              View All
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-blue-600">{activeYesterday.length}</p>
-        </Link>
+    <div className="space-y-8 pb-12 max-w-7xl mx-auto">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-gray-200 pb-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-2">Executive Summary</h1>
+          <p className="text-base text-gray-500 font-medium max-w-2xl">
+            A simple overview of today's bus operations, distances, and active drivers.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/trip-logs" className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2">
+            <Map size={18} /> View All Records
+          </Link>
+          <Link href="/map-visualizer" className="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-md flex items-center gap-2">
+            <Route size={18} /> Open Map
+          </Link>
+        </div>
+      </div>
 
-        {/* Existing Card 1 */}
-        <div className="card">
-          <h3 className="text-gray-600 text-sm font-medium mb-2">Total Trips</h3>
-          <p className="text-3xl font-bold text-primary-600">{stats.totalTrips}</p>
+      {/* Top 4 Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Link href="/active-drivers" className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-3xl shadow-lg text-white block hover:scale-[1.02] transition-transform group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
+          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2"><Activity size={16} className="text-blue-400" /> Drivers on Road</p>
+          <div className="flex items-end gap-3"><h3 className="text-5xl font-black mb-1">{activeCount}</h3><span className="text-2xl mb-1 group-hover:translate-x-1 transition-transform text-slate-500">→</span></div>
+          <p className="text-xs text-slate-300 font-medium mt-1">Active today</p>
+        </Link>
+        <Link href="/registered-drivers" className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all block group">
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2"><Users size={16} /> Total Drivers</p>
+          <div className="flex items-end gap-3"><h3 className="text-5xl font-black text-gray-900">{totalDrivers}</h3><span className="text-2xl mb-1 group-hover:translate-x-1 transition-transform text-gray-300">→</span></div>
+          <p className="text-sm text-gray-500 font-medium mt-1">Saved in system</p>
+        </Link>
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Distance Covered</p>
+          <h3 className="text-5xl font-black text-blue-600">{stats.totalDistance.toFixed(0)} <span className="text-2xl font-bold text-gray-400">km</span></h3>
+          <p className="text-sm text-gray-500 font-medium mt-1">Total route distance</p>
         </div>
-        
-        {/* Existing Card 2 */}
-        <div className="card">
-          <h3 className="text-gray-600 text-sm font-medium mb-2">Total Distance</h3>
-          <p className="text-3xl font-bold text-primary-600">
-            {stats.totalDistance.toFixed(2)} km
-          </p>
-        </div>
-        
-        {/* Existing Card 3 */}
-        <div className="card">
-          <h3 className="text-gray-600 text-sm font-medium mb-2">Avg Distance</h3>
-          <p className="text-3xl font-bold text-primary-600">
-            {stats.averageDistance.toFixed(2)} km
-          </p>
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Total Records</p>
+          <h3 className="text-5xl font-black text-emerald-600">{validTrips.length}</h3>
+          <p className="text-sm text-gray-500 font-medium mt-1">Clean trips saved</p>
         </div>
       </div>  
 
-    {/* Driver Statistics Charts */}
-          {/* UPDATE THIS LINE: */}
-          {trips.length > 0 && (
-            <DriverStatsCharts 
-              trips={validTrips} 
-              topN={10} 
-              driverCapacities={driverCapacities} // <--- Pass the data here
-            />
-          )}
-
-      {/* Filters */}
-      <div className="card">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search Trips
-              </label>
-              <input
-                type="text"
-                placeholder="Search by ID, driver name, or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-            <div className="md:w-64">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filter by Driver
-              </label>
-              <select
-                value={filterDriver}
-                onChange={(e) => setFilterDriver(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="all">All Drivers</option>
-                {uniqueDrivers.map((driver) => (
-                  <option key={driver.driverId} value={driver.driverId}>
-                    {driver.driverName || driver.driverEmail}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* New Filter: Vehicle Type */}
-            <div className="md:w-64">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filter by Vehicle Type
-              </label>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="all">All Vehicle Types</option>
-                <option value="32 to 52 seater (HPV)">32 to 52 seater (HPV)</option>
-                <option value="17 to 21 seater (MPV)">17 to 21 seater (MPV)</option>
-                <option value="5 to 13 seater (LPV)">5 to 13 seater (LPV)</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setFilterDriver('all');
-                  setStartDate('');
-                  setEndDate('');
-                }}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors whitespace-nowrap"
-              >
-                Clear Filters
-              </button>
-              <button
-                onClick={handleDownloadFiltered}
-                disabled={filteredTrips.length === 0 || isDownloading}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                {isDownloading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Downloading...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    Download Filtered ({filteredTrips.length})
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+      {/* TAB SWITCHER UI */}
+      <div className="flex justify-center mb-4">
+        <div className="bg-gray-100 p-1.5 rounded-2xl inline-flex gap-2">
+          <button onClick={() => setActiveTab('overview')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-black transition-all ${activeTab === 'overview' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
+            <PieChart size={16} /> General Overview
+          </button>
+          <button onClick={() => setActiveTab('analytics')} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-black transition-all ${activeTab === 'analytics' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
+            <BarChart2 size={16} /> Regional Analytics
+          </button>
         </div>
       </div>
 
-      {/* Trips Table */}
-      <div className="card">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-  <h2 className="text-xl font-bold text-gray-800">Recent Trips</h2>
-  
-  <Link 
-    href="/map-visualizer" 
-    className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all shadow-sm active:scale-95"
-  >
-    <svg 
-      className="w-5 h-5" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" 
-      />
-    </svg>
-    View Map (God Mode)
-  </Link>
-</div>
-        {filteredTrips.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No trips found</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trip ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Driver
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Start Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Moving Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Idle Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Distance
-                  </th>
-
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredTrips.map((trip) => {
-                  const times = calculateTripTimes(trip);
-                  return ( //
-                  <tr key={trip.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {trip.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>
-                        <div className="font-medium">{trip.driverName}</div>
-                        <div className="text-gray-500 text-xs">{trip.driverEmail}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(trip.startTime)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {calculateDuration(trip.startTime, trip.endTime)}
-                    </td>
-                    {/* --- PASTE THESE TWO NEW CELLS HERE --- */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                      {times.moving}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-500 font-medium">
-                      {times.idle}
-                    </td>
-                    {/* -------------------------------------- */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {trip.totalDistance.toFixed(2)} km
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex gap-4">
-                   <Link
-                     href={`/trip/${trip.id}`}
-                     className="text-blue-600 hover:text-blue-900 font-medium"
-                      >
-                      View Details
-                      </Link>
-  
-                      <button
-                      onClick={() => handleDeleteTrip(trip.id)}
-                      className="text-red-600 hover:text-red-900 font-medium"
-                      >
-                     Delete
-                    </button>
-                    </div>
-                    </td>
-                  </tr>
-                );
-                })}
-              </tbody>
-            </table>
+      {activeTab === 'overview' ? (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+          
+          {/* PRIORITY 1: FULL WIDTH LEADERBOARD & CHARTS */}
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="mb-6">
+              <h2 className="text-xl font-black text-gray-900">Fleet Performance & Leaderboard</h2>
+              <p className="text-gray-500 text-sm font-medium">Your highest performing operators and daily route distributions.</p>
+            </div>
+            {trips.length > 0 ? (
+              <DriverStatsCharts trips={validTrips} driverCapacities={driverCapacities} />
+            ) : (
+              <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl">
+                <p className="text-gray-400 font-bold tracking-widest uppercase text-xs">Waiting for today's data...</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* PRIORITY 2: HORIZONTAL QUICK NOTES GRID (NO SCROLLING NEEDED!) */}
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <h2 className="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
+              <Zap size={20} className="text-amber-500" /> Operations Summary
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                <p className="text-xs font-bold text-orange-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Award size={14} /> Distance Leader</p>
+                <p className="text-sm font-medium text-gray-800"><strong>{topEarner}</strong> drove the most today.</p>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100">
+                <p className="text-xs font-bold text-purple-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><PieChart size={14} /> Fleet Usage</p>
+                <p className="text-sm font-medium text-gray-800"><strong>{fleetUsage}%</strong> of drivers are active.</p>
+              </div>
+              <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Clock size={14} /> Busiest Hour</p>
+                <p className="text-sm font-medium text-gray-800">Peak traffic at <strong>{peakTime}</strong>.</p>
+              </div>
+              <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Timer size={14} /> Drive Time</p>
+                <p className="text-sm font-medium text-gray-800"><strong>{totalHoursToday} hours</strong> logged on road.</p>
+              </div>
+              <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Map size={14} /> Top Region</p>
+                <p className="text-sm font-medium text-gray-800"><strong>{mainRegion}</strong> is most active.</p>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Bus size={14} /> Main Vehicle</p>
+                <p className="text-sm font-medium text-gray-800">Mostly <strong>{mainVehicle}</strong> trips.</p>
+              </div>
+              <div className="p-4 bg-rose-50 rounded-2xl border border-rose-100 lg:col-span-2">
+                <p className="text-xs font-bold text-rose-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Route size={14} /> Longest Single Trip</p>
+                <p className="text-sm font-medium text-gray-800">The longest continuous mapped route today was <strong>{longestTrip} km</strong>.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* PRIORITY 3: RECENT 10 TRIPS WITH ADVANCED METRICS */}
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+              <h2 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
+                <History size={16} className="text-blue-600" /> 10 Most Recent Trips
+              </h2>
+              <Link href="/trip-logs" className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                View All Trip Logs <ArrowRight size={14} />
+              </Link>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-100">
+                <thead className="bg-white">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Driver</th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Time Logged</th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Distance</th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-1"><Zap size={12}/> Avg Speed</th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest"><div className="flex items-center gap-1 text-emerald-600"><Timer size={12}/> Moving</div></th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest"><div className="flex items-center gap-1 text-red-500"><Clock size={12}/> Idle</div></th>
+                    <th className="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-50">
+                  {recent10Trips.length > 0 ? (
+                    recent10Trips.map((trip) => {
+                      const durationMs = (trip.endTime && trip.endTime > trip.startTime) ? (trip.endTime - trip.startTime) : 0;
+                      let movingMs = 0, idleMs = 0;
+                      
+                      if (durationMs > 0) {
+                        if (trip.routePoints && trip.routePoints.length > 0) {
+                          const ratio = getMovingRatio(trip.routePoints);
+                          movingMs = durationMs * ratio;
+                          idleMs = durationMs * (1 - ratio);
+                        } else { movingMs = durationMs; }
+                      }
+                      const durationHours = durationMs / 3600000;
+                      const avgSpeed = durationHours > 0 ? (trip.totalDistance / durationHours) : 0;
+
+                      return (
+                        <tr key={trip.id} className="hover:bg-blue-50/30 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{trip.driverName || 'Unknown'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium"><span className="font-bold text-gray-700">{format(new Date(trip.startTime), 'MMM dd')}</span>, {format(new Date(trip.startTime), 'hh:mm a')}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-black text-blue-600">{trip.totalDistance.toFixed(2)} km</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-amber-500">{avgSpeed.toFixed(1)} km/h</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">{formatMs(movingMs)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-500">{formatMs(idleMs)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Link href={`/trip/${trip.id}`} className="flex items-center gap-1 w-max text-gray-500 hover:text-blue-600 font-bold text-xs transition-colors">
+                              View Route Map <ArrowRight size={12} />
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr><td colSpan={7} className="px-6 py-8 text-center text-sm font-bold text-gray-400">No trips recorded recently.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="mb-6"><h2 className="text-2xl font-black text-gray-900">Regional Analytics Dashboard</h2><p className="text-gray-500 text-sm font-medium">Analyze efficiency and fleet distribution across J&K.</p></div>
+          {trips.length > 0 ? <RegionAnalytics trips={validTrips} /> : <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl"><p className="text-gray-400 font-bold tracking-widest uppercase text-xs">Waiting for data...</p></div>}
+        </div>
+      )}
     </div>
   );
 }
 
-function HomeWithAuth() {
+export default function HomeWithAuth() {
   return (
     <ProtectedRoute>
       <Home />
     </ProtectedRoute>
   );
 }
-
-export default HomeWithAuth;

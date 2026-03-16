@@ -13,34 +13,61 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Helper component to auto-zoom the map to fit the filtered lines
-function MapFitter({ geoJsonData }: { geoJsonData: any }) {
+// The upgraded camera helper with City Presets!
+function MapFitter({ geoJsonData, selectedRegion }: { geoJsonData: any, selectedRegion?: string }) {
   const map = useMap();
+  
   useEffect(() => {
+    // 1. COMMAND CENTER PRESETS: Force the camera to the exact city coordinates
+    if (selectedRegion === 'jammu') {
+      map.flyTo([32.7266, 74.8570], 11, { duration: 1.5 }); // Jammu Coordinates
+      return;
+    }
+    
+    if (selectedRegion === 'srinagar') {
+      map.flyTo([34.0837, 74.7973], 11, { duration: 1.5 }); // Srinagar Coordinates
+      return;
+    }
+
+    // 2. DYNAMIC FIT: If searching or viewing "All", fit to the data bounds
     if (geoJsonData && geoJsonData.features && geoJsonData.features.length > 0) {
-      const bounds = L.geoJSON(geoJsonData).getBounds();
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50] });
+      try {
+        const geoJsonLayer = L.geoJSON(geoJsonData);
+        const bounds = geoJsonLayer.getBounds();
+        
+        if (bounds.isValid()) {
+          setTimeout(() => {
+            map.invalidateSize(); 
+            map.flyToBounds(bounds, { 
+              padding: [50, 50], 
+              maxZoom: 12,
+              duration: 1.5 
+            });
+          }, 100);
+        }
+      } catch (error) {
+        console.error("Camera swoop failed:", error);
       }
     }
-  }, [geoJsonData, map]);
+  }, [geoJsonData, selectedRegion, map]);
+  
   return null;
 }
 
-export default function GodModeMap({ geoJsonData }: { geoJsonData: any }) {
+export default function GodModeMap({ geoJsonData, selectedRegion }: { geoJsonData: any, selectedRegion?: string }) {
   return (
     <MapContainer 
-      center={[32.73, 74.87]} 
-      zoom={12} 
-      className="w-full h-full"
-      style={{ minHeight: '500px' }}
+      center={[33.4, 74.8]} // Default center between Jammu and Srinagar
+      zoom={8} 
+      className="w-full h-full z-0"
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; OpenStreetMap contributors'
       />
       
-      <MapFitter geoJsonData={geoJsonData} />
+      {/* Our preset camera helper sits right here */}
+      <MapFitter geoJsonData={geoJsonData} selectedRegion={selectedRegion} />
 
       {/* The key forces Leaflet to redraw the map when filters change */}
       {geoJsonData && (
@@ -48,16 +75,15 @@ export default function GodModeMap({ geoJsonData }: { geoJsonData: any }) {
            key={JSON.stringify(geoJsonData)}
            data={geoJsonData}
            style={(feature: any) => {
-             // Look at the capacity to determine the line color
              const vehicle = feature?.properties?.vehicleCapacity?.toLowerCase() || '';
-             let routeColor = '#9ca3af'; // Default: Gray
+             let routeColor = '#9ca3af'; 
 
              if (vehicle.includes('lpv') || vehicle.includes('5 to 13')) {
-               routeColor = '#f59e0b'; // Amber/Yellow for Small Vans (LPV)
+               routeColor = '#f59e0b'; 
              } else if (vehicle.includes('mpv') || vehicle.includes('17 to 21')) {
-               routeColor = '#3b82f6'; // Blue for Medium Buses (MPV)
+               routeColor = '#3b82f6'; 
              } else if (vehicle.includes('hpv') || vehicle.includes('32 to 52')) {
-               routeColor = '#ef4444'; // Red for Heavy/Large Buses (HPV)
+               routeColor = '#ef4444'; 
              }
 
              return {
