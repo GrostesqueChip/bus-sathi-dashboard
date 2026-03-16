@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { TripService } from '@/services/tripService'; // Added TripService
-import { format } from 'date-fns'; // Added for formatting dates
+import { TripService } from '@/services/tripService'; 
+import { format } from 'date-fns'; 
 
 interface Driver {
   id: string;
@@ -16,8 +16,8 @@ interface Driver {
   region: string;
   vehicleCapacity: string;
   vehicleNumber: string;
-  lastActiveStr: string; // New field for the UI
-  lastActiveTime: number; // New field for sorting
+  lastActiveStr: string; 
+  lastActiveTime: number; 
 }
 
 function RegisteredDrivers() {
@@ -32,13 +32,11 @@ function RegisteredDrivers() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Drivers and Trips at the same time for speed
         const [driverSnapshot, allTrips] = await Promise.all([
           getDocs(collection(db, "drivers")),
           TripService.getAllTrips()
         ]);
 
-        // Build a map to easily find the latest trip time for each driver
         const lastActiveMap: Record<string, number> = {};
         allTrips.forEach(trip => {
           const tripTime = trip.endTime || trip.startTime;
@@ -54,7 +52,6 @@ function RegisteredDrivers() {
           const rawRegion = data.region || 'Unknown';
           const finalRegion = rawRegion.toLowerCase().includes('srinagar') ? 'Kashmir' : rawRegion;
 
-          // Determine their last active date
           const lastActiveTimestamp = lastActiveMap[doc.id] || 0;
           const lastActiveStr = lastActiveTimestamp > 0 
             ? format(new Date(lastActiveTimestamp), 'MMM dd, yyyy hh:mm a')
@@ -73,7 +70,6 @@ function RegisteredDrivers() {
           });
         });
         
-        // Sort drivers so the most recently active ones show up at the top
         driverData.sort((a, b) => b.lastActiveTime - a.lastActiveTime);
 
         setDrivers(driverData);
@@ -87,7 +83,6 @@ function RegisteredDrivers() {
     fetchData();
   }, []);
 
-  // Apply filters
   const filteredDrivers = drivers.filter(driver => {
     const matchesSearch = driver.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           driver.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -100,17 +95,19 @@ function RegisteredDrivers() {
 
   // Export to CSV (Excel)
   const exportToCSV = () => {
-    // Added 'Last Active' to the Excel headers
-    const headers = ['Name', 'Email', 'Phone', 'Region', 'Vehicle Capacity', 'Vehicle Number', 'Last Active'];
+    // 1. Added S.No. to the headers
+    const headers = ['S.No.', 'Name', 'Email', 'Phone', 'Region', 'Vehicle Capacity', 'Vehicle Number', 'Last Active'];
     
-    const rows = filteredDrivers.map(d => [
+    // 2. Added the index + 1 to the rows
+    const rows = filteredDrivers.map((d, index) => [
+      (index + 1).toString(), // Serial Number
       d.name, 
       d.email, 
       d.phone, 
       d.region, 
       d.vehicleCapacity, 
       d.vehicleNumber,
-      d.lastActiveStr // Includes the date in the Excel export
+      d.lastActiveStr 
     ]);
 
     const csvContent = [
@@ -201,17 +198,21 @@ function RegisteredDrivers() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">S.No.</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Driver Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Region</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle No.</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase">Last Active</th> {/* New Column Header */}
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase">Last Active</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredDrivers.map((driver) => (
+              {filteredDrivers.map((driver, index) => (
                 <tr key={driver.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
+                    {index + 1}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{driver.name}</div>
                     <div className="text-sm text-gray-500 text-xs">ID: {driver.id}</div>
@@ -227,7 +228,6 @@ function RegisteredDrivers() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{driver.vehicleCapacity}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">{driver.vehicleNumber}</td>
-                  {/* New Column Data */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <span className={driver.lastActiveTime > 0 ? "text-blue-600" : "text-gray-400"}>
                       {driver.lastActiveStr}
@@ -237,7 +237,7 @@ function RegisteredDrivers() {
               ))}
               {filteredDrivers.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                     No drivers found matching these filters.
                   </td>
                 </tr>
