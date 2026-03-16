@@ -112,27 +112,33 @@ const loadDriverDetails = async () => {
       console.log("🚀 Starting to fetch driver details...");
       const querySnapshot = await getDocs(collection(db, "drivers"));
       setTotalRegisteredDrivers(querySnapshot.size);
+      
       const capacityMap: Record<string, string> = {};
+      const regionMap: Record<string, string> = {}; // <-- NEW
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         const capacity = data.vehicleCapacity || 'Unknown';
         
-        // Debugging Log: Check your browser console (F12) to see these!
-        console.log(`Found Driver: ${data.name} | ID: ${doc.id} | Capacity: ${capacity}`);
+        // --- NEW: Grab region and convert Srinagar to Kashmir ---
+        const rawRegion = data.region || 'Unknown';
+        const finalRegion = rawRegion.toLowerCase().includes('srinagar') ? 'Kashmir' : rawRegion;
+        // --------------------------------------------------------
 
-        // 1. Map ID -> Capacity
+        // 1. Map ID
         capacityMap[doc.id] = capacity;
+        regionMap[doc.id] = finalRegion; // <-- NEW
         
-        // 2. Map Clean Name -> Capacity (Lowercase & Trimmed)
+        // 2. Map Clean Name
         if (data.name) {
           const cleanName = data.name.toString().toLowerCase().trim();
           capacityMap[cleanName] = capacity;
+          regionMap[cleanName] = finalRegion; // <-- NEW
         }
       });
       
-      console.log("✅ Final Capacity Map:", capacityMap);
       setDriverCapacities(capacityMap);
+      setDriverRegions(regionMap); // <-- NEW
     } catch (err) {
       console.error("❌ Error loading drivers:", err);
     }
@@ -289,12 +295,22 @@ const calculateTripTimes = (trip: Trip) => {
       {/* Stats Cards */}
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
         
-        {/* NEW CARD 1: Registered Drivers */}
-        <div className="card bg-gray-50 border border-gray-100">
-          <h3 className="text-gray-600 text-sm font-medium mb-2">Registered Drivers</h3>
+{/* NEW CARD 1: Registered Drivers (Now Clickable!) */}
+        <Link 
+          href="/registered-drivers" 
+          className="card bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors block cursor-pointer group"
+        >
+          <div className="flex justify-between items-start">
+            <h3 className="text-gray-600 text-sm font-medium mb-2">Registered Drivers</h3>
+            <span className="text-gray-500 text-xs flex items-center gap-1 font-medium group-hover:text-gray-700 transition-colors">
+              View All
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          </div>
           <p className="text-3xl font-bold text-gray-800">{totalRegisteredDrivers}</p>
-        </div>
-
+        </Link>
       {/* NEW CARD 2: Active Yesterday (Clickable Link) */}
         <Link 
           href="/active-drivers" 
