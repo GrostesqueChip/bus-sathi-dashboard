@@ -25,7 +25,14 @@ export default function Header() {
   return (
     <header className="bg-primary-600 text-white shadow-lg">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">🚌 Bus Tracker Dashboard</h1>
+        
+        {/* --- NEW LOGO AND TITLE HERE --- */}
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" alt="Bus Sathi Logo" className="h-8 w-auto" />
+          <h1 className="text-2xl font-bold">Bus Sathi Dashboard</h1>
+        </div>
+        {/* ------------------------------- */}
+
         {user && (
           <div className="flex items-center gap-4">
             <span className="text-sm">

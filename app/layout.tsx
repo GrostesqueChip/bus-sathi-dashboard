@@ -6,9 +6,9 @@ import Header from '@/components/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: 'Bus Tracker Dashboard',
-  description: 'Admin dashboard for bus route tracking',
+export const metadata = {
+  title: 'Bus Sathi Dashboard',
+  description: 'Official transit management portal',
 }
 
 export default function RootLayout({
