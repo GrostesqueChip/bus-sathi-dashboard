@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Fix for default Leaflet icons in Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -13,95 +12,102 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// The upgraded camera helper with City Presets!
-function MapFitter({ geoJsonData, selectedRegion }: { geoJsonData: any, selectedRegion?: string }) {
+function MapFitter({ selectedRegion }: { selectedRegion?: string }) {
   const map = useMap();
   
   useEffect(() => {
-    // 1. COMMAND CENTER PRESETS: Force the camera to the exact city coordinates
+    // Force the camera strictly to J&K Regions. Ignores wild bounds.
     if (selectedRegion === 'jammu') {
-      map.flyTo([32.7266, 74.8570], 11, { duration: 1.5 }); // Jammu Coordinates
-      return;
+      map.flyTo([32.7266, 74.8570], 10, { duration: 1.5 }); 
+    } else if (selectedRegion === 'kashmir' || selectedRegion === 'srinagar') {
+      map.flyTo([34.0837, 74.7973], 10, { duration: 1.5 }); 
+    } else {
+      // Default "All" view centered exactly between the two
+      map.flyTo([33.4, 74.8], 8, { duration: 1.5 });
     }
-    
-    if (selectedRegion === 'srinagar') {
-      map.flyTo([34.0837, 74.7973], 11, { duration: 1.5 }); // Srinagar Coordinates
-      return;
-    }
-
-    // 2. DYNAMIC FIT: If searching or viewing "All", fit to the data bounds
-    if (geoJsonData && geoJsonData.features && geoJsonData.features.length > 0) {
-      try {
-        const geoJsonLayer = L.geoJSON(geoJsonData);
-        const bounds = geoJsonLayer.getBounds();
-        
-        if (bounds.isValid()) {
-          setTimeout(() => {
-            map.invalidateSize(); 
-            map.flyToBounds(bounds, { 
-              padding: [50, 50], 
-              maxZoom: 12,
-              duration: 1.5 
-            });
-          }, 100);
-        }
-      } catch (error) {
-        console.error("Camera swoop failed:", error);
-      }
-    }
-  }, [geoJsonData, selectedRegion, map]);
+  }, [selectedRegion, map]);
   
   return null;
 }
 
 export default function GodModeMap({ geoJsonData, selectedRegion }: { geoJsonData: any, selectedRegion?: string }) {
+  
+  // Approximate Boundaries of J&K to lock the map view
+  const JNK_BOUNDS: L.LatLngBoundsExpression = [
+    [31.5, 73.0], // South West
+    [35.5, 80.0]  // North East
+  ];
+
   return (
     <MapContainer 
-      center={[33.4, 74.8]} // Default center between Jammu and Srinagar
+      center={[33.4, 74.8]} 
       zoom={8} 
+      minZoom={7} // <-- FIX: Stops users/map from zooming out to all of India
+      maxBounds={JNK_BOUNDS} // <-- FIX: Hard-locks panning strictly to Northern India
+      maxBoundsViscosity={1.0}
       className="w-full h-full z-0"
+      zoomControl={false} 
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; OpenStreetMap contributors'
       />
       
-      {/* Our preset camera helper sits right here */}
-      <MapFitter geoJsonData={geoJsonData} selectedRegion={selectedRegion} />
+      <ZoomControl position="bottomright" />
+      
+      {/* Auto-Camera Mover */}
+      <MapFitter selectedRegion={selectedRegion} />
 
-      {/* The key forces Leaflet to redraw the map when filters change */}
       {geoJsonData && (
          <GeoJSON 
            key={JSON.stringify(geoJsonData)}
            data={geoJsonData}
            style={(feature: any) => {
-             const vehicle = feature?.properties?.vehicleCapacity?.toLowerCase() || '';
-             let routeColor = '#9ca3af'; 
-
-             if (vehicle.includes('lpv') || vehicle.includes('5 to 13')) {
-               routeColor = '#f59e0b'; 
-             } else if (vehicle.includes('mpv') || vehicle.includes('17 to 21')) {
-               routeColor = '#3b82f6'; 
-             } else if (vehicle.includes('hpv') || vehicle.includes('32 to 52')) {
-               routeColor = '#ef4444'; 
+             const props = feature?.properties || {};
+             const vehicle = props.vehicleCapacity?.toLowerCase() || '';
+             
+             // Flagged Anomaly Styling
+             if (props.isFlagged) {
+               return { color: '#ef4444', weight: 5, opacity: 0.9, dashArray: '10, 10' };
              }
 
-             return {
-               color: routeColor,
-               weight: 4,
-               opacity: 0.7,
-             };
+             // Standard Vehicle Styling
+             let routeColor = '#9ca3af'; 
+             if (vehicle.includes('lpv') || vehicle.includes('5 to 13')) routeColor = '#f59e0b';
+             else if (vehicle.includes('mpv') || vehicle.includes('17 to 21')) routeColor = '#3b82f6'; 
+             else if (vehicle.includes('hpv') || vehicle.includes('32 to 52')) routeColor = '#10b981'; 
+
+             return { color: routeColor, weight: 5, opacity: 0.8 };
            }}
            onEachFeature={(feature, layer) => {
              const props = feature.properties || {};
+             
+             const warningHtml = props.isFlagged 
+               ? `<div style="background: #fee2e2; border: 1px solid #f87171; color: #b91c1c; padding: 6px; border-radius: 6px; font-size: 10px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase;">⚠️ Flagged: ${props.flagReasons}</div>` 
+               : '';
+
              layer.bindPopup(`
-               <div style="padding: 5px;">
-                 <h3 style="font-weight: bold; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 8px;">${props.driverName || 'Unknown Driver'}</h3>
-                 <p style="margin: 2px 0; font-size: 13px;"><b>Bus No:</b> ${props.vehicle || 'N/A'}</p>
-                 <p style="margin: 2px 0; font-size: 13px;"><b>Type:</b> <span style="color: #ea580c; font-weight: bold;">${props.vehicleCapacity || 'Unknown'}</span></p>
-                 <p style="margin: 2px 0; font-size: 13px;"><b>Date:</b> ${props.date || 'N/A'}</p>
-                 <p style="margin: 2px 0; font-size: 13px;"><b>Region:</b> <span style="text-transform: uppercase; color: #2563eb; font-weight: bold;">${props.region || 'N/A'}</span></p>
-                 <p style="margin: 8px 0 0 0; font-size: 11px; color: #666;">ID: ${props.tripId || 'N/A'}</p>
+               <div style="padding: 8px; min-width: 200px;">
+                 ${warningHtml}
+                 <h3 style="font-weight: 900; font-size: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 8px; color: #111827;">
+                   ${props.driverName}
+                 </h3>
+                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                   <span style="font-size: 12px; color: #6b7280; font-weight: bold;">DISTANCE:</span>
+                   <span style="font-size: 12px; color: #2563eb; font-weight: 900;">${props.distance} km</span>
+                 </div>
+                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                   <span style="font-size: 12px; color: #6b7280; font-weight: bold;">TIME DRIVEN:</span>
+                   <span style="font-size: 12px; color: #10b981; font-weight: 900;">${props.duration}</span>
+                 </div>
+                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                   <span style="font-size: 12px; color: #6b7280; font-weight: bold;">VEHICLE:</span>
+                   <span style="font-size: 12px; color: #ea580c; font-weight: 900;">${props.vehicleCapacity}</span>
+                 </div>
+                 <div style="background: #f3f4f6; padding: 6px; border-radius: 6px;">
+                   <p style="margin: 0; font-size: 11px; color: #4b5563; font-weight: 600;">Started: ${props.date} at ${props.time}</p>
+                   <p style="margin: 2px 0 0 0; font-size: 10px; color: #9ca3af; font-family: monospace;">ID: ${props.tripId}</p>
+                 </div>
                </div>
              `);
            }}
