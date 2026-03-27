@@ -109,6 +109,13 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
+
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
+CRON_SECRET=
 ```
 
 ## Troubleshooting
@@ -144,3 +151,10 @@ Dashboard/
 ## License
 
 MIT
+
+
+## AI Copilot Snapshot Architecture
+
+- `GET /api/cron/cache-snapshot` runs every 12 hours using Vercel Cron, reads `trips` and `anomalies`, computes flagged trip signals, and stores a compact payload in `cache/latest_snapshot`.
+- `POST /api/chat` performs one document read from `cache/latest_snapshot`, injects that JSON into the system prompt, and streams model output back to the dashboard chat widget.
+- `components/ChatWidget.tsx` provides a floating assistant panel for fleet, anomaly, and driver questions.
