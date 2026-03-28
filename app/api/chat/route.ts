@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildLocalCopilotReply, buildRecoveryReply } from '@/lib/copilot';
 import { getAdminDb } from '@/lib/firebaseAdmin';
+import {
+  buildRationalizationReply,
+  getRouteRationalizationDataset,
+  isRationalizationQuestion,
+} from '@/lib/routeRationalization';
 import { FleetSnapshot, generateFleetSnapshot } from '@/lib/snapshot';
 
 export const dynamic = 'force-dynamic';
@@ -16,7 +21,7 @@ const SSE_HEADERS = {
 
 function buildSystemPrompt(snapshot: FleetSnapshot): string {
   return [
-    'You are Bus Sathi Copilot for RTO officers.',
+    'You are Bus Sathi Bot for RTO officers.',
     'Answer only from the provided fleet snapshot context.',
     'If data is missing, say so clearly and suggest where to verify in the dashboard.',
     'Be concise, operational, and include key numbers.',
@@ -131,8 +136,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const snapshot = await getSnapshot();
     const latestQuestion = getLatestUserQuestion(messages);
+
+    if (isRationalizationQuestion(latestQuestion)) {
+      try {
+        const rationalizationDataset = await getRouteRationalizationDataset();
+        return new NextResponse(sseFromText(buildRationalizationReply(latestQuestion, rationalizationDataset)), {
+          headers: SSE_HEADERS,
+        });
+      } catch (error) {
+        console.error('Failed to load route rationalization dataset:', error);
+      }
+    }
+
+    const snapshot = await getSnapshot();
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {

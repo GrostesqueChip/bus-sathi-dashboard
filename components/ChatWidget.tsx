@@ -6,8 +6,8 @@ import { useChat } from '@/hooks/useChat';
 
 const quickPrompts = [
   'Show active fleet status right now.',
-  'Which trips are currently flagged and why?',
-  'Which drivers have highest completed distance?',
+  'Why did route FDR-297 stay a feeder?',
+  'Which routes save the most passenger time?',
 ];
 
 function formatTime(timestamp: number) {
@@ -84,7 +84,7 @@ export default function ChatWidget() {
           {isOpen ? <X size={18} /> : <MessageSquare size={18} />}
         </span>
         <div className="hidden sm:block text-left">
-          <p className="text-sm font-black uppercase tracking-[0.22em]">AI Copilot</p>
+          <p className="text-sm font-black uppercase tracking-[0.22em]">Bus Sathi Bot</p>
           <p className="text-[11px] font-semibold text-blue-100/90">Fleet-aware and snapshot-ready</p>
         </div>
       </button>
@@ -101,8 +101,8 @@ export default function ChatWidget() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-black uppercase tracking-[0.25em]">Transit AI Copilot</h3>
-                    <p className="mt-1 text-sm font-semibold text-blue-100/90">Snapshot-aware fleet assistant</p>
+                    <h3 className="text-sm font-black uppercase tracking-[0.25em]">Bus Sathi Bot</h3>
+                    <p className="mt-1 text-sm font-semibold text-blue-100/90">Fleet and route intelligence</p>
                   </div>
 
                   {hasMessages && (
@@ -136,10 +136,10 @@ export default function ChatWidget() {
             {!hasMessages && (
               <div className="rounded-[1.75rem] border border-white/80 bg-white/90 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
                 <p className="flex items-center gap-2 text-sm font-black text-slate-800">
-                  <Sparkles size={16} className="text-indigo-500" /> Ask about fleet movement, flagged trips, and top drivers
+                  <Sparkles size={16} className="text-indigo-500" /> Ask about fleet movement, route rationalization, and top drivers
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  I can answer from the latest fleet snapshot and fall back gracefully if the model service is busy.
+                  I can answer from the latest fleet snapshot, rationalisation files, and fall back gracefully if the model service is busy.
                 </p>
 
                 <div className="mt-4 grid gap-2">
@@ -168,7 +168,7 @@ export default function ChatWidget() {
                         isUser ? 'justify-end text-blue-600/80' : 'text-slate-400'
                       }`}
                     >
-                      <span>{isUser ? 'You' : 'Copilot'}</span>
+                      <span>{isUser ? 'You' : 'Bus Sathi Bot'}</span>
                       <span>{formatTime(message.createdAt)}</span>
                     </div>
 
@@ -197,7 +197,7 @@ export default function ChatWidget() {
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={onTextareaKeyDown}
                 rows={2}
-                placeholder="Ask about flagged trips, fleet health, top drivers..."
+                placeholder="Ask about feeders, flagged trips, fleet health, top drivers..."
                 className="max-h-36 min-h-[56px] w-full resize-none rounded-[1.2rem] border-0 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-0"
               />
 

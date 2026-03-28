@@ -161,7 +161,7 @@ export function buildRecoveryReply(error: unknown) {
   const normalized = message.toLowerCase();
 
   if (normalized.includes('snapshot missing')) {
-    return 'Copilot could not find a cached fleet snapshot yet. Open /api/cron/cache-snapshot once, then ask again.';
+    return 'Bus Sathi Bot could not find a cached fleet snapshot yet. Open /api/cron/cache-snapshot once, then ask again.';
   }
 
   if (
@@ -170,10 +170,10 @@ export function buildRecoveryReply(error: unknown) {
     normalized.includes('decoder') ||
     normalized.includes('unsupported')
   ) {
-    return 'Copilot cannot read the fleet database yet because the Firebase admin key still needs attention. Re-save FIREBASE_PRIVATE_KEY, restart the app, and try again.';
+    return 'Bus Sathi Bot cannot read the fleet database yet because the Firebase admin key still needs attention. Re-save FIREBASE_PRIVATE_KEY, restart the app, and try again.';
   }
 
-  return 'Copilot hit a temporary backend issue and could not reach live fleet data. Please refresh the dashboard cache and try again.';
+  return 'Bus Sathi Bot hit a temporary backend issue and could not reach live fleet data. Please refresh the dashboard cache and try again.';
 }
 
 export function buildLocalCopilotReply(question: string, snapshot: FleetSnapshot) {

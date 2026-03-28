@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LayoutDashboard, Map as MapIcon, Contact, FolderClock, AlertOctagon  } from 'lucide-react';
+import { Menu, LayoutDashboard, Map as MapIcon, Contact, FolderClock, AlertOctagon, GitBranch } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export default function Sidebar() {
   const menuItems = [
     { title: "Executive Summary", path: "/", icon: LayoutDashboard },
     { title: "Route Analysis Map", path: "/map-visualizer", icon: MapIcon },
+    { title: "Route Rationalization", path: "/route-rationalization", icon: GitBranch },
     { title: "Driver Database", path: "/registered-drivers", icon: Contact },
     { title: "Data & Trip Logs", path: "/trip-logs", icon: FolderClock },
     { title: "Flagged Anomalies", path: "/flagged-trips", icon: AlertOctagon },
