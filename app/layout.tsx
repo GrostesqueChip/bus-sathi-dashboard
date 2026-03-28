@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { AuthProvider } from '@/lib/authContext'
 import Header from '@/components/Header'
@@ -43,6 +44,7 @@ export default function RootLayout({
             
             <ChatWidget />
           </div>
+          <SpeedInsights />
         </AuthProvider>        
       </body>
     </html>
