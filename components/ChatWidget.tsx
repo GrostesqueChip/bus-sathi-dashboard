@@ -1,13 +1,14 @@
 'use client';
 
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Bot, MessageSquare, RotateCcw, Send, Sparkles, X } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 
 const quickPrompts = [
-  'Show active fleet status right now.',
-  'Why did route FDR-297 stay a feeder?',
-  'Which routes save the most passenger time?',
+  'Why was FDR-297 retained as a feeder?',
+  'Which trunk routes have the highest coverage?',
+  'Which routes save the most passenger time each day?',
 ];
 
 function formatTime(timestamp: number) {
@@ -29,14 +30,15 @@ function TypingIndicator() {
           />
         ))}
       </div>
-      <span className="font-medium">Analyzing the latest fleet snapshot...</span>
+      <span className="font-medium">Checking fleet and route context...</span>
     </div>
   );
 }
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, input, isLoading, handleInputChange, resetChat, sendMessage } = useChat();
+  const pathname = usePathname();
+  const { messages, input, isLoading, handleInputChange, resetChat, sendMessage } = useChat({ pathname });
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -78,19 +80,19 @@ export default function ChatWidget() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed bottom-5 right-4 z-40 flex items-center gap-3 rounded-[1.75rem] border border-indigo-400/40 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3 text-white shadow-[0_18px_45px_rgba(37,99,235,0.35)] transition-all hover:translate-y-[-2px] hover:shadow-[0_22px_55px_rgba(67,56,202,0.38)] sm:bottom-6 sm:right-6"
+        className="fixed bottom-5 right-3 z-40 flex max-w-[calc(100vw-1.5rem)] items-center gap-3 rounded-[1.75rem] border border-indigo-400/40 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 py-3 text-white shadow-[0_18px_45px_rgba(37,99,235,0.35)] transition-all hover:translate-y-[-2px] hover:shadow-[0_22px_55px_rgba(67,56,202,0.38)] sm:bottom-6 sm:right-4 lg:right-6"
       >
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/10 backdrop-blur">
           {isOpen ? <X size={18} /> : <MessageSquare size={18} />}
         </span>
         <div className="hidden sm:block text-left">
           <p className="text-sm font-black uppercase tracking-[0.22em]">Bus Sathi Bot</p>
-          <p className="text-[11px] font-semibold text-blue-100/90">Fleet-aware and snapshot-ready</p>
+          <p className="text-[11px] font-semibold text-blue-100/90">Fleet, routes, and reasoning</p>
         </div>
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-3 z-40 w-[calc(100vw-1.5rem)] max-w-[29rem] overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/95 shadow-[0_30px_90px_rgba(15,23,42,0.24)] backdrop-blur-xl sm:bottom-24 sm:right-6">
+        <div className="fixed inset-x-3 bottom-24 top-[5.5rem] z-40 flex max-h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/95 shadow-[0_30px_90px_rgba(15,23,42,0.24)] backdrop-blur-xl sm:inset-x-auto sm:right-4 sm:top-[6.25rem] sm:w-[min(27rem,calc(100vw-2rem))] lg:right-6">
           <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 px-5 pb-5 pt-5 text-white">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.32),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(129,140,248,0.28),_transparent_40%)]" />
             <div className="relative flex items-start gap-4">
@@ -102,7 +104,7 @@ export default function ChatWidget() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-black uppercase tracking-[0.25em]">Bus Sathi Bot</h3>
-                    <p className="mt-1 text-sm font-semibold text-blue-100/90">Fleet and route intelligence</p>
+                    <p className="mt-1 text-sm font-semibold text-blue-100/90">Fleet, route, and rationalization intelligence</p>
                   </div>
 
                   {hasMessages && (
@@ -119,7 +121,7 @@ export default function ChatWidget() {
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-100">
-                    Live fallback ready
+                    Route-aware
                   </span>
                   <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-blue-100">
                     Auto-scroll on
@@ -131,23 +133,25 @@ export default function ChatWidget() {
 
           <div
             ref={scrollAreaRef}
-            className="h-[min(62vh,34rem)] space-y-4 overflow-y-auto bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.16),_transparent_35%),linear-gradient(180deg,_#f8fafc_0%,_#eef2ff_100%)] px-4 py-4"
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.16),_transparent_35%),linear-gradient(180deg,_#f8fafc_0%,_#eef2ff_100%)] px-4 py-4"
           >
             {!hasMessages && (
               <div className="rounded-[1.75rem] border border-white/80 bg-white/90 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
                 <p className="flex items-center gap-2 text-sm font-black text-slate-800">
-                  <Sparkles size={16} className="text-indigo-500" /> Ask about fleet movement, route rationalization, and top drivers
+                  <Sparkles size={16} className="text-indigo-500" /> Ask about fleet movement, route rationalization, route maps, and top drivers
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  I can answer from the latest fleet snapshot, rationalisation files, and fall back gracefully if the model service is busy.
+                  I can answer from the latest fleet snapshot and the rationalisation dataset, including route IDs like FDR-297 or route names like Janipur Kulwal.
                 </p>
 
                 <div className="mt-4 grid gap-2">
                   {quickPrompts.map((prompt) => (
                     <button
                       key={prompt}
+                      type="button"
                       onClick={() => sendMessage(prompt)}
-                      className="group rounded-2xl border border-slate-200 bg-slate-50/90 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition-all hover:border-indigo-300 hover:bg-white hover:shadow-sm"
+                      disabled={isLoading}
+                      className="group rounded-2xl border border-slate-200 bg-slate-50/90 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition-all hover:border-indigo-300 hover:bg-white hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <span className="block transition-transform group-hover:translate-x-1">{prompt}</span>
                     </button>
@@ -197,13 +201,13 @@ export default function ChatWidget() {
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={onTextareaKeyDown}
                 rows={2}
-                placeholder="Ask about feeders, flagged trips, fleet health, top drivers..."
+                placeholder="Ask about FDR-297, Janipur Kulwal, flagged trips, fleet health..."
                 className="max-h-36 min-h-[56px] w-full resize-none rounded-[1.2rem] border-0 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-0"
               />
 
               <div className="mt-1 flex items-center justify-between gap-3 px-2 pb-1">
                 <p className="text-[11px] font-semibold text-slate-400">
-                  {isLoading ? 'Reading the latest fleet data...' : 'Press Enter to send. Shift+Enter for a new line.'}
+                  {isLoading ? 'Reading fleet and route context...' : 'Press Enter to send. Shift+Enter for a new line.'}
                 </p>
 
                 <button

@@ -1,16 +1,17 @@
 import { format } from 'date-fns';
 import {
   ArrowUpRight,
+  Bot,
   BusFront,
   Clock3,
   Download,
-  ExternalLink,
   GitBranch,
   Map,
-  TimerReset,
+  Sparkles,
   Users,
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import RationalizationDashboard from '@/components/rationalization/RationalizationDashboard';
 import { getRouteRationalizationDataset } from '@/lib/routeRationalization';
 
 function formatCompactNumber(value: number) {
@@ -20,245 +21,173 @@ function formatCompactNumber(value: number) {
   }).format(value);
 }
 
-function formatFullNumber(value: number) {
-  return new Intl.NumberFormat('en-IN').format(Math.round(value));
-}
-
-function formatActionLabel(action: string) {
-  return action.replaceAll('_', ' ').toLowerCase();
-}
-
 export default async function RouteRationalizationPage() {
   const dataset = await getRouteRationalizationDataset();
 
-  const topImpactRoutes = [...dataset.impact]
-    .sort((a, b) => b.cumulativePersonMinutesSavedDaily - a.cumulativePersonMinutesSavedDaily)
-    .slice(0, 6);
-
-  const highestCoverageRoutes = [...dataset.routes]
-    .sort((a, b) => b.populationServed - a.populationServed)
-    .slice(0, 12);
+  const routesWithMaps = dataset.routes.filter((route) => Boolean(route.viewMapPath)).length;
+  const topCoverageRoute = [...dataset.routes].sort((a, b) => b.populationServed - a.populationServed)[0];
+  const topImpactRoute = [...dataset.impact]
+    .sort((a, b) => b.cumulativePersonMinutesSavedDaily - a.cumulativePersonMinutesSavedDaily)[0];
 
   return (
     <ProtectedRoute>
-      <div className="space-y-8 pb-12 max-w-7xl mx-auto">
-        <div className="flex flex-col gap-5 border-b border-gray-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-blue-600">Network Upgrade</p>
-            <h1 className="text-3xl font-black tracking-tight text-gray-900 md:text-4xl">Route Rationalization Hub</h1>
-            <p className="mt-3 max-w-3xl text-base font-medium text-gray-500">
-              Final trunk and feeder network, passenger-impact metrics, and the preserved master transit map UI from the
-              route-rationalisation run.
+      <div className="mx-auto max-w-7xl space-y-8 pb-12">
+        <section className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]">
+          <div className="relative px-6 py-7 md:px-8 md:py-8">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.22),_transparent_26%),radial-gradient(circle_at_bottom_left,_rgba(45,212,191,0.16),_transparent_28%)]" />
+
+            <div className="relative flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
+              <div className="max-w-4xl">
+                <div className="mb-4 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">
+                    Final network
+                  </span>
+                  <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
+                    Native explorer live
+                  </span>
+                  <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-100">
+                    Updated {format(new Date(dataset.updatedAt), 'dd MMM yyyy, hh:mm a')}
+                  </span>
+                </div>
+
+                <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
+                  Route Rationalization Command Deck
+                </h1>
+                <p className="mt-3 max-w-3xl text-base font-medium leading-7 text-slate-200/92">
+                  Explore the rationalised network with a native map, searchable route controls, full-route coverage, and
+                  stakeholder-ready downloads while keeping the original generated planner one click away.
+                </p>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  <div className="rounded-[1.6rem] border border-white/10 bg-white/8 p-4 backdrop-blur">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">Coverage lead</p>
+                    <p className="mt-2 text-lg font-black text-white">{topCoverageRoute?.newRouteId || 'n/a'}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-200/80">{topCoverageRoute?.routeName || 'No data'}</p>
+                  </div>
+                  <div className="rounded-[1.6rem] border border-white/10 bg-white/8 p-4 backdrop-blur">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-100">Top impact</p>
+                    <p className="mt-2 text-lg font-black text-white">{topImpactRoute?.newRouteId || 'n/a'}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-200/80">
+                      {topImpactRoute
+                        ? `${formatCompactNumber(topImpactRoute.cumulativePersonMinutesSavedDaily)} passenger-minutes saved daily`
+                        : 'No data'}
+                    </p>
+                  </div>
+                  <div className="rounded-[1.6rem] border border-white/10 bg-white/8 p-4 backdrop-blur">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-violet-100">Route maps ready</p>
+                    <p className="mt-2 text-lg font-black text-white">{routesWithMaps}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-200/80">Per-route HTML maps hosted directly from the dashboard build.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3 xl:justify-end">
+                <a
+                  href="/route-rationalization/Master_Transit_Map.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-sm font-bold text-white transition-all hover:border-blue-200/40 hover:bg-white/14"
+                >
+                  <ArrowUpRight size={16} /> Open original planner
+                </a>
+                <a
+                  href="/route-rationalization/Rationalised_Routes.geojson"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-sm font-bold text-white transition-all hover:border-blue-200/40 hover:bg-white/14"
+                >
+                  <Map size={16} /> View GeoJSON
+                </a>
+                <a
+                  href="/route-rationalization/Rationalised_Routes.xlsx"
+                  download
+                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-900 shadow-lg transition-all hover:translate-y-[-1px]"
+                >
+                  <Download size={16} /> Download report
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+              <GitBranch size={15} className="text-blue-600" /> Published routes
             </p>
+            <h2 className="mt-3 text-4xl font-black text-slate-950">{dataset.summary.totalRoutes}</h2>
+            <p className="mt-2 text-sm font-medium text-slate-500">Every final route is now visible inside the filtered table below.</p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="/route-rationalization/Master_Transit_Map.html"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700"
-            >
-              <ExternalLink size={16} /> Open Master Map
-            </a>
-            <a
-              href="/route-rationalization/Rationalised_Routes.xlsx"
-              download
-              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700"
-            >
-              <Download size={16} /> Download Official Report
-            </a>
-            <a
-              href="/route-rationalization/Rationalised_Routes.geojson"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700 transition-all hover:bg-blue-100"
-            >
-              <Map size={16} /> GeoJSON Layer
-            </a>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-7 text-white shadow-lg">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-slate-300">
-              <GitBranch size={16} className="text-blue-400" /> Final Network
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+              <BusFront size={15} className="text-teal-600" /> Network mix
             </p>
-            <h2 className="text-5xl font-black">{dataset.summary.totalRoutes}</h2>
-            <p className="mt-2 text-sm font-medium text-slate-300">Active rationalised routes in the published network.</p>
-          </div>
-
-          <div className="rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-gray-400">
-              <BusFront size={16} className="text-blue-600" /> Trunks vs Feeders
-            </p>
-            <h2 className="text-4xl font-black text-gray-900">
+            <h2 className="mt-3 text-4xl font-black text-slate-950">
               {dataset.summary.trunkRoutes}
-              <span className="mx-2 text-2xl text-gray-300">/</span>
+              <span className="mx-2 text-2xl text-slate-300">/</span>
               {dataset.summary.feederRoutes}
             </h2>
-            <p className="mt-2 text-sm font-medium text-gray-500">Trunk corridors compared with feeder services.</p>
+            <p className="mt-2 text-sm font-medium text-slate-500">Trunk corridors compared with feeder services in the final design.</p>
           </div>
 
-          <div className="rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-gray-400">
-              <TimerReset size={16} className="text-emerald-600" /> Wait Improvement
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+              <Clock3 size={15} className="text-emerald-600" /> Average wait cut
             </p>
-            <h2 className="text-4xl font-black text-emerald-600">{dataset.summary.averageWaitReduction.toFixed(1)} min</h2>
-            <p className="mt-2 text-sm font-medium text-gray-500">
+            <h2 className="mt-3 text-4xl font-black text-emerald-600">{dataset.summary.averageWaitReduction.toFixed(1)} min</h2>
+            <p className="mt-2 text-sm font-medium text-slate-500">
               Average wait moved from {dataset.summary.averageOldWaitTime.toFixed(1)} to {dataset.summary.averageNewWaitTime.toFixed(1)} minutes.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-gray-100 bg-white p-7 shadow-sm">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-gray-400">
-              <Users size={16} className="text-violet-600" /> Passenger Impact
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+              <Users size={15} className="text-violet-600" /> Passenger benefit
             </p>
-            <h2 className="text-4xl font-black text-violet-600">
+            <h2 className="mt-3 text-4xl font-black text-violet-600">
               {formatCompactNumber(dataset.summary.totalDailyPersonMinutesSaved)}
             </h2>
-            <p className="mt-2 text-sm font-medium text-gray-500">Passenger-minutes saved per day across the published impact file.</p>
+            <p className="mt-2 text-sm font-medium text-slate-500">Daily passenger-minutes saved across the published impact file.</p>
           </div>
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.8fr_1fr]">
-          <div className="overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-sm">
-            <div className="flex flex-col gap-3 border-b border-gray-100 px-6 py-5 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h2 className="text-xl font-black text-gray-900">Preserved Master Transit Map</h2>
-                <p className="text-sm font-medium text-gray-500">
-                  The original generated HTML is embedded below so the route-rationalisation UI stays intact.
-                </p>
-              </div>
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-blue-700">
-                Updated {format(new Date(dataset.updatedAt), 'dd MMM yyyy, hh:mm a')}
-              </span>
-            </div>
-
-            <iframe
-              src="/route-rationalization/Master_Transit_Map.html"
-              title="Master Transit Map"
-              className="h-[78vh] min-h-[720px] w-full bg-white"
-            />
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.9fr]">
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-blue-600">
+              <Sparkles size={15} /> What changed
+            </p>
+            <h2 className="mt-3 text-2xl font-black text-slate-950">Cleaner route explorer, no dead space, and full-network browsing</h2>
+            <p className="mt-3 max-w-3xl text-sm font-medium leading-7 text-slate-600">
+              The route rationalization screen now uses a native interactive explorer first, keeps the original planner as a
+              backup tab, and exposes all published routes with search, filters, sorting, route focus, and direct map links.
+            </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-black text-gray-900">Impact Leaders</h2>
-              <p className="mt-1 text-sm font-medium text-gray-500">Highest daily passenger time savings from the rationalisation run.</p>
-
-              <div className="mt-5 space-y-3">
-                {topImpactRoutes.map((route, index) => (
-                  <div key={`${route.newRouteId}-${route.routeId}-${index}`} className="rounded-2xl bg-gray-50 p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-black text-gray-900">{route.newRouteId}</p>
-                        <p className="text-sm font-medium text-gray-600">{route.routeName}</p>
-                      </div>
-                      <span className="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-violet-700">
-                        #{index + 1}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm font-bold text-violet-700">
-                      {formatCompactNumber(route.cumulativePersonMinutesSavedDaily)} passenger-minutes saved daily
-                    </p>
-                    <p className="mt-1 text-xs font-medium text-gray-500">
-                      Wait time {route.oldWaitTime} {'->'} {route.newWaitTime} min
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-black text-gray-900">Network Notes</h2>
-              <div className="mt-4 space-y-3 text-sm font-medium text-gray-600">
-                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                  <p className="font-black uppercase tracking-[0.18em] text-blue-700">Coverage</p>
-                  <p className="mt-1">{formatCompactNumber(dataset.summary.totalPopulationServed)} route-level population served across the final network.</p>
-                </div>
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-                  <p className="font-black uppercase tracking-[0.18em] text-emerald-700">Operations</p>
-                  <p className="mt-1">Use the chatbot for why a route became a trunk or feeder by asking with IDs like FDR-297, TRK-005, or an old route like R0129.</p>
-                </div>
-                <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-                  <p className="font-black uppercase tracking-[0.18em] text-amber-700">Static Assets</p>
-                  <p className="mt-1">The Excel report, route map HTML, and GeoJSON layer are all hosted directly from this dashboard build.</p>
-                </div>
-              </div>
-            </div>
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-violet-600">
+              <Bot size={15} /> Bus Sathi Bot
+            </p>
+            <h2 className="mt-3 text-2xl font-black text-slate-950">Route reasoning is wired in</h2>
+            <p className="mt-3 text-sm font-medium leading-7 text-slate-600">
+              Ask about route IDs like <span className="font-black text-slate-900">FDR-297</span> or
+              {' '}
+              <span className="font-black text-slate-900">TRK-005</span>, old IDs like
+              {' '}
+              <span className="font-black text-slate-900">R0129</span>, or natural route names such as
+              {' '}
+              <span className="font-black text-slate-900">Janipur Kulwal</span> to get the stored reasoning, wait-time change,
+              fleet, and coverage snapshot.
+            </p>
           </div>
-        </div>
+        </section>
 
-        <div className="rounded-[2rem] border border-gray-100 bg-white shadow-sm">
-          <div className="flex flex-col gap-2 border-b border-gray-100 px-6 py-5 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-xl font-black text-gray-900">Final Network Routes</h2>
-              <p className="text-sm font-medium text-gray-500">Highest-coverage routes from the rationalised network with direct links to per-route maps.</p>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-400">Population sorted</p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-100">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">New Route</th>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">Action</th>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">Population</th>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">Wait Time</th>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">Fleet</th>
-                  <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-gray-400">Map</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50 bg-white">
-                {highestCoverageRoutes.map((route) => (
-                  <tr key={`${route.newRouteId}-${route.routeId}`} className="hover:bg-blue-50/40 transition-colors">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-black text-gray-900">{route.newRouteId}</p>
-                        <p className="text-sm font-medium text-gray-500">{route.routeName}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${
-                          route.actionTaken.includes('TRUNK')
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-teal-100 text-teal-800'
-                        }`}
-                      >
-                        {formatActionLabel(route.actionTaken)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-bold text-gray-700">{formatFullNumber(route.populationServed)}</td>
-                    <td className="px-6 py-4 text-sm font-bold text-gray-700">
-                      <span className="inline-flex items-center gap-1">
-                        <Clock3 size={14} className="text-gray-400" />
-                        {route.oldWaitTime} {'->'} {route.newWaitTime} min
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-bold text-blue-700">{route.fleetRequired}</td>
-                    <td className="px-6 py-4">
-                      {route.viewMapPath ? (
-                        <a
-                          href={`/route-rationalization/${route.viewMapPath}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-sm font-bold text-blue-600 hover:text-blue-800"
-                        >
-                          View map <ArrowUpRight size={14} />
-                        </a>
-                      ) : (
-                        <span className="text-sm font-medium text-gray-400">No link</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <RationalizationDashboard
+          routes={dataset.routes}
+          impact={dataset.impact}
+          summary={dataset.summary}
+          updatedAt={dataset.updatedAt}
+        />
       </div>
     </ProtectedRoute>
   );

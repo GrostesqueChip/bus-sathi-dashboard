@@ -125,10 +125,12 @@ async function getSnapshot(): Promise<FleetSnapshot> {
 
 export async function POST(req: NextRequest) {
   let messages: any[] = [];
+  let pathname = '';
 
   try {
     const body = await req.json();
     messages = Array.isArray(body?.messages) ? body.messages : [];
+    pathname = typeof body?.pathname === 'string' ? body.pathname : '';
   } catch {
     return new NextResponse(sseFromText('I could not read that chat request. Please try again.'), {
       headers: SSE_HEADERS,
@@ -137,13 +139,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const latestQuestion = getLatestUserQuestion(messages);
+    const onRationalizationPage = pathname.startsWith('/route-rationalization');
 
-    if (isRationalizationQuestion(latestQuestion)) {
+    if (onRationalizationPage || isRationalizationQuestion(latestQuestion)) {
       try {
         const rationalizationDataset = await getRouteRationalizationDataset();
-        return new NextResponse(sseFromText(buildRationalizationReply(latestQuestion, rationalizationDataset)), {
-          headers: SSE_HEADERS,
+        const rationalizationReply = buildRationalizationReply(latestQuestion, rationalizationDataset, {
+          preferSummaryFallback: isRationalizationQuestion(latestQuestion),
         });
+
+        if (rationalizationReply) {
+          return new NextResponse(sseFromText(rationalizationReply), {
+            headers: SSE_HEADERS,
+          });
+        }
       } catch (error) {
         console.error('Failed to load route rationalization dataset:', error);
       }

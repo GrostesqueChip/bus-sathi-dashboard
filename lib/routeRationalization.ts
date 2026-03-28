@@ -186,7 +186,7 @@ export async function getRouteRationalizationDataset() {
 }
 
 export function isRationalizationQuestion(question: string) {
-  return /(rationali[sz]|feeder|trunk|passenger impact|time saved|wait time|new route|old route|\b(?:TRK|FDR)-\d{3}\b|\bR\d{4}\b)/i.test(
+  return /(rationali[sz]|feeder|trunk|passenger impact|time saved|wait time|headway|coverage|population served|fleet required|new route|old route|merged|upgraded|retained|\b(?:TRK|FDR)-\d{3}\b|\bR\d{4}\b)/i.test(
     question
   );
 }
@@ -207,30 +207,202 @@ function extractRouteIdentifier(question: string) {
   return match?.[0] || null;
 }
 
-export function buildRationalizationReply(question: string, dataset: RouteRationalizationDataset) {
-  const normalized = question.toLowerCase();
+type RationalizationReplyOptions = {
+  preferSummaryFallback?: boolean;
+};
+
+const ROUTE_QUERY_STOP_WORDS = new Set([
+  'a',
+  'about',
+  'all',
+  'am',
+  'an',
+  'and',
+  'are',
+  'as',
+  'became',
+  'become',
+  'did',
+  'does',
+  'explain',
+  'for',
+  'from',
+  'get',
+  'give',
+  'happen',
+  'happened',
+  'has',
+  'have',
+  'how',
+  'i',
+  'is',
+  'map',
+  'me',
+  'network',
+  'of',
+  'on',
+  'please',
+  'rationalization',
+  'rationalisation',
+  'route',
+  'routes',
+  'show',
+  'tell',
+  'that',
+  'the',
+  'this',
+  'to',
+  'what',
+  'why',
+]);
+
+function normalizeSearchText(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/\u2194/g, ' ')
+    .replaceAll('↔', ' ')
+    .replaceAll('&', ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function tokenizeSearchText(value: string) {
+  return normalizeSearchText(value)
+    .split(' ')
+    .filter((token) => token.length > 2 && !ROUTE_QUERY_STOP_WORDS.has(token));
+}
+
+function scoreAliasMatch(alias: string, normalizedQuestion: string, questionTokens: string[]) {
+  const normalizedAlias = normalizeSearchText(alias);
+  if (!normalizedAlias) return 0;
+
+  let score = 0;
+  const aliasTokens = tokenizeSearchText(alias);
+  const overlapCount = aliasTokens.filter((token) => questionTokens.includes(token)).length;
+
+  if (normalizedQuestion.includes(normalizedAlias) && normalizedAlias.length >= 5) {
+    score += 80;
+  }
+
+  score += overlapCount * 16;
+
+  if (aliasTokens.length >= 2 && overlapCount === aliasTokens.length) {
+    score += 30;
+  }
+
+  if (aliasTokens.some((token) => questionTokens.includes(token) && token.length >= 7)) {
+    score += 12;
+  }
+
+  return score;
+}
+
+function findRouteMatch(question: string, dataset: RouteRationalizationDataset) {
   const routeIdentifier = extractRouteIdentifier(question);
 
   if (routeIdentifier) {
-    const matchingLogEntries = dataset.log.filter(
+    const logEntries = dataset.log.filter(
       (entry) => entry.oldRouteId.toUpperCase() === routeIdentifier || entry.newRouteId.toUpperCase() === routeIdentifier
     );
-    const matchingRoute = dataset.routes.find(
-      (route) => route.routeId.toUpperCase() === routeIdentifier || route.newRouteId.toUpperCase() === routeIdentifier
-    );
+    const route =
+      dataset.routes.find(
+        (item) => item.routeId.toUpperCase() === routeIdentifier || item.newRouteId.toUpperCase() === routeIdentifier
+      ) || null;
+
+    if (route || logEntries.length > 0) {
+      return { type: 'single' as const, route, logEntries };
+    }
+  }
+
+  const normalizedQuestion = normalizeSearchText(question);
+  const questionTokens = tokenizeSearchText(question);
+
+  if (questionTokens.length === 0) {
+    return null;
+  }
+
+  const scoredRoutes = dataset.routes
+    .map((route) => {
+      const relatedLogEntries = dataset.log.filter(
+        (entry) => entry.newRouteId === route.newRouteId || entry.oldRouteId === route.routeId || entry.newRouteId === route.routeId
+      );
+
+      const aliases = [
+        route.newRouteId,
+        route.routeId,
+        route.routeName,
+        ...relatedLogEntries.map((entry) => entry.oldRouteId),
+        ...relatedLogEntries.map((entry) => entry.oldName),
+      ];
+
+      const score = aliases.reduce((maxScore, alias) => {
+        return Math.max(maxScore, scoreAliasMatch(alias, normalizedQuestion, questionTokens));
+      }, 0);
+
+      return {
+        route,
+        logEntries: relatedLogEntries,
+        score,
+      };
+    })
+    .filter((item) => item.score >= 24)
+    .sort((a, b) => b.score - a.score);
+
+  if (!scoredRoutes.length) {
+    return null;
+  }
+
+  if (scoredRoutes.length > 1 && scoredRoutes[1].score >= scoredRoutes[0].score - 8 && scoredRoutes[0].score < 90) {
+    return {
+      type: 'ambiguous' as const,
+      candidates: scoredRoutes.slice(0, 5).map((item) => item.route),
+    };
+  }
+
+  return {
+    type: 'single' as const,
+    route: scoredRoutes[0].route,
+    logEntries: scoredRoutes[0].logEntries,
+  };
+}
+
+export function buildRationalizationReply(
+  question: string,
+  dataset: RouteRationalizationDataset,
+  options: RationalizationReplyOptions = {}
+) {
+  const normalized = question.toLowerCase();
+  const routeMatch = findRouteMatch(question, dataset);
+
+  if (routeMatch?.type === 'ambiguous') {
+    const suggestions = routeMatch.candidates.map((route, index) => {
+      return `${index + 1}. ${route.newRouteId} (${route.routeName})`;
+    });
+
+    return [
+      'I found a few possible route matches.',
+      ...suggestions,
+      'Ask again with the exact route ID or the full route name for a precise reasoning note.',
+    ].join('\n');
+  }
+
+  if (routeMatch?.type === 'single') {
+    const matchingLogEntries = routeMatch.logEntries;
+    const matchingRoute = routeMatch.route;
 
     if (matchingLogEntries.length > 0) {
       const primary = matchingLogEntries[0];
       const intro = matchingRoute
-        ? `${matchingRoute.newRouteId} is marked as ${matchingRoute.actionTaken.replaceAll('_', ' ').toLowerCase()}.`
-        : `Here is the rationalisation note for ${routeIdentifier}.`;
+        ? `${matchingRoute.newRouteId} (${matchingRoute.routeName}) is marked as ${matchingRoute.actionTaken.replaceAll('_', ' ').toLowerCase()}.`
+        : `Here is the rationalisation note for ${primary.newRouteId || primary.oldRouteId}.`;
 
       const detailLines = [
         intro,
         primary.reasoning,
       ];
 
-      if (matchingLogEntries.length > 1 && primary.newRouteId.toUpperCase() === routeIdentifier) {
+      if (matchingLogEntries.length > 1 && primary.newRouteId) {
         const oldRoutes = matchingLogEntries.slice(0, 4).map((entry) => entry.oldRouteId).join(', ');
         detailLines.push(`This final route groups ${matchingLogEntries.length} source routes, including ${oldRoutes}.`);
       }
@@ -239,6 +411,23 @@ export function buildRationalizationReply(question: string, dataset: RouteRation
         detailLines.push(
           `Operational snapshot: ${formatNumber(matchingRoute.populationServed)} people served, ${matchingRoute.fleetRequired} vehicles, ${matchingRoute.headwayMin}-minute headway, and wait time ${matchingRoute.oldWaitTime} -> ${matchingRoute.newWaitTime} minutes.`
         );
+
+        if (matchingRoute.viewMapPath) {
+          detailLines.push(`Detailed route map: /route-rationalization/${matchingRoute.viewMapPath}`);
+        }
+      }
+
+      return detailLines.join('\n\n');
+    }
+
+    if (matchingRoute) {
+      const detailLines = [
+        `${matchingRoute.newRouteId} (${matchingRoute.routeName}) is marked as ${matchingRoute.actionTaken.replaceAll('_', ' ').toLowerCase()}.`,
+        `Operational snapshot: ${formatNumber(matchingRoute.populationServed)} people served, ${matchingRoute.fleetRequired} vehicles, ${matchingRoute.headwayMin}-minute headway, and wait time ${matchingRoute.oldWaitTime} -> ${matchingRoute.newWaitTime} minutes.`,
+      ];
+
+      if (matchingRoute.viewMapPath) {
+        detailLines.push(`Detailed route map: /route-rationalization/${matchingRoute.viewMapPath}`);
       }
 
       return detailLines.join('\n\n');
@@ -300,9 +489,13 @@ export function buildRationalizationReply(question: string, dataset: RouteRation
     ].join('\n');
   }
 
-  return [
-    'I can answer route rationalisation questions about trunk routes, feeder routes, wait-time changes, passenger impact, and specific route IDs like FDR-297, TRK-005, or R0129.',
-    '',
-    `Current network snapshot: ${dataset.summary.totalRoutes} final routes, ${dataset.summary.trunkRoutes} trunks, ${dataset.summary.feederRoutes} feeders, and ${formatCompactNumber(dataset.summary.totalDailyPersonMinutesSaved)} passenger-minutes saved daily.`,
-  ].join('\n');
+  if (options.preferSummaryFallback) {
+    return [
+      'I can answer route rationalisation questions about trunk routes, feeder routes, wait-time changes, passenger impact, and specific route IDs like FDR-297, TRK-005, or R0129.',
+      '',
+      `Current network snapshot: ${dataset.summary.totalRoutes} final routes, ${dataset.summary.trunkRoutes} trunks, ${dataset.summary.feederRoutes} feeders, and ${formatCompactNumber(dataset.summary.totalDailyPersonMinutesSaved)} passenger-minutes saved daily.`,
+    ].join('\n');
+  }
+
+  return null;
 }

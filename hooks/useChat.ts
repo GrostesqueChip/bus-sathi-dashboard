@@ -12,7 +12,11 @@ export interface ChatMessage {
 
 const FALLBACK_CHAT_ERROR = 'Sorry, I could not complete that request. Please try again in a moment.';
 
-export function useChat() {
+type UseChatOptions = {
+  pathname?: string | null;
+};
+
+export function useChat(options?: UseChatOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +59,7 @@ export function useChat() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            pathname: options?.pathname || '',
             messages: [...messages, userMessage].map((message) => ({
               role: message.role,
               content: message.content,
@@ -131,7 +136,7 @@ export function useChat() {
         setIsLoading(false);
       }
     },
-    [input, isLoading, messages]
+    [input, isLoading, messages, options?.pathname]
   );
 
   return {
