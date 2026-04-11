@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_ad0960d71afb8f302e68fafc6020cb4d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_ad0960d71afb8f302e68fafc6020cb4d" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_ad0960d71afb8f302e68fafc6020cb4d = L.map(
+                "map_ad0960d71afb8f302e68fafc6020cb4d",
+                {
+                    center: [32.74363369318182, 74.86656334659091],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_0256c321715ed3a38ddf37547fe0e6ff = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "\u00a9 OpenStreetMap contributors \u00a9 CARTO",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_0256c321715ed3a38ddf37547fe0e6ff.addTo(map_ad0960d71afb8f302e68fafc6020cb4d);
+        
+    
+            var poly_line_8f4d3a72b2039f625cab92804a7ae8d5 = L.polyline(
+                [[32.743188, 74.873128], [32.743167, 74.872873], [32.743113, 74.872131], [32.743147, 74.872154], [32.743173, 74.872196], [32.743205, 74.872233], [32.743238, 74.872303], [32.743285, 74.872396], [32.74332, 74.872475], [32.743378, 74.872686], [32.743447, 74.872929], [32.74347, 74.872986], [32.743501, 74.873021], [32.743539, 74.873045], [32.743565, 74.873062], [32.743599, 74.87308], [32.743677, 74.87307], [32.743685, 74.873038], [32.743701, 74.87301], [32.743668, 74.87287], [32.743644, 74.872745], [32.743618, 74.87262], [32.743596, 74.872432], [32.743537, 74.872322], [32.743458, 74.872191], [32.74342, 74.872105], [32.743392, 74.872017], [32.743361, 74.871856], [32.743353, 74.871621], [32.743344, 74.871511], [32.743328, 74.871434], [32.743301, 74.871374], [32.743249, 74.871317], [32.743201, 74.871284], [32.743145, 74.871253], [32.74307, 74.87122], [32.742993, 74.871186], [32.742926, 74.871138], [32.742871, 74.871087], [32.74277, 74.870976], [32.742702, 74.870891], [32.742631, 74.870826], [32.742562, 74.870789], [32.742493, 74.870749], [32.742439, 74.870717], [32.742336, 74.870564], [32.742249, 74.870421], [32.74211, 74.870205], [32.742008, 74.870024], [32.741943, 74.869842], [32.741901, 74.869631], [32.74189, 74.869369], [32.741859, 74.869258], [32.741827, 74.869017], [32.741815, 74.868985], [32.741811, 74.86895], [32.741816, 74.868916], [32.741828, 74.868884], [32.741848, 74.868858], [32.741873, 74.868839], [32.7419, 74.86883], [32.741928, 74.86883], [32.741955, 74.868839], [32.742227, 74.868729], [32.742331, 74.868677], [32.742499, 74.868627], [32.742582, 74.868603], [32.74267, 74.868566], [32.742717, 74.868535], [32.742781, 74.868469], [32.742824, 74.868402], [32.742983, 74.868151], [32.74302, 74.868083], [32.743095, 74.86795], [32.743163, 74.867823], [32.743185, 74.867783], [32.743216, 74.867705], [32.743238, 74.867632], [32.743261, 74.867454], [32.743287, 74.867161], [32.743282, 74.867022], [32.743297, 74.866951], [32.743334, 74.866914], [32.743387, 74.866863], [32.743841, 74.866453], [32.743944, 74.866343], [32.744026, 74.866218], [32.744077, 74.866117], [32.744129, 74.865975], [32.744144, 74.866033], [32.744169, 74.866116], [32.744201, 74.866171], [32.744243, 74.866222], [32.744333, 74.866297], [32.744508, 74.866284], [32.744887, 74.866282], [32.744987, 74.866279], [32.745302, 74.866268], [32.745663, 74.866239], [32.746087, 74.866227], [32.74637, 74.866212], [32.746533, 74.866202], [32.746704, 74.866191], [32.7468, 74.866183], [32.746889, 74.866168], [32.747007, 74.866134], [32.74735, 74.86598], [32.747526, 74.86591], [32.747837, 74.865825], [32.747905, 74.865805], [32.747965, 74.865793], [32.748045, 74.865791], [32.748122, 74.865799], [32.7481, 74.865624], [32.748074, 74.865451], [32.748045, 74.865283], [32.748006, 74.865141], [32.747946, 74.86495], [32.747883, 74.864769], [32.747805, 74.8646], [32.747646, 74.86432], [32.74754, 74.864132], [32.747392, 74.863897], [32.747277, 74.863714], [32.747177, 74.86358], [32.747077, 74.863465], [32.746859, 74.863272], [32.746406, 74.862918], [32.745602, 74.862302], [32.74554, 74.862274], [32.745469, 74.862259], [32.745267, 74.862272], [32.745206, 74.862302], [32.74514, 74.862302], [32.74508, 74.862272], [32.74506, 74.862248], [32.745033, 74.862217], [32.745008, 74.862145], [32.745008, 74.862067], [32.744924, 74.861929], [32.744816, 74.86179], [32.744612, 74.861596], [32.74427, 74.861334], [32.743961, 74.861096], [32.743249, 74.86055], [32.743202, 74.860514], [32.741924, 74.85953], [32.74174, 74.859846], [32.741728, 74.859866], [32.741415, 74.860408], [32.741383, 74.860467], [32.74136, 74.860518], [32.741267, 74.860535], [32.741208, 74.860551], [32.741159, 74.860563], [32.741103, 74.86057], [32.741064, 74.86057], [32.74101, 74.860561], [32.740978, 74.860543], [32.740917, 74.860496], [32.740936, 74.860457], [32.740939, 74.860408], [32.740937, 74.860368], [32.740924, 74.860312], [32.74087, 74.86016], [32.740832, 74.86006], [32.740802, 74.85999], [32.740781, 74.85994], [32.74067, 74.85967], [32.740631, 74.859602], [32.740591, 74.859555], [32.740502, 74.859484], [32.740385, 74.859405], [32.740274, 74.859347], [32.740141, 74.859296], [32.740039, 74.85926]],
+                {"bubblingMouseEvents": true, "color": "#00695C", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#00695C", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 4}
+            ).addTo(map_ad0960d71afb8f302e68fafc6020cb4d);
+        
+    
+        var popup_8d66d5d5045c9fb120c4ab90115d522c = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_4cbc91d1fd0542890b39b057f8592840 = $(`<div id="html_4cbc91d1fd0542890b39b057f8592840" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Arial,sans-serif;min-width:280px;font-size:12px">   <div style="color:#00695C;font-size:15px;font-weight:700">FDR-471</div>   <div style="background:#00695C;color:#fff;display:inline-block;border-radius:4px;     padding:1px 8px;font-size:10px;margin:3px 0 4px">RETAINED AS FEEDER</div>   <div style="font-size:10px;color:#6A1B9A;margin-bottom:2px">     Route Type: Urban | Zone: City_Core</div>   <div style="color:#E65100;font-weight:700;font-size:11px;margin-bottom:6px">     Priority: MP | Headway: 30 min   </div>      <table style="width:100%;border-collapse:collapse;line-height:1.7">     <tr><td style="color:#666">Route Name</td><td>PANJTRITHI ↔ BATHINDI</td></tr>     <tr><td style="color:#666">Length</td><td><b>2.8 km</b></td></tr>     <tr><td style="color:#666">Fleet</td><td><b>2 buses</b></td></tr>     <tr><td style="color:#888;font-size:11px">HPV / MPV</td>         <td style="font-size:11px">0 / 2         <span style="color:#888;font-size:10px">(0% HPV)</span></td></tr>     <tr style="border-top:1px solid #f0f0f0">       <td style="color:#666">Cycle Time</td><td>42.2 min</td></tr>     <tr><td style="color:#666">Stops (est.)</td><td>5</td></tr>     <tr style="border-top:1px solid #f0f0f0">       <td style="color:#1565C0">Pop_Score</td><td><b>0.801</b></td></tr>     <tr><td style="color:#E65100">POI_Score</td><td><b>0.369</b></td></tr>     <tr><td style="color:#4A148C">Road ×</td><td><b>0.75</b></td></tr>     <tr><td style="color:#333"><b>Final CDI</b></td><td><b>0.4389</b></td></tr>     <tr><td style="color:#666">Pop. Served</td><td><b>1.28% of CMP 2024</b></td></tr>   </table> </div></div>`)[0];
+                popup_8d66d5d5045c9fb120c4ab90115d522c.setContent(html_4cbc91d1fd0542890b39b057f8592840);
+            
+        
+
+        poly_line_8f4d3a72b2039f625cab92804a7ae8d5.bindPopup(popup_8d66d5d5045c9fb120c4ab90115d522c)
+        ;
+
+        
+    
+</script>
+</html>

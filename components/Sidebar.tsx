@@ -13,6 +13,7 @@ export default function Sidebar() {
     { title: "Executive Summary", path: "/", icon: LayoutDashboard },
     { title: "Route Analysis Map", path: "/map-visualizer", icon: MapIcon },
     { title: "Route Rationalization", path: "/route-rationalization", icon: GitBranch },
+    { title: "V3 Route Plan", path: "/route-rationalization-v3", icon: GitBranch },
     { title: "Driver Database", path: "/registered-drivers", icon: Contact },
     { title: "Data & Trip Logs", path: "/trip-logs", icon: FolderClock },
     { title: "Flagged Anomalies", path: "/flagged-trips", icon: AlertOctagon },

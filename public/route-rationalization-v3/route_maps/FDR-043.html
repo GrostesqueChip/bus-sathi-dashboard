@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6fd1ebc964832bd932a2eec4536d4f0b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_6fd1ebc964832bd932a2eec4536d4f0b" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6fd1ebc964832bd932a2eec4536d4f0b = L.map(
+                "map_6fd1ebc964832bd932a2eec4536d4f0b",
+                {
+                    center: [32.68965443442623, 74.89658343442623],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_8fa23611474fe8ffdddab3b841ebdd3f = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "\u00a9 OpenStreetMap contributors \u00a9 CARTO",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_8fa23611474fe8ffdddab3b841ebdd3f.addTo(map_6fd1ebc964832bd932a2eec4536d4f0b);
+        
+    
+            var poly_line_781f89607615cc67862b9ae088168b6d = L.polyline(
+                [[32.716738, 74.887523], [32.716579, 74.887572], [32.716207, 74.887694], [32.715243, 74.887926], [32.71507, 74.887968], [32.715052, 74.887968], [32.715148, 74.888287], [32.715294, 74.888756], [32.715346, 74.888979], [32.715393, 74.889271], [32.715432, 74.889529], [32.715459, 74.889776], [32.715483, 74.890028], [32.715535, 74.890293], [32.715572, 74.890492], [32.715657, 74.890824], [32.715716, 74.890998], [32.715736, 74.891058], [32.715783, 74.891221], [32.715696, 74.891262], [32.713995, 74.892014], [32.710807, 74.893439], [32.710041, 74.893779], [32.709298, 74.894107], [32.708437, 74.894488], [32.703383, 74.896761], [32.703258, 74.896818], [32.70301, 74.896928], [32.702637, 74.897095], [32.702269, 74.897262], [32.700977, 74.897844], [32.700929, 74.897865], [32.700905, 74.897876], [32.700596, 74.898021], [32.700349, 74.898137], [32.699249, 74.898608], [32.698599, 74.898904], [32.696188, 74.900001], [32.69594, 74.900114], [32.695589, 74.900294], [32.695377, 74.900396], [32.694834, 74.90065], [32.693156, 74.901463], [32.693024, 74.901527], [32.691213, 74.90237], [32.690958, 74.9025], [32.690857, 74.902547], [32.690792, 74.902578], [32.690143, 74.902894], [32.689201, 74.903342], [32.688791, 74.903542], [32.688326, 74.903764], [32.687263, 74.904288], [32.686376, 74.904681], [32.685676, 74.905009], [32.685527, 74.905078], [32.685407, 74.905145], [32.685032, 74.905313], [32.684685, 74.905463], [32.684479, 74.905562], [32.68408, 74.905732], [32.683848, 74.90583], [32.683654, 74.905903], [32.683406, 74.905966], [32.683132, 74.906024], [32.682896, 74.906049], [32.682648, 74.906053], [32.682421, 74.906052], [32.682279, 74.906033], [32.682095, 74.90601], [32.681875, 74.905965], [32.681607, 74.905871], [32.681413, 74.905803], [32.681264, 74.905744], [32.680942, 74.905596], [32.680673, 74.905453], [32.680399, 74.905258], [32.680067, 74.904968], [32.679882, 74.904791], [32.679719, 74.904614], [32.679573, 74.904425], [32.679413, 74.904175], [32.679169, 74.903778], [32.679014, 74.903468], [32.678841, 74.903068], [32.67869, 74.902666], [32.678148, 74.901068], [32.677365, 74.898717], [32.677322, 74.89858], [32.677335, 74.898504], [32.677366, 74.898312], [32.677169, 74.897745], [32.676828, 74.89673], [32.676429, 74.895547], [32.676151, 74.894718], [32.676077, 74.8945], [32.675858, 74.893859], [32.675706, 74.893422], [32.675643, 74.893249], [32.67552, 74.892936], [32.675399, 74.892822], [32.674968, 74.89151], [32.674507, 74.890101], [32.674427, 74.889854], [32.674397, 74.889749], [32.674072, 74.888975], [32.673917, 74.88863], [32.673731, 74.888256], [32.67369, 74.888174], [32.673346, 74.887452], [32.673024, 74.886729], [32.67301, 74.8867], [32.672876, 74.886424], [32.672855, 74.88638], [32.672499, 74.885599], [32.672276, 74.885279], [32.671843, 74.884361], [32.671353, 74.883293], [32.670885, 74.882275], [32.670013, 74.880418], [32.669575, 74.880558], [32.669549, 74.880566]],
+                {"bubblingMouseEvents": true, "color": "#00695C", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#00695C", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 4}
+            ).addTo(map_6fd1ebc964832bd932a2eec4536d4f0b);
+        
+    
+        var popup_4c76d9fcd2a3d73ae3ec6995cc5655d5 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_273690abe0dc1caaa6f4d74b3528afed = $(`<div id="html_273690abe0dc1caaa6f4d74b3528afed" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Arial,sans-serif;min-width:280px;font-size:12px">   <div style="color:#00695C;font-size:15px;font-weight:700">FDR-043</div>   <div style="background:#00695C;color:#fff;display:inline-block;border-radius:4px;     padding:1px 8px;font-size:10px;margin:3px 0 4px">RETAINED AS FEEDER</div>   <div style="font-size:10px;color:#6A1B9A;margin-bottom:2px">     Route Type: Urban | Zone: Peri_Urban</div>   <div style="color:#E65100;font-weight:700;font-size:11px;margin-bottom:6px">     Priority: MP | Headway: 30 min   </div>      <table style="width:100%;border-collapse:collapse;line-height:1.7">     <tr><td style="color:#666">Route Name</td><td>NARWAL ↔ KUNJWANI</td></tr>     <tr><td style="color:#666">Length</td><td><b>7.4 km</b></td></tr>     <tr><td style="color:#666">Fleet</td><td><b>3 buses</b></td></tr>     <tr><td style="color:#888;font-size:11px">HPV / MPV</td>         <td style="font-size:11px">0 / 3         <span style="color:#888;font-size:10px">(0% HPV)</span></td></tr>     <tr style="border-top:1px solid #f0f0f0">       <td style="color:#666">Cycle Time</td><td>71.6 min</td></tr>     <tr><td style="color:#666">Stops (est.)</td><td>14</td></tr>     <tr style="border-top:1px solid #f0f0f0">       <td style="color:#1565C0">Pop_Score</td><td><b>0.983</b></td></tr>     <tr><td style="color:#E65100">POI_Score</td><td><b>0.103</b></td></tr>     <tr><td style="color:#4A148C">Road ×</td><td><b>0.75</b></td></tr>     <tr><td style="color:#333"><b>Final CDI</b></td><td><b>0.4070</b></td></tr>     <tr><td style="color:#666">Pop. Served</td><td><b>4.05% of CMP 2024</b></td></tr>   </table> </div></div>`)[0];
+                popup_4c76d9fcd2a3d73ae3ec6995cc5655d5.setContent(html_273690abe0dc1caaa6f4d74b3528afed);
+            
+        
+
+        poly_line_781f89607615cc67862b9ae088168b6d.bindPopup(popup_4c76d9fcd2a3d73ae3ec6995cc5655d5)
+        ;
+
+        
+    
+</script>
+</html>
