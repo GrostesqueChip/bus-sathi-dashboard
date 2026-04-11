@@ -106,8 +106,8 @@ export default function V3PresentationDashboard({
                 Route Rationalization V3 Presentation Deck
               </h1>
               <p className="mt-4 max-w-3xl text-base font-semibold leading-8 text-slate-200/88">
-                A stakeholder-ready view of the Jammu route frequency plan, showing the final v3 network, trunk-feeder
-                split, HPV/MPV fleet policy, protected social routes, and the original generated outputs.
+                A simple presentation view of the Jammu frequency plan. Route codes are shown first so every route can be
+                matched back to the Excel workbook during your presentation.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -146,10 +146,10 @@ export default function V3PresentationDashboard({
                 </p>
               </div>
               <div className="rounded-[2rem] border border-white/12 bg-white/10 p-5 backdrop-blur">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-100">Fleet policy</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-100">Buses needed</p>
                 <p className="mt-2 text-4xl font-black">{formatNumber(summary.totalFleetRequired)}</p>
                 <p className="mt-1 text-sm font-semibold text-slate-200/80">
-                  {formatNumber(summary.hpvTotal)} HPV + {formatNumber(summary.mpvTotal)} MPV, with LPV removed.
+                  {formatNumber(summary.hpvTotal)} large buses + {formatNumber(summary.mpvTotal)} medium buses.
                 </p>
               </div>
             </div>
@@ -166,16 +166,16 @@ export default function V3PresentationDashboard({
           tone="slate"
         />
         <KpiCard
-          label="Trunk / feeder"
+          label="Main / feeder"
           value={`${summary.trunkRoutes} / ${summary.feederRoutes}`}
-          detail={`${summary.cmpBackboneTrunks} CMP backbone trunks with high-frequency focus.`}
+          detail={`${summary.cmpBackboneTrunks} important corridors get faster service.`}
           icon={Network}
           tone="blue"
         />
         <KpiCard
           label="Social routes"
           value={formatNumber(summary.socialObligationRoutes)}
-          detail="Protected routes upgraded away from the low-priority band where needed."
+          detail="Routes kept because they serve important public needs."
           icon={ShieldCheck}
           tone="teal"
         />
@@ -191,26 +191,35 @@ export default function V3PresentationDashboard({
       <section className="overflow-hidden rounded-[2.4rem] border border-slate-200 bg-slate-950 text-white shadow-sm">
         <div className="grid gap-5 p-6 md:grid-cols-2 xl:grid-cols-4">
           <PolicyCard
-            title="Aggressive trunk gate"
-            detail="v3 lowered the CDI gate to the 30th percentile, allowing more high-demand corridors to become trunks."
+            title="More main routes selected"
+            detail="The plan promotes stronger corridors into main routes so the busiest links are easier to serve."
             icon={Sparkles}
           />
           <PolicyCard
-            title="CMP backbone priority"
-            detail="CMP-intersecting corridors receive backbone treatment and the planned 10-minute headway standard."
+            title="Important corridors get faster service"
+            detail="Routes on key city corridors are planned with shorter waiting times."
             icon={Route}
           />
           <PolicyCard
             title="Social protection"
-            detail="Social-obligation routes are retained and prevented from falling into the low-priority band."
+            detail="Routes serving important communities are kept in the plan instead of being dropped."
             icon={ShieldCheck}
           />
           <PolicyCard
-            title="HPV/MPV only"
-            detail="LPV is removed from v3. Trunks use an 85% HPV mix while feeders run as MPV services."
+            title="Only large and medium buses"
+            detail="The v3 plan removes LPV service and uses large buses for main routes and medium buses for feeders."
             icon={BusFront}
           />
         </div>
+      </section>
+
+      <section className="rounded-[2rem] border border-cyan-100 bg-cyan-50 p-6 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-700">Route code guide</p>
+        <h2 className="mt-2 text-2xl font-black text-slate-950">Use route codes to match the dashboard with the Excel plan</h2>
+        <p className="mt-2 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
+          Route code is the official code from the frequency plan workbook. Use it to match a dashboard route with the
+          Excel report. Dashboard IDs like FDR-351 or CMP-08 are still shown, but they are now secondary labels.
+        </p>
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.55fr)_24rem]">
@@ -303,7 +312,10 @@ export default function V3PresentationDashboard({
               <div className="mt-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-2xl font-black text-slate-950">{selectedRoute.newRouteId}</h3>
+                    <h3 className="text-3xl font-black tracking-tight text-slate-950">{selectedRoute.routeCode || selectedRoute.newRouteId}</h3>
+                    <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                      Dashboard ID: {selectedRoute.newRouteId} / Old ID: {selectedRoute.routeId}
+                    </p>
                     <p className="mt-1 text-sm font-bold leading-6 text-slate-500">{selectedRoute.routeName}</p>
                   </div>
                   {selectedRoute.actionTaken !== 'MERGED_INTO_TRUNK' && (
@@ -334,12 +346,12 @@ export default function V3PresentationDashboard({
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Fleet</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Buses needed</p>
                     <p className="mt-2 text-2xl font-black text-slate-950">{selectedRoute.fleetRequired}</p>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Headway</p>
-                    <p className="mt-2 text-2xl font-black text-cyan-700">{selectedRoute.headwayMin}m</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Bus every</p>
+                    <p className="mt-2 text-2xl font-black text-cyan-700">{selectedRoute.headwayMin} min</p>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-3">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">HPV/MPV</p>
@@ -348,14 +360,14 @@ export default function V3PresentationDashboard({
                     </p>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">CDI</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Demand score</p>
                     <p className="mt-2 text-2xl font-black text-orange-600">{selectedRoute.finalCdi.toFixed(3)}</p>
                   </div>
                 </div>
 
                 {selectedLog?.reasoning && (
                   <div className="mt-4 max-h-36 overflow-y-auto rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Decision note</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Why this decision was made</p>
                     <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{selectedLog.reasoning}</p>
                   </div>
                 )}
@@ -367,7 +379,7 @@ export default function V3PresentationDashboard({
 
           <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
             <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-orange-600">
-              <BarChart3 size={14} /> Top fleet corridors
+              <BarChart3 size={14} /> Routes needing the most buses
             </p>
             <div className="mt-4 space-y-3">
               {topFleetRoutes.map((route, index) => (
@@ -379,13 +391,16 @@ export default function V3PresentationDashboard({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-black text-slate-950">{route.newRouteId}</p>
+                      <p className="text-base font-black text-slate-950">{route.routeCode || route.newRouteId}</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
+                        Dashboard ID: {route.newRouteId}
+                      </p>
                       <p className="text-xs font-bold leading-5 text-slate-500">{route.routeName}</p>
                     </div>
                     <span className="text-[10px] font-black uppercase tracking-[0.18em] text-orange-600">#{index + 1}</span>
                   </div>
                   <p className="mt-2 text-sm font-black text-orange-700">
-                    {route.fleetRequired} buses at {route.headwayMin} min headway
+                    {route.fleetRequired} buses / bus every {route.headwayMin} min
                   </p>
                 </button>
               ))}

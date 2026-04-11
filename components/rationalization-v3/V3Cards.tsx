@@ -13,6 +13,9 @@ export function formatCompactNumber(value: number) {
 }
 
 export function formatActionLabel(action: string) {
+  if (action === 'UPGRADED_TO_TRUNK') return 'Main route';
+  if (action === 'RETAINED_AS_FEEDER') return 'Feeder route';
+  if (action === 'MERGED_INTO_TRUNK') return 'Merged into main route';
   return action.replaceAll('_', ' ').toLowerCase();
 }
 

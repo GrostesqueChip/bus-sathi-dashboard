@@ -26,6 +26,9 @@ function formatDecimal(value: unknown, digits = 2) {
 }
 
 function formatAction(action: unknown) {
+  if (action === 'UPGRADED_TO_TRUNK') return 'Main route';
+  if (action === 'RETAINED_AS_FEEDER') return 'Feeder route';
+  if (action === 'MERGED_INTO_TRUNK') return 'Merged into main route';
   return String(action || 'Unknown').replaceAll('_', ' ').toLowerCase();
 }
 
@@ -188,6 +191,7 @@ export default function V3NetworkMap({ selectedRouteId }: V3NetworkMapProps) {
         onEachFeature={(feature: any, layer) => {
           const properties = feature?.properties || {};
           const routeId = String(properties.New_Route_ID || 'Unknown route');
+          const routeCode = String(properties.Route_Code || routeId);
           const isTrunk = String(properties.Action_Taken || '') === 'UPGRADED_TO_TRUNK';
           const isSocial = Boolean(properties.Social_Flag);
 
@@ -195,7 +199,8 @@ export default function V3NetworkMap({ selectedRouteId }: V3NetworkMapProps) {
             <div style="min-width: 260px; padding: 8px 5px;">
               <div style="display:flex; justify-content:space-between; gap:12px; margin-bottom:10px;">
                 <div>
-                  <div style="font-size:18px; font-weight:900; color:#0f172a;">${routeId}</div>
+                  <div style="font-size:18px; font-weight:900; color:#0f172a;">${routeCode}</div>
+                  <div style="font-size:11px; font-weight:900; letter-spacing:0.12em; color:#64748b; text-transform:uppercase;">Dashboard ID: ${routeId}</div>
                   <div style="font-size:13px; font-weight:700; color:#475569;">${properties.Route_Name || 'Unnamed route'}</div>
                 </div>
                 <span style="height:fit-content; padding:6px 10px; border-radius:999px; font-size:10px; font-weight:900; letter-spacing:0.12em; text-transform:uppercase; background:${isTrunk ? '#dbeafe' : '#ccfbf1'}; color:${isTrunk ? '#1d4ed8' : '#0f766e'};">
@@ -205,16 +210,16 @@ export default function V3NetworkMap({ selectedRouteId }: V3NetworkMapProps) {
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:7px; font-size:12px; color:#334155;">
                 <div><strong>Type:</strong> ${properties.Route_Type || 'n/a'}</div>
                 <div><strong>Band:</strong> ${properties.Priority_Band || 'n/a'}</div>
-                <div><strong>Headway:</strong> ${formatNumber(properties.Headway_Min)} min</div>
-                <div><strong>Fleet:</strong> ${formatNumber(properties.Fleet_Required)}</div>
+                <div><strong>Bus every:</strong> ${formatNumber(properties.Headway_Min)} min</div>
+                <div><strong>Buses needed:</strong> ${formatNumber(properties.Fleet_Required)}</div>
                 <div><strong>HPV/MPV:</strong> ${formatNumber(properties.HPV_Count)} / ${formatNumber(properties.MPV_Count)}</div>
-                <div><strong>CDI:</strong> ${formatDecimal(properties.Final_CDI, 4)}</div>
+                <div><strong>Demand score:</strong> ${formatDecimal(properties.Final_CDI, 4)}</div>
                 <div><strong>Population:</strong> ${formatNumber(properties.Population_Served)}</div>
                 <div><strong>Zone:</strong> ${properties.Congestion_Zone || 'n/a'}</div>
               </div>
               ${
                 isSocial
-                  ? '<div style="margin-top:10px; padding:8px 10px; border-radius:12px; background:#fff7ed; color:#9a3412; font-size:12px; font-weight:800;">Social-obligation route protected in v3</div>'
+                  ? '<div style="margin-top:10px; padding:8px 10px; border-radius:12px; background:#fff7ed; color:#9a3412; font-size:12px; font-weight:800;">Protected public-need route</div>'
                   : ''
               }
               <a href="/route-rationalization-v3/route_maps/${routeId}.html" target="_blank" rel="noreferrer" style="display:inline-block; margin-top:12px; color:#2563eb; font-size:12px; font-weight:900; text-decoration:none;">

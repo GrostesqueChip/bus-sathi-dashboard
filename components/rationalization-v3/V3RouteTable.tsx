@@ -52,9 +52,9 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
       })
       .filter((route) => routeMatchesSearch(route, searchQuery))
       .sort((a, b) => {
-        if (sortMode === 'cdi') return b.finalCdi - a.finalCdi;
+        if (sortMode === 'demand') return b.finalCdi - a.finalCdi;
         if (sortMode === 'population') return b.populationServed - a.populationServed;
-        if (sortMode === 'headway') return a.headwayMin - b.headwayMin;
+        if (sortMode === 'service') return a.headwayMin - b.headwayMin;
         return b.fleetRequired - a.fleetRequired;
       });
   }, [actionFilter, priorityFilter, routeTypeFilter, routes, searchQuery, socialFilter, sortMode]);
@@ -75,7 +75,7 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
         <div>
           <h2 className="text-xl font-black text-slate-950">V3 Route Table</h2>
           <p className="text-sm font-semibold text-slate-500">
-            Search and filter every v3 route row, then click a row to focus the map and details.
+            Search by official route code, dashboard ID, old route ID, or route name. Click a row to focus the map and details.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
@@ -94,23 +94,23 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="CMP-08, R0001, Janipur..."
+                placeholder="JMJM04120118, FDR-351, R0001, Janipur..."
                 className="w-full rounded-2xl border border-slate-200 bg-white px-10 py-3 text-sm font-semibold text-slate-700 outline-none transition-all focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
               />
             </div>
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Action</span>
+            <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Decision</span>
             <select
               value={actionFilter}
               onChange={(event) => setActionFilter(event.target.value as ActionFilter)}
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition-all focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
             >
               <option value="all">All</option>
-              <option value="trunk">Trunks</option>
-              <option value="feeder">Feeders</option>
-              <option value="merged">Merged</option>
+              <option value="trunk">Main routes</option>
+              <option value="feeder">Feeder routes</option>
+              <option value="merged">Merged routes</option>
             </select>
           </label>
 
@@ -166,10 +166,10 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
               onChange={(event) => setSortMode(event.target.value as SortMode)}
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition-all focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
             >
-              <option value="fleet">Fleet required</option>
-              <option value="cdi">Final CDI</option>
+              <option value="fleet">Buses needed</option>
+              <option value="demand">Demand score</option>
               <option value="population">Population served</option>
-              <option value="headway">Tightest headway</option>
+              <option value="service">Fastest service</option>
             </select>
           </label>
         </div>
@@ -180,12 +180,12 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
           <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Route</th>
-              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Action</th>
+              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Route decision</th>
               <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Type</th>
               <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Priority</th>
-              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Headway</th>
-              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Fleet</th>
-              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">CDI</th>
+              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Bus every</th>
+              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Buses needed</th>
+              <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Demand score</th>
               <th className="px-6 py-4 text-left text-xs font-black uppercase tracking-[0.18em] text-slate-400">Map</th>
             </tr>
           </thead>
@@ -200,8 +200,8 @@ export default function V3RouteTable({ routes, selectedRouteKey, onSelectRoute }
                   className={`cursor-pointer transition-colors ${isSelected ? 'bg-cyan-50/70' : 'hover:bg-cyan-50/35'}`}
                 >
                   <td className="px-6 py-4">
-                    <p className="text-sm font-black text-slate-950">{route.newRouteId}</p>
-                    <p className="text-xs font-bold text-slate-400">{route.routeId}</p>
+                    <p className="text-lg font-black tracking-tight text-slate-950">{route.routeCode || route.newRouteId}</p>
+                    <p className="text-xs font-bold text-slate-400">Dashboard ID: {route.newRouteId} / Old ID: {route.routeId}</p>
                     <p className="mt-1 max-w-xs text-sm font-semibold leading-5 text-slate-500">{route.routeName}</p>
                   </td>
                   <td className="px-6 py-4">

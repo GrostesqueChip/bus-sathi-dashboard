@@ -2,6 +2,7 @@ import { readFile, readdir, stat } from 'fs/promises';
 import path from 'path';
 
 export interface RationalizedRouteV3 {
+  routeCode: string;
   routeId: string;
   routeName: string;
   actionTaken: string;
@@ -112,14 +113,20 @@ let datasetPromise: Promise<RouteRationalizationV3Dataset> | null = null;
 export const V3_SOURCE_FILES: V3SourceFile[] = [
   {
     label: '4-sheet workbook',
-    description: 'Presentation-ready route frequency plan.',
+    description: 'Main Excel report with official route codes.',
     href: `${PUBLIC_ROUTE}/Jammu_Route_Frequency_Plan_v3.xlsx`,
     download: true,
     fileName: 'Jammu_Route_Frequency_Plan_v3.xlsx',
   },
   {
+    label: 'Route code guide',
+    description: 'Reference document explaining route-code format.',
+    href: `${PUBLIC_ROUTE}/Route_Code_Documentation.pdf`,
+    fileName: 'Route_Code_Documentation.pdf',
+  },
+  {
     label: 'Master transit map',
-    description: 'Generated sidebar + KPI map from the v3 pipeline.',
+    description: 'Original generated map from the v3 pipeline.',
     href: `${PUBLIC_ROUTE}/Master_Transit_Map_v3.html`,
     fileName: 'Master_Transit_Map_v3.html',
   },
@@ -131,28 +138,28 @@ export const V3_SOURCE_FILES: V3SourceFile[] = [
   },
   {
     label: 'Operational CSV',
-    description: 'Full route-level plan with fleet and priority fields.',
+    description: 'Route-level plan with buses, priority, and service details.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_v3.csv`,
     download: true,
     fileName: 'Rationalised_Routes_v3.csv',
   },
   {
     label: 'Passenger impact CSV',
-    description: 'Frequency and passenger-facing route summary.',
+    description: 'Passenger-facing service frequency summary.',
     href: `${PUBLIC_ROUTE}/Passenger_Impact_v3.csv`,
     download: true,
     fileName: 'Passenger_Impact_v3.csv',
   },
   {
     label: 'Audit log CSV',
-    description: 'Route-by-route rationalisation reasoning.',
+    description: 'Route-by-route decision notes.',
     href: `${PUBLIC_ROUTE}/Rationalisation_Log_v3.csv`,
     download: true,
     fileName: 'Rationalisation_Log_v3.csv',
   },
   {
     label: 'Pipeline log',
-    description: 'QC checks and export run details.',
+    description: 'Quality checks and export run details.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
   },
@@ -186,6 +193,7 @@ function normalizeMapFile(value: unknown) {
 
 function normalizeRoute(row: Record<string, unknown>): RationalizedRouteV3 {
   return {
+    routeCode: readString(row, 'Route_Code'),
     routeId: readString(row, 'Route_ID'),
     routeName: readString(row, 'Route_Name'),
     actionTaken: readString(row, 'Action_Taken'),

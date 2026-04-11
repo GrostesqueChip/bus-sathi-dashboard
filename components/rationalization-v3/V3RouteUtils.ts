@@ -2,12 +2,12 @@ import type { RationalizedRouteV3 } from '@/lib/routeRationalizationV3';
 
 export type ActionFilter = 'all' | 'trunk' | 'feeder' | 'merged';
 export type SocialFilter = 'all' | 'protected' | 'regular';
-export type SortMode = 'fleet' | 'cdi' | 'population' | 'headway';
+export type SortMode = 'fleet' | 'demand' | 'population' | 'service';
 
 export const PRIORITY_ORDER = ['HP', 'MP', 'LP'];
 
-export function getRouteKey(route: Pick<RationalizedRouteV3, 'newRouteId' | 'routeId'>) {
-  return `${route.newRouteId}:${route.routeId}`;
+export function getRouteKey(route: Pick<RationalizedRouteV3, 'routeCode' | 'newRouteId' | 'routeId'>) {
+  return `${route.routeCode || route.newRouteId}:${route.routeId}`;
 }
 
 export function getRouteMapHref(route: Pick<RationalizedRouteV3, 'mapFile' | 'newRouteId'>) {
@@ -26,6 +26,7 @@ export function routeMatchesSearch(route: RationalizedRouteV3, query: string) {
 
   const haystack = [
     route.routeId,
+    route.routeCode,
     route.newRouteId,
     route.routeName,
     route.actionTaken,
