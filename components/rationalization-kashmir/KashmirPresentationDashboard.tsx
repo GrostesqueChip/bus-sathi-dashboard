@@ -321,10 +321,10 @@ export default function KashmirPresentationDashboard({
               <div className="mt-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tight text-slate-950">{selectedRoute.newRouteId}</h3>
+                    <h3 className="text-3xl font-black tracking-tight text-slate-950">{selectedRoute.routeCode || selectedRoute.newRouteId}</h3>
                     {selectedRoute.routeCode && (
                       <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                        Code: {selectedRoute.routeCode}
+                        Map ID: {selectedRoute.newRouteId}
                       </p>
                     )}
                     <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-slate-400">
@@ -430,10 +430,10 @@ export default function KashmirPresentationDashboard({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-base font-black text-slate-950">{route.newRouteId}</p>
+                      <p className="text-base font-black text-slate-950">{route.routeCode || route.newRouteId}</p>
                       {route.routeCode && (
                         <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
-                          Code: {route.routeCode}
+                          Map ID: {route.newRouteId}
                         </p>
                       )}
                       <p className="text-xs font-bold leading-5 text-slate-500">{route.routeName}</p>

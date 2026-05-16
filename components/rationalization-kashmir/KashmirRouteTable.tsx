@@ -94,7 +94,7 @@ export default function KashmirRouteTable({ routes, selectedRouteKey, onSelectRo
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="TRK-047, SSCL-01, FDR-038, Soura..."
+                placeholder="PWSP..., SSCL-01, TRK-047, Soura..."
                 className="w-full rounded-2xl border border-slate-200 bg-white px-10 py-3 text-sm font-semibold text-slate-700 outline-none transition-all focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100"
               />
             </div>
@@ -201,9 +201,9 @@ export default function KashmirRouteTable({ routes, selectedRouteKey, onSelectRo
                   className={`cursor-pointer transition-colors ${isSelected ? 'bg-emerald-50/70' : 'hover:bg-emerald-50/35'}`}
                 >
                   <td className="px-6 py-4">
-                    <p className="text-lg font-black tracking-tight text-slate-950">{route.newRouteId}</p>
+                    <p className="text-lg font-black tracking-tight text-slate-950">{route.routeCode || route.newRouteId}</p>
                     {route.routeCode && (
-                      <p className="text-xs font-bold text-slate-400">Code: {route.routeCode}</p>
+                      <p className="text-xs font-bold text-slate-400">Map ID: {route.newRouteId}</p>
                     )}
                     <p className="text-xs font-bold text-slate-400">Old ID: {route.routeId}</p>
                     <p className="mt-1 max-w-xs text-sm font-semibold leading-5 text-slate-500">{route.routeName}</p>
