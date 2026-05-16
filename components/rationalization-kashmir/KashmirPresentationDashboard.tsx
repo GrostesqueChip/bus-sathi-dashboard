@@ -376,26 +376,34 @@ export default function KashmirPresentationDashboard({
                   )}
                 </div>
 
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Buses needed</p>
-                    <p className="mt-2 text-2xl font-black text-slate-950">{selectedRoute.fleetRequired}</p>
-                  </div>
-                  <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Bus every</p>
-                    <p className="mt-2 text-2xl font-black text-emerald-700">{selectedRoute.headwayMin} min</p>
-                  </div>
-                  <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">HPV/MPV</p>
-                    <p className="mt-2 text-2xl font-black text-blue-700">
-                      {selectedRoute.hpvCount}/{selectedRoute.mpvCount}
+                {selectedRoute.actionTaken === 'MERGED_INTO_TRUNK' ? (
+                  <div className="mt-5 rounded-2xl bg-slate-100 p-4 text-center">
+                    <p className="text-sm font-bold text-slate-600">
+                      This route was merged into a main trunk route. Its operational metrics (fleet, headway) are combined with the trunk route.
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-slate-50 p-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Demand score</p>
-                    <p className="mt-2 text-2xl font-black text-orange-600">{selectedRoute.finalCdi.toFixed(3)}</p>
+                ) : (
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-slate-50 p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Buses needed</p>
+                      <p className="mt-2 text-2xl font-black text-slate-950">{selectedRoute.fleetRequired}</p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Bus every</p>
+                      <p className="mt-2 text-2xl font-black text-emerald-700">{selectedRoute.headwayMin} min</p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">HPV/MPV</p>
+                      <p className="mt-2 text-2xl font-black text-blue-700">
+                        {selectedRoute.hpvCount}/{selectedRoute.mpvCount}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Demand score</p>
+                      <p className="mt-2 text-2xl font-black text-orange-600">{selectedRoute.finalCdi.toFixed(3)}</p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {selectedRoute.displacedOperatorClass && (
                   <div className="mt-3 rounded-2xl bg-amber-50 p-3">
