@@ -229,15 +229,7 @@ export default function KashmirPresentationDashboard({
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-teal-100 bg-teal-50 p-6 shadow-sm">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-700">Route ID guide</p>
-        <h2 className="mt-2 text-2xl font-black text-slate-950">Route codes will be added in a future update</h2>
-        <p className="mt-2 max-w-4xl text-sm font-semibold leading-7 text-slate-600">
-          The current route IDs (TRK-xxx, FDR-xxx, SSCL-xx) are temporary dashboard identifiers.
-          Official route codes matching the frequency plan workbook will be added later. For now, use
-          the New Route ID and Old Route ID to cross-reference with the Excel report.
-        </p>
-      </section>
+
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.55fr)_24rem]">
         <div className="space-y-6">
