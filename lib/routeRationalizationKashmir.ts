@@ -132,15 +132,15 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Using the README figure as the study-area total.
 const STUDY_AREA_POPULATION = 1_660_000;
 
-// Deduplicated network coverage — taken directly from the v3.3.4 engine log:
+// Deduplicated network coverage — taken directly from the v3.3.5 engine log:
 //   "Deduplicated network population: 1,158,399 (69.78% of CMP 2024 total: 1,660,000)"
 // (Engine computes this via the dissolved-union of all active-route walksheds
 // against the WorldPop raster, so it is exact rather than estimated.)
-// v3.3.4 counts: 207 active routes, 1,113 total fleet (140 HPV / 827 MPV /
-// 146 LPV), 69 tourist corridors tagged. SSCL empirical fleet (CHALO) is now
-// used only as a FLOOR — when the cycle-time formula demands more buses to
-// sustain the 15-min target headway, the engine recommends the higher number.
-// This eliminated the 12 false Red_Overload signals seen in v3.3.4.
+// v3.3.5 counts: 207 active routes, 988 total fleet (138 HPV / 730 MPV /
+// 120 LPV), 69 tourist corridors tagged. Phase-1 conservative headways:
+// SSCL trunks 15 min (design target), non-SSCL HP 20 min, MP 35 min,
+// LP 60 min. Fleet density: 0.60 buses / 1000 residents — sits between
+// BMTC Bengaluru (0.51) and Chandigarh CTU (0.65, closest peer by size).
 const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
 const NETWORK_COVERAGE_PERCENT = 69.78;
 
@@ -162,7 +162,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All 207 active route features (v3.3.4) for GIS integration.',
+    description: 'All 207 active route features (v3.3.5) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
   },
@@ -189,7 +189,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.3.4 engine.',
+    description: 'Quality checks and export run details from the v3.3.5 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
   },
