@@ -131,15 +131,14 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Using the README figure as the study-area total.
 const STUDY_AREA_POPULATION = 1_660_000;
 
-// Deduplicated network coverage is not directly available from the CSV output.
-// Based on 342 routes covering the Srinagar Valley core + satellite towns,
-// and the engine's 400m walk catchments covering dense urban + peri-urban,
-// a conservative estimate derived from the SSCL cross-evaluation data
-// (SSCL 30 routes serve ~68% of population; full 237-route active network
-// covers substantially more) yields approximately 78–82%.
-// Using 79.4% as the evidence-backed estimate from engine overlap analysis.
-const DEDUPLICATED_NETWORK_POPULATION = 1_318_000;
-const NETWORK_COVERAGE_PERCENT = 79.4;
+// Deduplicated network coverage — taken directly from the v3.3.3 engine log:
+//   "Deduplicated network population: 1,158,399 (69.78% of CMP 2024 total: 1,660,000)"
+// (Engine computes this via the dissolved-union of all active-route walksheds
+// against the WorldPop raster, so it is exact rather than estimated.)
+// Updated counts in v3.3.3 (post-audit tightening): 207 active routes,
+// 883 total fleet, 69 tourist corridors tagged.
+const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
+const NETWORK_COVERAGE_PERCENT = 69.78;
 
 let datasetPromise: Promise<RouteRationalizationKashmirDataset> | null = null;
 
@@ -159,7 +158,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All 237 active route features for GIS integration.',
+    description: 'All 207 active route features (v3.3.3) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
   },
@@ -186,7 +185,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.2 engine.',
+    description: 'Quality checks and export run details from the v3.3.3 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
   },

@@ -94,7 +94,7 @@ export default function KashmirPresentationDashboard({
             <div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
-                  kashmir valley v3
+                  kashmir valley v3.3.3
                 </span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">
                   {summary.ssclBackboneRoutes} sscl backbone routes
@@ -110,6 +110,12 @@ export default function KashmirPresentationDashboard({
               <p className="mt-4 max-w-3xl text-base font-semibold leading-8 text-slate-200/88">
                 A data-driven frequency plan for 342 in-scope routes in the Srinagar Valley, built on the SSCL e-bus
                 backbone with 30 trunk routes from CHALO ridership data.
+              </p>
+              <p className="mt-2 max-w-3xl text-xs font-semibold leading-5 text-amber-100/90">
+                Route codes shown with a <span className="rounded bg-amber-200/20 px-1 font-black uppercase tracking-[0.14em] text-amber-100">TEMP</span> pill are placeholders
+                (format <code className="font-mono">TMP-K####</code>). The slot is wired through every list and detail panel and will fill in
+                automatically once the stops-derived <code className="font-mono">Route_Code</code> values are generated from
+                <code className="font-mono"> Kashmir_Stops_Sectored_V2.csv</code>.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -321,7 +327,17 @@ export default function KashmirPresentationDashboard({
               <div className="mt-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tight text-slate-950">{selectedRoute.routeCode || selectedRoute.newRouteId}</h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-3xl font-black tracking-tight text-slate-950">{selectedRoute.routeCode || selectedRoute.newRouteId}</h3>
+                      {selectedRoute.routeCode?.startsWith('TMP-') && (
+                        <span
+                          title="Temporary placeholder code — will be replaced by stops-derived Route_Code in the next data refresh."
+                          className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-700"
+                        >
+                          temp
+                        </span>
+                      )}
+                    </div>
                     {selectedRoute.routeCode && (
                       <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-slate-400">
                         Map ID: {selectedRoute.newRouteId}
@@ -430,7 +446,14 @@ export default function KashmirPresentationDashboard({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-base font-black text-slate-950">{route.routeCode || route.newRouteId}</p>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <p className="text-base font-black text-slate-950">{route.routeCode || route.newRouteId}</p>
+                        {route.routeCode?.startsWith('TMP-') && (
+                          <span className="rounded-full border border-amber-300 bg-amber-50 px-1.5 py-0 text-[9px] font-black uppercase tracking-[0.16em] text-amber-700">
+                            temp
+                          </span>
+                        )}
+                      </div>
                       {route.routeCode && (
                         <p className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
                           Map ID: {route.newRouteId}
