@@ -27,6 +27,7 @@ export interface RationalizedRouteKashmir {
   fleetRequired: number;
   hpvCount: number;
   mpvCount: number;
+  lpvCount: number;
   cmpTrunk: boolean;
   cmpRouteId: string;
   populationServed: number;
@@ -131,12 +132,15 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Using the README figure as the study-area total.
 const STUDY_AREA_POPULATION = 1_660_000;
 
-// Deduplicated network coverage — taken directly from the v3.3.3 engine log:
+// Deduplicated network coverage — taken directly from the v3.3.4 engine log:
 //   "Deduplicated network population: 1,158,399 (69.78% of CMP 2024 total: 1,660,000)"
 // (Engine computes this via the dissolved-union of all active-route walksheds
 // against the WorldPop raster, so it is exact rather than estimated.)
-// Updated counts in v3.3.3 (post-audit tightening): 207 active routes,
-// 883 total fleet, 69 tourist corridors tagged.
+// v3.3.4 counts: 207 active routes, 1,113 total fleet (140 HPV / 827 MPV /
+// 146 LPV), 69 tourist corridors tagged. SSCL empirical fleet (CHALO) is now
+// used only as a FLOOR — when the cycle-time formula demands more buses to
+// sustain the 15-min target headway, the engine recommends the higher number.
+// This eliminated the 12 false Red_Overload signals seen in v3.3.4.
 const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
 const NETWORK_COVERAGE_PERCENT = 69.78;
 
@@ -158,7 +162,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All 207 active route features (v3.3.3) for GIS integration.',
+    description: 'All 207 active route features (v3.3.4) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
   },
@@ -185,7 +189,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.3.3 engine.',
+    description: 'Quality checks and export run details from the v3.3.4 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
   },
@@ -237,6 +241,7 @@ function normalizeRoute(row: Record<string, unknown>): RationalizedRouteKashmir 
     fleetRequired: toNumber(row.Fleet_Required),
     hpvCount: toNumber(row.HPV_Count),
     mpvCount: toNumber(row.MPV_Count),
+    lpvCount: toNumber(row.LPV_Count),
     cmpTrunk: toBoolean(row.CMP_Trunk),
     cmpRouteId: readString(row, 'CMP_Route_ID'),
     populationServed: toNumber(row.Population_Served),
@@ -309,6 +314,7 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
   const totalFleetRequired = active.reduce((sum, route) => sum + route.fleetRequired, 0);
   const hpvTotal = active.reduce((sum, route) => sum + route.hpvCount, 0);
   const mpvTotal = active.reduce((sum, route) => sum + route.mpvCount, 0);
+  const lpvTotal = active.reduce((sum, route) => sum + route.lpvCount, 0);
 
   return {
     totalRouteRows: routes.length,
@@ -322,7 +328,7 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
     totalFleetRequired,
     hpvTotal,
     mpvTotal,
-    lpvTotal: 0,
+    lpvTotal,
     totalPopulationServedRows: routes.reduce((sum, route) => sum + route.populationServed, 0),
     deduplicatedNetworkPopulation: DEDUPLICATED_NETWORK_POPULATION,
     studyAreaPopulation: STUDY_AREA_POPULATION,
