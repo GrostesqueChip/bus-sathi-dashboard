@@ -148,8 +148,15 @@ let datasetPromise: Promise<RouteRationalizationKashmirDataset> | null = null;
 
 export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   {
-    label: '4-sheet workbook',
-    description: 'Main Excel report with route plan, priority summary, and type summary.',
+    label: 'RTO Master Workbook (9 sheets)',
+    description: 'Sign-off-ready Excel: cover sheet, route plan, operator absorption register with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx`,
+    download: true,
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx',
+  },
+  {
+    label: '4-sheet workbook (legacy)',
+    description: 'Engineering Excel report with route plan, priority summary, and type summary.',
     href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.xlsx`,
     download: true,
     fileName: 'Kashmir_Route_Frequency_Plan_v3.xlsx',
