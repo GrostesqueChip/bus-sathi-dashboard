@@ -203,14 +203,7 @@ export default function KashmirRouteTable({ routes, selectedRouteKey, onSelectRo
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <p className="text-lg font-black tracking-tight text-slate-950">{route.routeCode || route.newRouteId}</p>
-                      {route.routeCode?.startsWith('TMP-') && (
-                        <span
-                          title="Temporary placeholder code — will be replaced by stops-derived Route_Code in the next data refresh."
-                          className="rounded-full border border-amber-300 bg-amber-50 px-1.5 py-0 text-[9px] font-black uppercase tracking-[0.16em] text-amber-700"
-                        >
-                          temp
-                        </span>
-                      )}
+
                     </div>
                     {route.routeCode && (
                       <p className="text-xs font-bold text-slate-400">Map ID: {route.newRouteId}</p>
