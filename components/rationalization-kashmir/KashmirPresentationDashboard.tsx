@@ -35,7 +35,10 @@ import {
 } from '@/components/rationalization-kashmir/KashmirCards';
 import KashmirRouteTable from '@/components/rationalization-kashmir/KashmirRouteTable';
 import KashmirSourceFiles from '@/components/rationalization-kashmir/KashmirSourceFiles';
+import KashmirBeforeAfter from '@/components/rationalization-kashmir/KashmirBeforeAfter';
 import { getRouteKey, getRouteMapHref, PRIORITY_ORDER } from '@/components/rationalization-kashmir/KashmirRouteUtils';
+
+const NETWORK_MAP_ANCHOR_ID = 'kashmir-network-map';
 
 const KashmirNetworkMap = dynamic(() => import('@/components/rationalization-kashmir/KashmirNetworkMap'), {
   ssr: false,
@@ -232,7 +235,7 @@ export default function KashmirPresentationDashboard({
 
 
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.55fr)_24rem]">
+      <section id={NETWORK_MAP_ANCHOR_ID} className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.55fr)_24rem] scroll-mt-6">
         <div className="space-y-6">
           <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
             <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-5 md:flex-row md:items-center md:justify-between">
@@ -456,6 +459,15 @@ export default function KashmirPresentationDashboard({
           </div>
         </aside>
       </section>
+
+      <KashmirBeforeAfter
+        routes={routes}
+        log={log}
+        summary={summary}
+        selectedRouteKey={selectedRouteKey}
+        onSelectRoute={(route) => setSelectedRouteKey(getRouteKey(route))}
+        mapAnchorId={NETWORK_MAP_ANCHOR_ID}
+      />
 
       <KashmirRouteTable
         routes={routes}
