@@ -94,7 +94,7 @@ export default function KashmirPresentationDashboard({
             <div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
-                  kashmir valley v3.3.4
+                  kashmir valley v3.3.5
                 </span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">
                   {summary.ssclBackboneRoutes} sscl backbone routes
@@ -164,7 +164,7 @@ export default function KashmirPresentationDashboard({
         <KpiCard
           label="Active routes"
           value={formatNumber(summary.activeRoutes)}
-          detail={`${formatNumber(summary.totalRouteRows)} total rows, including ${summary.mergedRoutes} merged records.`}
+          detail={`Rationalised from ${formatNumber(summary.totalRouteRows)} legacy permits — ${summary.mergedRoutes} absorbed into trunk corridors.`}
           icon={GitBranch}
           tone="slate"
         />

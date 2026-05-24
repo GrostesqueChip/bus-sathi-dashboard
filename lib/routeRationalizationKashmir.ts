@@ -323,13 +323,18 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
   const mpvTotal = active.reduce((sum, route) => sum + route.mpvCount, 0);
   const lpvTotal = active.reduce((sum, route) => sum + route.lpvCount, 0);
 
+  const uniqueActiveRoutes = new Set(active.map((route) => route.newRouteId)).size;
+  const uniqueSsclRoutes = new Set(
+    active.filter((route) => route.newRouteId.startsWith('SSCL-')).map((route) => route.newRouteId)
+  ).size;
+
   return {
     totalRouteRows: routes.length,
-    activeRoutes: active.length,
-    trunkRoutes: routes.filter((route) => route.actionTaken.includes('TRUNK') && route.actionTaken !== 'MERGED_INTO_TRUNK').length,
+    activeRoutes: uniqueActiveRoutes,
+    trunkRoutes: active.filter((route) => route.newRouteId.startsWith('TRK-')).length,
     feederRoutes: routes.filter((route) => route.actionTaken.includes('FEEDER')).length,
     mergedRoutes: routes.filter((route) => route.actionTaken === 'MERGED_INTO_TRUNK').length,
-    ssclBackboneRoutes: routes.filter((route) => route.newRouteId.startsWith('SSCL-') && route.actionTaken !== 'MERGED_INTO_TRUNK').length,
+    ssclBackboneRoutes: uniqueSsclRoutes,
     socialObligationRoutes: routes.filter((route) => route.socialFlag).length,
     regionalLifelines: routes.filter((route) => route.routeType === 'Regional_District').length,
     totalFleetRequired,
@@ -394,7 +399,3 @@ export async function getRouteRationalizationKashmirDataset() {
   return datasetPromise;
 }
 
-export function getRouteKashmirMapHref(route: Pick<RationalizedRouteKashmir, 'mapFile' | 'newRouteId'>) {
-  const mapFile = route.mapFile || `route_maps_kashmir/${route.newRouteId}.html`;
-  return `${PUBLIC_ROUTE}/${mapFile}`;
-}
