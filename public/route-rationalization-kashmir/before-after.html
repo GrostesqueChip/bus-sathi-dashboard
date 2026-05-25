@@ -410,6 +410,168 @@
     .delay-4 { animation-delay: 0.4s; }
     .delay-5 { animation-delay: 0.5s; }
     .delay-6 { animation-delay: 0.6s; }
+
+    /* ── Downloads Section ───────────────────────────────────── */
+    .download-section {
+      padding: 1.5rem 0 2rem;
+    }
+    .download-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .download-grid {
+        grid-template-columns: 1.6fr 1fr;
+      }
+    }
+    .download-card-featured {
+      background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(20,184,166,0.06) 100%);
+      border: 2px solid var(--accent-emerald);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(16,185,129,0.1);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .download-card-featured::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .download-card-featured:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(16,185,129,0.15);
+    }
+    .download-card-featured .badge {
+      align-self: flex-start;
+      background: var(--accent-emerald);
+      color: #0a0f1a;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px rgba(16,185,129,0.3);
+    }
+    .download-card-featured h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .download-card-featured p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .btn-download-primary {
+      background: var(--accent-emerald);
+      color: #0a0f1a;
+      border: none;
+      outline: none;
+      padding: 0.85rem 1.75rem;
+      font-size: 0.9rem;
+      font-weight: 750;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+      width: fit-content;
+    }
+    .btn-download-primary:hover {
+      background: #34d399;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+    }
+    .btn-download-primary:active {
+      transform: translateY(0);
+    }
+
+    .download-list-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: 270px;
+      overflow-y: auto;
+    }
+    .download-list-secondary::-webkit-scrollbar {
+      width: 4px;
+    }
+    .download-list-secondary::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .download-list-secondary::-webkit-scrollbar-thumb {
+      background: var(--border-accent);
+      border-radius: 4px;
+    }
+    .download-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+    .download-item:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--border-accent);
+    }
+    .download-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .download-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .download-item-meta {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+    .btn-download-secondary {
+      background: transparent;
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16,185,129,0.3);
+      padding: 0.4rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-download-secondary:hover {
+      background: rgba(16,185,129,0.08);
+      border-color: var(--accent-emerald);
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -464,6 +626,73 @@
       <div class="kpi-label">Coverage</div>
       <div class="kpi-value neutral">10</div>
       <div class="kpi-detail">Districts across Kashmir Valley</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DOWNLOADS & RESOURCES ═══════════════════════ -->
+<div class="container">
+  <div class="download-section fade-in">
+    <div class="section-label">Official Documentation & Data</div>
+    <div class="section-title">Downloads &amp; Resources</div>
+    <div class="section-sub">Access the official workbooks, route files, and operational sheets prepared for the Regional Transport Office (RTO) review.</div>
+    
+    <div class="download-grid">
+      <!-- FEATURED DOWNLOAD: RTO Master Workbook -->
+      <div class="download-card-featured">
+        <div>
+          <span class="badge">RTO Official Submit</span>
+          <h3>RTO Master Route &amp; Operator Plan</h3>
+          <p>This 9-sheet sign-off-ready workbook contains the full frequency plans, passenger demand analysis, and operator absorption registries with buyback cost calibrations.</p>
+        </div>
+        <a href="Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx" download class="btn-download-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download RTO Master Workbook (.xlsx)
+        </a>
+      </div>
+      
+      <!-- OTHER DOWNLOADS -->
+      <div class="download-list-secondary">
+        <div class="download-item">
+          <div class="download-item-info">
+            <span class="download-item-title">Optimised Routes (GeoJSON)</span>
+            <span class="download-item-meta">GIS Map Layer · 1.7 MB</span>
+          </div>
+          <a href="Rationalised_Routes_Kashmir_v3.geojson" download class="btn-download-secondary">Download</a>
+        </div>
+        
+        <div class="download-item">
+          <div class="download-item-info">
+            <span class="download-item-title">Operational Route Plan (CSV)</span>
+            <span class="download-item-meta">Route list, headways & fleet · 124 KB</span>
+          </div>
+          <a href="Rationalised_Routes_Kashmir_v3.csv" download class="btn-download-secondary">Download</a>
+        </div>
+
+        <div class="download-item">
+          <div class="download-item-info">
+            <span class="download-item-title">Passenger Impact Register (CSV)</span>
+            <span class="download-item-meta">Frequency changes & served pop · 19 KB</span>
+          </div>
+          <a href="Passenger_Impact_Kashmir_v3.csv" download class="btn-download-secondary">Download</a>
+        </div>
+
+        <div class="download-item">
+          <div class="download-item-info">
+            <span class="download-item-title">Decision Audit Log (CSV)</span>
+            <span class="download-item-meta">CDI scores & reasoning details · 136 KB</span>
+          </div>
+          <a href="Rationalisation_Log_Kashmir_v3.csv" download class="btn-download-secondary">Download</a>
+        </div>
+
+        <div class="download-item">
+          <div class="download-item-info">
+            <span class="download-item-title">Legacy 4-Sheet Plan (Excel)</span>
+            <span class="download-item-meta">Engineering summary sheet · 52 KB</span>
+          </div>
+          <a href="Kashmir_Route_Frequency_Plan_v3.xlsx" download class="btn-download-secondary">Download</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
