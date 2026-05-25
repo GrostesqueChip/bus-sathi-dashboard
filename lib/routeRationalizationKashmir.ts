@@ -204,6 +204,27 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
   },
+  {
+    label: 'Routes with Sectored Codes (Excel)',
+    description: 'Excel sheet containing routes matched with their corresponding sectored codes.',
+    href: `${PUBLIC_ROUTE}/Routes_with_Codes.xlsx`,
+    download: true,
+    fileName: 'Routes_with_Codes.xlsx',
+  },
+  {
+    label: 'Route Code Generator Script (Python)',
+    description: 'Python script used to match routes with sectored stop codes and generate codes.',
+    href: `${PUBLIC_ROUTE}/generate_route_codes (1).py`,
+    download: true,
+    fileName: 'generate_route_codes (1).py',
+  },
+  {
+    label: 'Sectored Stops Database (CSV)',
+    description: 'Database of stops with their corresponding sector IDs and stop numbers.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Stops_Sectored_V2.csv`,
+    download: true,
+    fileName: 'Kashmir_Stops_Sectored_V2.csv',
+  },
 ];
 
 function toNumber(value: unknown) {
