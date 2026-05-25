@@ -225,6 +225,13 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     download: true,
     fileName: 'Kashmir_Stops_Sectored_V2.csv',
   },
+  {
+    label: 'Formatted Kashmir Routes (Pretty)',
+    description: 'Formatted and styled Excel sheet containing Kashmir routes for submission.',
+    href: `${PUBLIC_ROUTE}/Formatted_Kashmir_Routes_Pretty.xlsx`,
+    download: true,
+    fileName: 'Formatted_Kashmir_Routes_Pretty.xlsx',
+  },
 ];
 
 function toNumber(value: unknown) {

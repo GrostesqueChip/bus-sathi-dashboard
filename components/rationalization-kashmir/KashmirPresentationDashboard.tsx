@@ -185,6 +185,13 @@ export default function KashmirPresentationDashboard({
               <Download size={20} /> Download RTO Master Workbook (.xlsx)
             </a>
             <a
+              href="/route-rationalization-kashmir/Formatted_Kashmir_Routes_Pretty.xlsx"
+              download
+              className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-350"
+            >
+              <Download size={18} className="text-slate-400" /> Pretty Routes (.xlsx)
+            </a>
+            <a
               href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.xlsx"
               download
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-350"
