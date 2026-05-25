@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kashmir Valley Route Rationalisation — Before & After</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0f1a;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --bg-surface: #1e293b;
+      --border: #1e293b;
+      --border-accent: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-emerald: #10b981;
+      --accent-emerald-dim: rgba(16,185,129,0.15);
+      --accent-red: #ef4444;
+      --accent-red-dim: rgba(239,68,68,0.12);
+      --accent-orange: #f97316;
+      --accent-orange-dim: rgba(249,115,22,0.12);
+      --accent-blue: #3b82f6;
+      --accent-blue-dim: rgba(59,130,246,0.12);
+      --accent-violet: #8b5cf6;
+      --accent-violet-dim: rgba(139,92,246,0.12);
+      --accent-teal: #14b8a6;
+      --accent-amber: #f59e0b;
+      --radius-sm: 0.75rem;
+      --radius-md: 1.25rem;
+      --radius-lg: 1.75rem;
+      --radius-xl: 2.25rem;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 4rem 0 3rem;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(16,185,129,0.12), transparent),
+        radial-gradient(ellipse 50% 40% at 85% 80%, rgba(249,115,22,0.10), transparent);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px; padding: 0.4rem 1rem;
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      color: var(--accent-emerald);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900; letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 30%, var(--accent-emerald) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      max-width: 680px; margin: 1rem auto 0;
+      font-size: 1.05rem; font-weight: 500;
+      color: var(--text-secondary); line-height: 1.7;
+    }
+
+    /* ── Toggle ──────────────────────────────────────────────── */
+    .view-toggle-wrap {
+      display: flex; justify-content: center;
+      padding: 1.5rem 0 0.5rem;
+      position: sticky; top: 0; z-index: 1000;
+      background: linear-gradient(to bottom, var(--bg-primary), transparent);
+      padding-bottom: 1.25rem;
+    }
+    .view-toggle {
+      display: inline-flex; gap: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px; padding: 5px;
+    }
+    .view-toggle button {
+      border: none; outline: none; cursor: pointer;
+      font-family: inherit;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.82rem; font-weight: 700;
+      border-radius: 999px;
+      transition: all 0.25s;
+      color: var(--text-muted);
+      background: transparent;
+    }
+    .view-toggle button.active {
+      background: var(--accent-emerald);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+    }
+    .view-toggle button:not(.active):hover {
+      color: var(--text-primary);
+      background: var(--bg-surface);
+    }
+
+    /* ── KPI Strip ───────────────────────────────────────────── */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem; padding: 2rem 0;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.3s, transform 0.25s;
+    }
+    .kpi-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+    .kpi-label {
+      font-size: 0.6rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+    .kpi-value {
+      font-size: 2.2rem; font-weight: 900;
+      margin-top: 0.35rem; line-height: 1;
+    }
+    .kpi-detail {
+      font-size: 0.75rem; font-weight: 500;
+      color: var(--text-secondary); margin-top: 0.5rem;
+    }
+    .kpi-value.before { color: var(--accent-red); }
+    .kpi-value.after { color: var(--accent-emerald); }
+    .kpi-value.neutral { color: var(--accent-blue); }
+
+    /* ── Comparison Section ──────────────────────────────────── */
+    .comparison-section { padding: 1rem 0 2rem; }
+    .section-label {
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--accent-emerald); margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: 1.75rem; font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .section-sub {
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--text-secondary); margin-top: 0.4rem;
+      max-width: 700px;
+    }
+
+    /* ── Map Container ───────────────────────────────────────── */
+    .map-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .map-grid.full { grid-template-columns: 1fr; }
+    .map-panel {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+    .map-panel-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .map-panel-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .map-panel-dot.red { background: var(--accent-red); box-shadow: 0 0 8px rgba(239,68,68,0.4); }
+    .map-panel-dot.green { background: var(--accent-emerald); box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+    .map-panel-title {
+      font-size: 0.85rem; font-weight: 800;
+    }
+    .map-panel-subtitle {
+      font-size: 0.7rem; font-weight: 500;
+      color: var(--text-muted); margin-left: auto;
+    }
+    .map-container { height: 520px; width: 100%; }
+
+    /* ── Legend ───────────────────────────────────────────────── */
+    .legend-strip {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.2);
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .legend-line {
+      width: 24px; height: 3px;
+      border-radius: 2px;
+    }
+
+    /* ── Trunk Merge Cards ───────────────────────────────────── */
+    .merge-section { padding: 2rem 0; }
+    .merge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .merge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.25s;
+    }
+    .merge-card:hover { border-color: var(--accent-emerald); transform: translateY(-3px); }
+    .merge-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(16,185,129,0.06), transparent);
+    }
+    .merge-card-trunk {
+      font-size: 1.35rem; font-weight: 900;
+      color: var(--accent-emerald);
+    }
+    .merge-card-corridor {
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--text-secondary); margin-top: 0.25rem;
+    }
+    .merge-card-stat {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      margin-top: 0.6rem;
+      background: var(--accent-red-dim);
+      color: var(--accent-red);
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+    }
+    .merge-card-body {
+      padding: 1rem 1.5rem;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .merge-card-body::-webkit-scrollbar { width: 4px; }
+    .merge-card-body::-webkit-scrollbar-track { background: transparent; }
+    .merge-card-body::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 4px; }
+    .merge-route-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-size: 0.78rem;
+    }
+    .merge-route-row:last-child { border-bottom: none; }
+    .merge-route-id {
+      font-weight: 800; color: var(--accent-red);
+      min-width: 50px; font-size: 0.7rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .merge-route-name {
+      font-weight: 500; color: var(--text-secondary);
+    }
+    .merge-arrow {
+      color: var(--text-muted); font-size: 0.65rem;
+    }
+
+    /* ── Duplication Table ────────────────────────────────────── */
+    .dup-section { padding: 2rem 0; }
+    .dup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .dup-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      transition: border-color 0.3s;
+    }
+    .dup-bar:hover { border-color: var(--accent-orange); }
+    .dup-bar-name {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .dup-bar-track {
+      margin-top: 0.6rem; height: 8px;
+      background: var(--bg-surface);
+      border-radius: 999px; overflow: hidden;
+    }
+    .dup-bar-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+    .dup-bar-count {
+      margin-top: 0.4rem;
+      font-size: 0.7rem; font-weight: 800;
+      color: var(--accent-orange);
+    }
+
+    /* ── Improvement Banner ──────────────────────────────────── */
+    .improvement-banner {
+      margin: 2rem 0;
+      padding: 2.5rem;
+      background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.06) 100%);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: var(--radius-xl);
+      text-align: center;
+    }
+    .improvement-banner h2 {
+      font-size: 2rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-teal));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .improvement-metrics {
+      display: flex; justify-content: center; gap: 3rem;
+      margin-top: 1.5rem; flex-wrap: wrap;
+    }
+    .imp-metric { text-align: center; }
+    .imp-metric-value {
+      font-size: 2.5rem; font-weight: 900;
+    }
+    .imp-metric-label {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--text-muted); margin-top: 0.25rem;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 3rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    footer p {
+      font-size: 0.75rem; font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* ── Tooltip on map ──────────────────────────────────────── */
+    .leaflet-tooltip {
+      font-family: 'Inter', sans-serif !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      border-radius: 8px !important;
+      padding: 6px 12px !important;
+      border: 1px solid var(--border) !important;
+      background: var(--bg-card) !important;
+      color: var(--text-primary) !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4) !important;
+    }
+    .leaflet-popup-content-wrapper {
+      font-family: 'Inter', sans-serif !important;
+      border-radius: 12px !important;
+      background: var(--bg-card) !important;
+      color: var(--text-primary) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important;
+    }
+    .leaflet-popup-tip { background: var(--bg-card) !important; }
+    .leaflet-popup-content { font-size: 0.8rem; line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .map-grid { grid-template-columns: 1fr; }
+      .map-container { height: 380px; }
+      .improvement-metrics { gap: 1.5rem; }
+      .imp-metric-value { font-size: 1.8rem; }
+    }
+
+    /* ── Slide-in animation ──────────────────────────────────── */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      animation: fadeSlideIn 0.6s ease forwards;
+    }
+    @keyframes fadeSlideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-badge">● Kashmir Valley Transit · v3.3.5</div>
+    <h1>Route Rationalisation<br />Before &amp; After</h1>
+    <p>A data-driven restructuring of 342 legacy bus permits into an optimised 192-route network with trunk-feeder hierarchy, standardised route codes, and demand-based fleet planning.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════ VIEW TOGGLE ═══════════════════════ -->
+<div class="view-toggle-wrap">
+  <div class="view-toggle">
+    <button class="active" onclick="setView('split')">Side by Side</button>
+    <button onclick="setView('before')">Before Only</button>
+    <button onclick="setView('after')">After Only</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ KPI STRIP ═══════════════════════ -->
+<div class="container">
+  <div class="kpi-strip fade-in">
+    <div class="kpi-card">
+      <div class="kpi-label">Old Permits</div>
+      <div class="kpi-value before">342</div>
+      <div class="kpi-detail">Individual bus route permits</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">New Routes</div>
+      <div class="kpi-value after">192</div>
+      <div class="kpi-detail">5 Trunk + 157 Feeder + 30 SSCL</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Reduction</div>
+      <div class="kpi-value after">44%</div>
+      <div class="kpi-detail">Fewer route overlaps</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Duplicates Eliminated</div>
+      <div class="kpi-value before">135</div>
+      <div class="kpi-detail">Merged into trunk corridors</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Worst Duplication</div>
+      <div class="kpi-value before">42×</div>
+      <div class="kpi-detail">Hazratbal ↔ LD permits</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Coverage</div>
+      <div class="kpi-value neutral">10</div>
+      <div class="kpi-detail">Districts across Kashmir Valley</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MAPS ═══════════════════════ -->
+<div class="container comparison-section fade-in delay-1">
+  <div class="section-label">Network Comparison</div>
+  <div class="section-title">Side-by-Side Transit Network</div>
+  <div class="section-sub">Left: the old fragmented network with 342 overlapping permits. Right: the rationalised 192-route network with clear trunk-feeder hierarchy.</div>
+
+  <div class="map-grid" id="mapGrid">
+    <!-- BEFORE MAP -->
+    <div class="map-panel" id="beforePanel">
+      <div class="map-panel-header">
+        <div class="map-panel-dot red"></div>
+        <div class="map-panel-title">Before — 342 Legacy Permits</div>
+        <div class="map-panel-subtitle">Fragmented &amp; duplicated</div>
+      </div>
+      <div class="map-container" id="beforeMap"></div>
+      <div class="legend-strip">
+        <div class="legend-item">
+          <div class="legend-line" style="background:rgba(239,68,68,0.7)"></div>
+          Duplicate permits (same corridor)
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:rgba(249,115,22,0.5)"></div>
+          Overlapping routes
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER MAP -->
+    <div class="map-panel" id="afterPanel">
+      <div class="map-panel-header">
+        <div class="map-panel-dot green"></div>
+        <div class="map-panel-title">After — 192 Optimised Routes</div>
+        <div class="map-panel-subtitle">Structured hierarchy</div>
+      </div>
+      <div class="map-container" id="afterMap"></div>
+      <div class="legend-strip">
+        <div class="legend-item">
+          <div class="legend-line" style="background:#10b981; height:5px;"></div>
+          Trunk (TRK)
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#3b82f6"></div>
+          Feeder (FDR)
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#8b5cf6"></div>
+          SSCL Backbone
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ IMPROVEMENT BANNER ═══════════════════════ -->
+<div class="container">
+  <div class="improvement-banner fade-in delay-2">
+    <h2>Key Improvements</h2>
+    <div class="improvement-metrics">
+      <div class="imp-metric">
+        <div class="imp-metric-value" style="color:var(--accent-emerald)">342 → 192</div>
+        <div class="imp-metric-label">Total Routes</div>
+      </div>
+      <div class="imp-metric">
+        <div class="imp-metric-value" style="color:var(--accent-red)">135</div>
+        <div class="imp-metric-label">Duplicate Permits Eliminated</div>
+      </div>
+      <div class="imp-metric">
+        <div class="imp-metric-value" style="color:var(--accent-blue)">30</div>
+        <div class="imp-metric-label">SSCL E-Bus Backbone Routes</div>
+      </div>
+      <div class="imp-metric">
+        <div class="imp-metric-value" style="color:var(--accent-violet)">12-Char</div>
+        <div class="imp-metric-label">Standardised Route Codes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ TOP DUPLICATES ═══════════════════════ -->
+<div class="container dup-section fade-in delay-3">
+  <div class="section-label">The Problem — Route Duplication</div>
+  <div class="section-title">Most Duplicated Route Permits</div>
+  <div class="section-sub">These corridors had the most duplicate permits — multiple buses running the exact same route independently with no coordination.</div>
+
+  <div class="dup-grid" id="dupGrid"></div>
+</div>
+
+<!-- ═══════════════════════ TRUNK MERGES ═══════════════════════ -->
+<div class="container merge-section fade-in delay-4">
+  <div class="section-label">The Solution — Trunk Consolidation</div>
+  <div class="section-title">Old Permits Merged Into New Trunk Routes</div>
+  <div class="section-sub">Each trunk route replaces dozens of overlapping legacy permits with a single coordinated high-capacity service.</div>
+
+  <div class="merge-grid" id="mergeGrid"></div>
+</div>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <div class="container">
+    <p>Kashmir Valley Route Rationalisation · v3.3.5 · Regional Transport Office, Kashmir</p>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+const TRUNK_MERGES = {
+  'TRK-047': {
+    corridor: 'Soura ↔ LD / Parimpora',
+    code: 'PWSP08091416',
+    routes: [
+      {id:'R0001',name:'SOURA ↔ LD'},{id:'R0016',name:'SOURA ↔ LD'},
+      {id:'R0017',name:'SOURA ↔ LD'},{id:'R0022',name:'SOURA ↔ LD'},
+      {id:'R0026',name:'SOURA ↔ PARIMPORA'},{id:'R0028',name:'SOURA ↔ LD'},
+      {id:'R0034',name:'SORA ↔ PARIMPORA'},{id:'R0037',name:'SOURA ↔ LD'},
+      {id:'R0039',name:'SOURA ↔ LD'},{id:'R0042',name:'SORA ↔ LD'},
+      {id:'R0043',name:'BAGHAT SHORA ↔ LALCHOWK'},{id:'R0048',name:'SOURA ↔ LD'},
+      {id:'R0054',name:'SOURA ↔ PARIMPORA'},{id:'R0056',name:'SOURA ↔ QAMARWARI'},
+      {id:'R0062',name:'SOURA ↔ LD'},{id:'R0188',name:'SOURA ↔ PARIMPORA'},
+      {id:'R0247',name:'SOURA ↔ CHUNTWALIWAR'},{id:'R0254',name:'SOURA ↔ PARIMPORA'},
+      {id:'R0301',name:'SOURA ↔ PARIMPORA'},{id:'R0378',name:'SOURA ↔ LD'},
+      {id:'R0386',name:'SOURA ↔ LD'},{id:'R0391',name:'SOURA ↔ LD'},
+      {id:'R0394',name:'SOURA ↔ LD'},{id:'R0397',name:'SOURA ↔ LD'},
+      {id:'R0398',name:'BAGHAT SHORA ↔ LALCHOWK'},{id:'R0403',name:'SOURA ↔ LD'},
+      {id:'R0404',name:'SOURA ↔ LD'},{id:'R0406',name:'SOURA ↔ LD'},
+      {id:'R0407',name:'BAGHAT SHORA ↔ LALCHOWK'},{id:'R0408',name:'SOURA ↔ LALCHOWK'},
+      {id:'R0410',name:'BAGHAT SHORA ↔ LALCHOWK'},{id:'R0411',name:'SOURA ↔ LALCHOWK'},
+      {id:'R0413',name:'SOURA ↔ LD'},{id:'R0432',name:'SOURA ↔ LD'},
+      {id:'R0434',name:'SOURA ↔ LD'},{id:'R0440',name:'SOURA ↔ LD'},
+      {id:'R0442',name:'SOURA ↔ LD'},{id:'R0443',name:'SOURA ↔ LD'}
+    ]
+  },
+  'TRK-049': {
+    corridor: 'Hazratbal ↔ LD',
+    code: 'SRSP10091816',
+    routes: [
+      {id:'R0020',name:'HAZRATBAL ↔ LD'},{id:'R0066',name:'HAZRATBAL ↔ LD'},
+      {id:'R0067',name:'HAZRATBAL ↔ LD'},{id:'R0150',name:'HAZRATBAL ↔ LD'},
+      {id:'R0151',name:'HAZRATBAL ↔ LD'},{id:'R0167',name:'HAZRATBAL ↔ LD'},
+      {id:'R0169',name:'HAZRATBAL ↔ LD'},{id:'R0171',name:'HAZRATBAL ↔ LD'},
+      {id:'R0172',name:'HAZRATBAL ↔ LD'},{id:'R0173',name:'HAZRATBAL ↔ LD'},
+      {id:'R0181',name:'HAZRATBAL ↔ LD'},{id:'R0182',name:'HAZRATBAL ↔ LD'},
+      {id:'R0184',name:'HAZRATBAL ↔ LD'},{id:'R0190',name:'HAZRATBAL ↔ LD'},
+      {id:'R0201',name:'HAZRATBAL ↔ LD'},{id:'R0203',name:'HAZRATBAL ↔ LD'},
+      {id:'R0212',name:'HAZRATBAL ↔ LD'},{id:'R0216',name:'HAZRATBAL ↔ LD'},
+      {id:'R0217',name:'HAZRATBAL ↔ LD'},{id:'R0221',name:'HAZRATBAL ↔ LD'},
+      {id:'R0223',name:'HAZRATBAL ↔ LD'},{id:'R0225',name:'HAZRATBAL ↔ LD'},
+      {id:'R0228',name:'HAZRATBAL ↔ LD'},{id:'R0241',name:'HAZRATBAL ↔ LD'},
+      {id:'R0242',name:'HAZRATBAL ↔ LD'},{id:'R0260',name:'HAZRATBAL ↔ LD'},
+      {id:'R0261',name:'HAZRATBAL ↔ LD'},{id:'R0265',name:'HAZRATBAL ↔ LD'},
+      {id:'R0277',name:'HAZRATBAL ↔ LD'},{id:'R0296',name:'HAZRATBAL ↔ LD'},
+      {id:'R0299',name:'HAZRATBAL ↔ LD'},{id:'R0300',name:'HAZRATBAL ↔ LD'},
+      {id:'R0316',name:'HAZRATBAL ↔ LD'},{id:'R0339',name:'HAZRATBAL ↔ LD'},
+      {id:'R0349',name:'HAZRATBAL ↔ LD'},{id:'R0355',name:'HAZRATBAL ↔ LD'},
+      {id:'R0356',name:'HAZRATBAL ↔ LD'},{id:'R0358',name:'HAZRATBAL ↔ LD'},
+      {id:'R0360',name:'HAZRATBAL ↔ LD'},{id:'R0369',name:'HAZRATBAL ↔ LD'},
+      {id:'R0387',name:'HAZRATBAL ↔ LD'},{id:'R0409',name:'HAZRATBAL ↔ LD'}
+    ]
+  },
+  'TRK-050': {
+    corridor: 'Safakadal / Parimpora ↔ Jehangir Chowk',
+    code: 'SRSR10104626',
+    routes: [
+      {id:'R0008',name:'LAWAYPORA ↔ JEHANGIR CHOWK'},
+      {id:'R0058',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0059',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0061',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0063',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0097',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0098',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0101',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0102',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0104',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0105',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0124',name:'QAMARWARI ↔ JEHANGIR CHOWK'},
+      {id:'R0130',name:'PARIMPORA ↔ JEHANGIR CHOWK'},
+      {id:'R0143',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0158',name:'GBS ↔ LAL CHOWK'},
+      {id:'R0162',name:'PARIMPORA ↔ JAWAHAIRNAGAR'},
+      {id:'R0170',name:'PARIMPORA ↔ JAWAHIRNAGAR'},
+      {id:'R0174',name:'PARIMPORA ↔ JAWAHIRNAGAR'},
+      {id:'R0177',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0179',name:'PARIMPORA ↔ JAWAHIRNAGAR'},
+      {id:'R0195',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0208',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0211',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0224',name:'PARIMPORA ↔ JAWAHIRNAGAR'},
+      {id:'R0317',name:'LAWAYPORA ↔ JEHANGIR CHOWK'},
+      {id:'R0319',name:'RANGPORA ↔ LALCHOWK'},
+      {id:'R0321',name:'RANGPORA ↔ LALCHOWK'},
+      {id:'R0322',name:'RANGPORA ↔ LALCHOWK'},
+      {id:'R0344',name:'RANGPORA ↔ LALCHOWK'},
+      {id:'R0346',name:'RANGPORA ↔ LALCHOWK'},
+      {id:'R0412',name:'LAWAYPORA ↔ JEHANGIR CHOWK'},
+      {id:'R0436',name:'SAFAKADAL ↔ JEHANGIR CHOWK'},
+      {id:'R0444',name:'PARIMPORA ↔ JAWAHIRNAGAR'},
+      {id:'R0445',name:'SAFAKADAL ↔ JEHANGIR CHOWK'}
+    ]
+  },
+  'TRK-048': {
+    corridor: 'Soura ↔ Hazratbal',
+    code: 'PWSR08101418',
+    routes: [
+      {id:'R0027',name:'SOURA ↔ HAZRATBAL'},{id:'R0041',name:'SOURA ↔ HAZRATBAL'},
+      {id:'R0229',name:'SOURA ↔ HAZRATBAL'},{id:'R0380',name:'SOURA ↔ HAZRATBAL'},
+      {id:'R0381',name:'SOURA ↔ HAZRATBAL'},{id:'R0392',name:'SOURA ↔ HAZRATBAL'},
+      {id:'R0418',name:'SOURA ↔ HAZRATBAL'},{id:'R0427',name:'SOURA ↔ HAZRATBAL'},
+      {id:'R0428',name:'SOURA ↔ HAZRATBAL'},{id:'R0429',name:'SOURA ↔ HAZRATBAL'}
+    ]
+  },
+  'TRK-046': {
+    corridor: 'Jehangir Chowk ↔ Bemina',
+    code: 'SRSR10102510',
+    routes: [
+      {id:'R0175',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0220',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0226',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0236',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0246',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0253',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0282',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0289',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0318',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0324',name:'JEHANGIR CHOWK ↔ BEMINA'},
+      {id:'R0340',name:'JEHANGIR CHOWK ↔ BEMINA'}
+    ]
+  }
+};
+
+const TOP_DUPLICATES = [
+  {name:'HAZRATBAL ↔ LD', count:42},
+  {name:'SOURA ↔ LD', count:23},
+  {name:'SOURA ↔ JEHANGIR CHOWK', count:18},
+  {name:'SAFAKADAL ↔ JEHANGIR CHOWK', count:17},
+  {name:'JEHANGIR CHOWK ↔ HMT', count:13},
+  {name:'JEHANGIR CHOWK ↔ BEMINA', count:12},
+  {name:'SOURA ↔ HAZRATBAL', count:11},
+  {name:'JEHANGIR CHOWK ↔ JVC', count:11},
+  {name:'LALBAZAR ↔ LD', count:10},
+  {name:'JEHANGIR CHOWK ↔ BUDGAM', count:9},
+  {name:'NARBAL ↔ JEHANGIR CHOWK', count:9},
+  {name:'LALBAZAR ↔ PARIMPORA', count:9}
+];
+
+const MAX_DUP = 42;
+
+// ═══════════════════════ MAPS ═══════════════════════
+const BOUNDS = [[33.85, 74.50], [34.42, 75.15]];
+const CENTER = [34.08, 74.80];
+const TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const TILES_ATTR = '&copy; <a href="https://carto.com/">CARTO</a>';
+
+let beforeMap, afterMap;
+let geojsonData = null;
+
+async function initMaps() {
+  // BEFORE MAP
+  beforeMap = L.map('beforeMap', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView(CENTER, 12);
+  L.tileLayer(TILES, { attribution: TILES_ATTR, maxZoom: 18 }).addTo(beforeMap);
+  L.control.zoom({ position: 'topright' }).addTo(beforeMap);
+
+  // AFTER MAP
+  afterMap = L.map('afterMap', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView(CENTER, 12);
+  L.tileLayer(TILES, { attribution: TILES_ATTR, maxZoom: 18 }).addTo(afterMap);
+  L.control.zoom({ position: 'topright' }).addTo(afterMap);
+
+  // Sync maps
+  beforeMap.on('move', () => {
+    afterMap.setView(beforeMap.getCenter(), beforeMap.getZoom(), { animate: false });
+  });
+  afterMap.on('move', () => {
+    beforeMap.setView(afterMap.getCenter(), afterMap.getZoom(), { animate: false });
+  });
+
+  // Load GeoJSON
+  try {
+    const resp = await fetch('Rationalised_Routes_Kashmir_v3.geojson');
+    geojsonData = await resp.json();
+    renderBeforeMap(geojsonData);
+    renderAfterMap(geojsonData);
+  } catch(e) {
+    console.error('Failed to load GeoJSON:', e);
+  }
+}
+
+function renderBeforeMap(geojson) {
+  // For "before": render ALL routes in red/orange with high opacity overlap to show chaos
+  const features = geojson.features;
+
+  // Simulate duplication: render each route multiple times based on how many old permits it replaced
+  features.forEach(f => {
+    const action = f.properties.Action_Taken;
+    const id = f.properties.New_Route_ID;
+    let duplicates = 1;
+
+    // Show merged routes with visual duplication (offset lines)
+    if (id.startsWith('TRK')) {
+      // Trunk routes had many duplicates
+      const trunkData = TRUNK_MERGES[id];
+      duplicates = trunkData ? trunkData.routes.length : 5;
+    }
+
+    const coords = f.geometry.coordinates.map(c => [c[1], c[0]]);
+
+    // Draw the base route and offset copies to simulate the messy old network
+    for (let i = 0; i < Math.min(duplicates, 20); i++) {
+      const offset = (i - duplicates/2) * 0.0003;
+      const offsetCoords = coords.map(c => [c[0] + offset * (Math.random()-0.3), c[1] + offset * (Math.random()-0.3)]);
+
+      const line = L.polyline(offsetCoords, {
+        color: i === 0 ? '#ef4444' : '#f97316',
+        weight: i === 0 ? 2.5 : 1.5,
+        opacity: i === 0 ? 0.7 : 0.25 + Math.random() * 0.2,
+        dashArray: i > 0 ? '4 6' : null
+      });
+
+      if (i === 0 && id.startsWith('TRK')) {
+        const trunkData = TRUNK_MERGES[id];
+        line.bindPopup(`
+          <div style="min-width:200px">
+            <div style="font-weight:800;color:#ef4444;font-size:0.85rem">${trunkData ? trunkData.routes.length : '?'} duplicate permits</div>
+            <div style="font-weight:600;margin-top:4px">${f.properties.Route_Name}</div>
+            <div style="color:#94a3b8;font-size:0.75rem;margin-top:4px">All running the same corridor independently</div>
+          </div>
+        `);
+      }
+      line.addTo(beforeMap);
+    }
+
+    // Non-trunk routes shown once
+    if (!id.startsWith('TRK')) {
+      const line = L.polyline(coords, {
+        color: '#f97316',
+        weight: 1.5,
+        opacity: 0.3
+      });
+      line.addTo(beforeMap);
+    }
+  });
+}
+
+function renderAfterMap(geojson) {
+  const colorMap = {
+    'TRK': '#10b981',
+    'FDR': '#3b82f6',
+    'SSCL': '#8b5cf6'
+  };
+  const weightMap = {
+    'TRK': 4.5,
+    'FDR': 2,
+    'SSCL': 3
+  };
+
+  geojson.features.forEach(f => {
+    const id = f.properties.New_Route_ID;
+    const prefix = id.split('-')[0];
+    const coords = f.geometry.coordinates.map(c => [c[1], c[0]]);
+    const color = colorMap[prefix] || '#64748b';
+    const weight = weightMap[prefix] || 2;
+
+    const line = L.polyline(coords, {
+      color: color,
+      weight: weight,
+      opacity: prefix === 'TRK' ? 0.9 : prefix === 'SSCL' ? 0.75 : 0.5
+    });
+
+    const priorityLabel = f.properties.Priority_Band || '';
+    const headway = f.properties.Headway_Min || '';
+    const fleet = f.properties.Fleet_Required || '';
+    const code = f.properties.Route_Code || '';
+
+    line.bindPopup(`
+      <div style="min-width:220px">
+        <div style="font-weight:900;color:${color};font-size:1rem">${id}</div>
+        <div style="font-weight:600;margin-top:4px">${f.properties.Route_Name}</div>
+        ${code ? `<div style="color:#64748b;font-size:0.72rem;margin-top:2px;font-family:monospace">${code}</div>` : ''}
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <span style="background:rgba(16,185,129,0.15);color:#10b981;padding:2px 8px;border-radius:6px;font-size:0.7rem;font-weight:700">${prefix}</span>
+          ${priorityLabel ? `<span style="background:rgba(59,130,246,0.15);color:#3b82f6;padding:2px 8px;border-radius:6px;font-size:0.7rem;font-weight:700">${priorityLabel}</span>` : ''}
+        </div>
+        ${headway ? `<div style="color:#94a3b8;font-size:0.75rem;margin-top:6px">Every ${headway} min · ${fleet} buses · ${f.properties.Route_KM || '?'} km</div>` : ''}
+      </div>
+    `);
+
+    line.bindTooltip(id, { sticky: true, direction: 'top', offset: [0, -6] });
+    line.addTo(afterMap);
+  });
+}
+
+// ═══════════════════════ VIEW TOGGLE ═══════════════════════
+function setView(mode) {
+  const grid = document.getElementById('mapGrid');
+  const before = document.getElementById('beforePanel');
+  const after = document.getElementById('afterPanel');
+  const btns = document.querySelectorAll('.view-toggle button');
+  btns.forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  if (mode === 'split') {
+    grid.classList.remove('full');
+    before.style.display = '';
+    after.style.display = '';
+  } else if (mode === 'before') {
+    grid.classList.add('full');
+    before.style.display = '';
+    after.style.display = 'none';
+  } else {
+    grid.classList.add('full');
+    before.style.display = 'none';
+    after.style.display = '';
+  }
+
+  setTimeout(() => {
+    beforeMap.invalidateSize();
+    afterMap.invalidateSize();
+  }, 100);
+}
+
+// ═══════════════════════ RENDER DUPLICATION BARS ═══════════════════════
+function renderDuplicates() {
+  const grid = document.getElementById('dupGrid');
+  const colors = ['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#14b8a6','#06b6d4','#3b82f6','#6366f1','#8b5cf6','#a855f7'];
+
+  TOP_DUPLICATES.forEach((d, i) => {
+    const pct = (d.count / MAX_DUP * 100).toFixed(0);
+    const c = colors[i % colors.length];
+    grid.innerHTML += `
+      <div class="dup-bar">
+        <div class="dup-bar-name">${d.name}</div>
+        <div class="dup-bar-track">
+          <div class="dup-bar-fill" style="width:${pct}%;background:${c}"></div>
+        </div>
+        <div class="dup-bar-count">${d.count} duplicate permits</div>
+      </div>
+    `;
+  });
+}
+
+// ═══════════════════════ RENDER MERGE CARDS ═══════════════════════
+function renderMergeCards() {
+  const grid = document.getElementById('mergeGrid');
+
+  Object.entries(TRUNK_MERGES).forEach(([trunkId, data]) => {
+    const routeRows = data.routes.map(r =>
+      `<div class="merge-route-row">
+        <span class="merge-route-id">${r.id}</span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-route-name">${r.name}</span>
+      </div>`
+    ).join('');
+
+    grid.innerHTML += `
+      <div class="merge-card">
+        <div class="merge-card-header">
+          <div class="merge-card-trunk">${trunkId}</div>
+          <div class="merge-card-corridor">${data.corridor}</div>
+          <div style="font-family:monospace;font-size:0.7rem;color:#64748b;margin-top:0.2rem">${data.code}</div>
+          <div class="merge-card-stat">${data.routes.length} old permits → 1 trunk</div>
+        </div>
+        <div class="merge-card-body">
+          ${routeRows}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initMaps();
+  renderDuplicates();
+  renderMergeCards();
+});
+</script>
+</body>
+</html>

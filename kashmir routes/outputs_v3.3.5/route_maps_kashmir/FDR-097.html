@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Route FDR-097 — Kashmir Transit</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f5f7fa}
+  #sidebar{width:360px;min-width:280px;height:100vh;overflow-y:auto;background:#fff;
+            border-right:1px solid #e0e4ea;display:flex;flex-direction:column}
+  #map{flex:1;height:100vh}
+  .header{background:#00695C;color:#fff;padding:14px 16px}
+  .header h2{font-size:17px;font-weight:700;margin-bottom:2px}
+  .header .sub{font-size:11px;opacity:0.85}
+  .badges{padding:8px 16px;background:#f8f9fb;border-bottom:1px solid #e8eaed;display:flex;flex-wrap:wrap;gap:4px}
+  .badge{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;color:#fff}
+  .section{padding:12px 16px;border-bottom:1px solid #f0f2f5}
+  .section h3{font-size:11px;font-weight:700;text-transform:uppercase;color:#9aa;letter-spacing:.05em;margin-bottom:8px}
+  .kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .kv .k{color:#666;font-size:12px}
+  .kv .v{font-size:12px;font-weight:600;color:#222;text-align:right;max-width:60%}
+  .terminal-box{background:#f8f9fb;border-radius:6px;padding:8px 10px;margin-bottom:6px}
+  .terminal-box .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .terminal-box .value{font-size:13px;font-weight:700}
+  .via-list{list-style:none;padding:0}
+  .via-list li{font-size:11px;color:#444;padding:2px 0;border-bottom:1px dotted #e8eaed}
+  .via-list li::before{content:"• ";color:#5C6BC0}
+  .poi-table{width:100%;border-collapse:collapse}
+  .pop-bar-bg{background:#e8eaed;border-radius:4px;height:8px;margin-top:4px}
+  .pop-bar{background:#00695C;border-radius:4px;height:8px}
+  .score-row{display:flex;gap:8px;margin-bottom:4px}
+  .score-box{flex:1;background:#f8f9fb;border-radius:6px;padding:6px 8px;text-align:center}
+  .score-box .sv{font-size:15px;font-weight:700}
+  .score-box .sk{font-size:9px;color:#888;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div class="header">
+    <div class="sub">Kashmir Valley Transit — Route Detail</div>
+    <h2>FDR-097</h2>
+    <div style="font-size:12px;opacity:0.9;margin-top:2px">SRINAGAR to SHANGLIPORA</div>
+  </div>
+  <div class="badges">
+    <span class="badge" style="background:#00695C">RETAINED AS FEEDER</span>
+    <span class="badge" style="background:#E65100">MP Priority</span>
+    <span class="badge" style="background:#37474F">Regional District</span>
+    
+    
+  </div>
+
+  <div class="section">
+    <h3>Terminals</h3>
+    <div class="terminal-box" style="border-left:4px solid #1B5E20">
+      <div class="label" style="color:#1B5E20">&#9650; Origin / Start</div>
+      <div class="value">SRINAGAR</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.08570, 74.80530</div>
+    </div>
+    <div class="terminal-box" style="border-left:4px solid #B71C1C">
+      <div class="label" style="color:#B71C1C">&#9660; Destination / End</div>
+      <div class="value">SHANGLIPORA</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.11244, 74.77088</div>
+    </div>
+    
+  </div>
+
+  <div class="section">
+    <h3>Area &amp; Zone</h3>
+    <div class="kv"><span class="k">Congestion Zone</span><span class="v">City Core</span></div>
+    <div class="kv"><span class="k">Route Type</span><span class="v">Regional District</span></div>
+    <div class="kv"><span class="k">Route Length</span><span class="v">5.4 km</span></div>
+    <div class="kv"><span class="k">Est. Stops</span><span class="v">10</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Population Served</h3>
+    <div class="kv"><span class="k">Residents within walkshed</span><span class="v" style="color:#00695C">193</span></div>
+    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#00695C">2.62%</span></div>
+    <div class="pop-bar-bg"><div class="pop-bar" style="width:10.5%"></div></div>
+  </div>
+
+  <div class="section">
+    <h3>Service Plan</h3>
+    <div class="kv"><span class="k">Headway</span><span class="v">45 min</span></div>
+    <div class="kv"><span class="k">Cycle Time</span><span class="v">16.2 min</span></div>
+    <div class="kv"><span class="k">Fleet Required</span><span class="v">2 buses</span></div>
+    <div class="kv"><span class="k">HPV (12m)</span><span class="v">1</span></div>
+    <div class="kv"><span class="k">MPV (9m)</span><span class="v">1</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Demand Scores</h3>
+    <div class="score-row">
+      <div class="score-box"><div class="sv" style="color:#1565C0">0.723</div><div class="sk">Pop Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#E65100">0.330</div><div class="sk">POI Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#1B5E20">0.5267</div><div class="sk">Final CDI</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>POIs Covered (30)</h3>
+    <table class='poi-table'><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Astaan Syed Ashbab Saheb</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Balas Store</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Batyar Mandir</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Best Buy Departmental Store</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Brothers Departmental Store</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Bulbul Lankar Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> D3 Super Mart</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Dr. Naseer's Unani & Panchkarma Hospital</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> GMC Srinagar</td><td style="padding:2px 6px;font-size:10px;color:#666">gmc_srinagar</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Government Super Speciality Hospital</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Khaleel Stores</td><td style="padding:2px 6px;font-size:10px;color:#666">supermarket</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Latter Masjid Sharief Safakadal</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Maidan Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Abu Bakr</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Hanfi</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Hanfiya Jamia Awal Owaisi</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Jamia Ahlihadees</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Jamia Ahlihadees Zaldagar</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Khairuz Zamaan</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Hanfia Jamia</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Jamallata Chowk</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Safakadal</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Sekidafar Chowk</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Shah Mohalla</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Zaldagar</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Medical College Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Mehboob Ul Alam Masjid (Tengpora Masjid)</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Niyamat Departmental Store</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Pandit General Store</td><td style="padding:2px 6px;font-size:10px;color:#666">supermarket</td></tr></table>
+  </div>
+</div>
+
+<div id="map"></div>
+<script>
+var map = L.map('map').setView([34.09859003783784, 74.78599339459458], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 18}).addTo(map);
+
+var coords = [[34.085697, 74.8053], [34.085783, 74.805324], [34.086132, 74.805435], [34.08622, 74.804836], [34.086756, 74.804984], [34.08696, 74.805019], [34.087037, 74.80502], [34.087098, 74.805004], [34.087249, 74.804931], [34.087587, 74.804705], [34.087537, 74.804526], [34.087478, 74.804227], [34.087418, 74.803828], [34.087364, 74.803541], [34.087351, 74.803474], [34.087293, 74.803122], [34.087227, 74.8028], [34.087202, 74.802723], [34.087102, 74.802369], [34.087081, 74.802303], [34.087051, 74.802246], [34.086982, 74.802097], [34.086827, 74.801891], [34.086717, 74.801652], [34.086638, 74.80127], [34.087049, 74.801297], [34.087712, 74.801264], [34.087766, 74.801261], [34.087902, 74.801254], [34.088497, 74.801316], [34.088775, 74.801322], [34.088982, 74.80127], [34.089296, 74.801218], [34.089538, 74.80114], [34.089586, 74.801115], [34.089895, 74.80094], [34.090117, 74.800962], [34.090286, 74.80093], [34.090482, 74.800859], [34.090536, 74.800807], [34.090834, 74.800695], [34.091244, 74.800533], [34.091699, 74.80036], [34.092436, 74.800222], [34.092702, 74.800065], [34.092874, 74.799895], [34.09292, 74.799861], [34.092957, 74.799843], [34.093022, 74.799826], [34.093075, 74.7998], [34.093335, 74.799691], [34.093811, 74.799502], [34.094213, 74.799318], [34.094583, 74.799091], [34.09472, 74.799007], [34.095267, 74.798706], [34.095493, 74.7986], [34.09558, 74.798561], [34.095815, 74.798456], [34.095663, 74.798131], [34.095324, 74.797446], [34.095104, 74.796613], [34.095071, 74.796489], [34.095021, 74.796301], [34.09493, 74.795814], [34.094888, 74.795367], [34.094929, 74.795087], [34.095077, 74.794442], [34.095181, 74.794025], [34.095418, 74.792709], [34.095441, 74.79248], [34.095467, 74.791876], [34.09547, 74.791796], [34.095473, 74.790664], [34.095474, 74.790195], [34.095501, 74.789847], [34.095593, 74.789313], [34.095679, 74.788805], [34.095709, 74.787965], [34.095745, 74.78733], [34.095756, 74.787239], [34.095812, 74.786767], [34.095897, 74.786266], [34.095944, 74.78595], [34.095959, 74.785363], [34.096044, 74.784802], [34.096156, 74.784421], [34.096235, 74.784153], [34.096264, 74.783919], [34.096253, 74.783768], [34.096201, 74.783661], [34.096264, 74.783584], [34.096371, 74.783388], [34.096815, 74.782723], [34.097379, 74.781973], [34.097424, 74.781913], [34.097503, 74.781822], [34.09751, 74.781812], [34.097981, 74.781071], [34.098236, 74.780586], [34.098725, 74.77977], [34.098821, 74.779622], [34.099022, 74.779436], [34.099155, 74.779313], [34.099249, 74.779225], [34.099738, 74.778915], [34.10008, 74.778697], [34.100102, 74.778688], [34.100371, 74.778582], [34.100582, 74.778517], [34.100802, 74.77848], [34.100879, 74.778445], [34.10108, 74.778295], [34.101598, 74.777929], [34.101862, 74.777714], [34.10189, 74.777666], [34.101921, 74.777601], [34.101986, 74.777314], [34.10212, 74.777059], [34.102167, 74.777015], [34.102217, 74.776975], [34.102495, 74.776823], [34.102543, 74.776803], [34.102749, 74.77675], [34.102792, 74.776733], [34.102833, 74.776698], [34.102969, 74.77654], [34.103073, 74.776422], [34.103731, 74.775591], [34.103916, 74.775376], [34.104201, 74.77489], [34.104263, 74.774824], [34.104373, 74.774737], [34.104437, 74.774695], [34.104679, 74.774641], [34.104746, 74.774615], [34.104839, 74.774541], [34.105024, 74.774346], [34.105557, 74.773804], [34.105766, 74.773591], [34.106092, 74.773151], [34.10633, 74.772807], [34.106645, 74.772201], [34.106756, 74.772048], [34.106795, 74.772017], [34.10685, 74.771984], [34.107023, 74.771926], [34.107148, 74.771819], [34.107196, 74.771759], [34.107388, 74.771484], [34.107712, 74.771052], [34.107933, 74.770969], [34.108004, 74.770945], [34.108079, 74.770929], [34.10833, 74.770919], [34.108366, 74.770921], [34.108534, 74.770901], [34.108687, 74.770861], [34.108752, 74.770863], [34.108806, 74.77087], [34.109149, 74.77098], [34.109268, 74.770979], [34.109508, 74.77093], [34.10973, 74.770889], [34.10987, 74.770883], [34.109901, 74.770878], [34.109954, 74.770869], [34.110135, 74.770838], [34.110318, 74.770806], [34.110761, 74.770786], [34.110977, 74.770776], [34.111093, 74.77077], [34.111381, 74.770768], [34.111621, 74.770767], [34.111742, 74.770763], [34.112022, 74.770789], [34.112102, 74.770804], [34.11214, 74.770814], [34.112168, 74.770833], [34.112183, 74.770857], [34.112195, 74.770874], [34.112205, 74.770882], [34.112217, 74.770888], [34.112354, 74.770884], [34.112436, 74.770877]];
+var line = L.polyline(coords, {color: '#00695C', weight: 5, opacity: 0.9}).addTo(map);
+map.fitBounds(line.getBounds(), {padding: [30, 30]});
+
+// Start marker
+var startIcon = L.divIcon({
+  html: '<div style="background:#1B5E20;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">S</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[0], {icon: startIcon}).addTo(map)
+  .bindPopup('<b>START</b><br>SRINAGAR');
+
+// End marker
+var endIcon = L.divIcon({
+  html: '<div style="background:#B71C1C;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">E</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map)
+  .bindPopup('<b>END</b><br>SHANGLIPORA');
+
+// Via points
+var viaCoords = [];
+viaCoords.forEach(function(pt, i) {
+  var viaIcon = L.divIcon({
+    html: '<div style="background:#5C6BC0;color:#fff;border-radius:50%;width:10px;height:10px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
+    iconSize: [10, 10], iconAnchor: [5, 5], className: ''
+  });
+  L.marker(pt, {icon: viaIcon}).addTo(map).bindPopup('Via point ' + (i+1));
+});
+</script>
+<div style="position:fixed;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.85);border:1px solid #ccc;border-radius:4px;padding:3px 10px;font-size:10px;color:#666;z-index:9999;pointer-events:none;white-space:nowrap">
+  &#9888; Open-source global tiles (OpenStreetMap/CartoDB) — may not reflect India's official political boundaries
+</div>
+</body>
+</html>

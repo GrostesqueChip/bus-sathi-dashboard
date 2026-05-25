@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Route SSCL-22 — Kashmir Transit</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f5f7fa}
+  #sidebar{width:360px;min-width:280px;height:100vh;overflow-y:auto;background:#fff;
+            border-right:1px solid #e0e4ea;display:flex;flex-direction:column}
+  #map{flex:1;height:100vh}
+  .header{background:#1A237E;color:#fff;padding:14px 16px}
+  .header h2{font-size:17px;font-weight:700;margin-bottom:2px}
+  .header .sub{font-size:11px;opacity:0.85}
+  .badges{padding:8px 16px;background:#f8f9fb;border-bottom:1px solid #e8eaed;display:flex;flex-wrap:wrap;gap:4px}
+  .badge{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;color:#fff}
+  .section{padding:12px 16px;border-bottom:1px solid #f0f2f5}
+  .section h3{font-size:11px;font-weight:700;text-transform:uppercase;color:#9aa;letter-spacing:.05em;margin-bottom:8px}
+  .kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .kv .k{color:#666;font-size:12px}
+  .kv .v{font-size:12px;font-weight:600;color:#222;text-align:right;max-width:60%}
+  .terminal-box{background:#f8f9fb;border-radius:6px;padding:8px 10px;margin-bottom:6px}
+  .terminal-box .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .terminal-box .value{font-size:13px;font-weight:700}
+  .via-list{list-style:none;padding:0}
+  .via-list li{font-size:11px;color:#444;padding:2px 0;border-bottom:1px dotted #e8eaed}
+  .via-list li::before{content:"• ";color:#5C6BC0}
+  .poi-table{width:100%;border-collapse:collapse}
+  .pop-bar-bg{background:#e8eaed;border-radius:4px;height:8px;margin-top:4px}
+  .pop-bar{background:#1A237E;border-radius:4px;height:8px}
+  .score-row{display:flex;gap:8px;margin-bottom:4px}
+  .score-box{flex:1;background:#f8f9fb;border-radius:6px;padding:6px 8px;text-align:center}
+  .score-box .sv{font-size:15px;font-weight:700}
+  .score-box .sk{font-size:9px;color:#888;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div class="header">
+    <div class="sub">Kashmir Valley Transit — Route Detail</div>
+    <h2>SSCL-22</h2>
+    <div style="font-size:12px;opacity:0.9;margin-top:2px">Batamaloo to Khrew Bus Stand</div>
+  </div>
+  <div class="badges">
+    <span class="badge" style="background:#1A237E">UPGRADED TO TRUNK</span>
+    <span class="badge" style="background:#1B5E20">HP Priority</span>
+    <span class="badge" style="background:#37474F">Peri Urban</span>
+    <span class='badge' style='background:#6A1B9A'>SSCL SSCL-22</span>
+    
+  </div>
+
+  <div class="section">
+    <h3>Terminals</h3>
+    <div class="terminal-box" style="border-left:4px solid #1B5E20">
+      <div class="label" style="color:#1B5E20">&#9650; Origin / Start</div>
+      <div class="value">34.0687, 74.7796</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.06871, 74.77963</div>
+    </div>
+    <div class="terminal-box" style="border-left:4px solid #B71C1C">
+      <div class="label" style="color:#B71C1C">&#9660; Destination / End</div>
+      <div class="value">34.0403, 74.9268</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.04028, 74.92678</div>
+    </div>
+    
+  </div>
+
+  <div class="section">
+    <h3>Area &amp; Zone</h3>
+    <div class="kv"><span class="k">Congestion Zone</span><span class="v">Peri Urban</span></div>
+    <div class="kv"><span class="k">Route Type</span><span class="v">Peri Urban</span></div>
+    <div class="kv"><span class="k">Route Length</span><span class="v">18.2 km</span></div>
+    <div class="kv"><span class="k">Est. Stops</span><span class="v">36</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Population Served</h3>
+    <div class="kv"><span class="k">Residents within walkshed</span><span class="v" style="color:#1A237E">2,855</span></div>
+    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#1A237E">5.85%</span></div>
+    <div class="pop-bar-bg"><div class="pop-bar" style="width:23.4%"></div></div>
+  </div>
+
+  <div class="section">
+    <h3>Service Plan</h3>
+    <div class="kv"><span class="k">Headway</span><span class="v">15 min</span></div>
+    <div class="kv"><span class="k">Cycle Time</span><span class="v">90.9 min</span></div>
+    <div class="kv"><span class="k">Fleet Required</span><span class="v">9 buses</span></div>
+    <div class="kv"><span class="k">HPV (12m)</span><span class="v">0</span></div>
+    <div class="kv"><span class="k">MPV (9m)</span><span class="v">9</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Demand Scores</h3>
+    <div class="score-row">
+      <div class="score-box"><div class="sv" style="color:#1565C0">0.388</div><div class="sk">Pop Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#E65100">0.107</div><div class="sk">POI Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#1B5E20">0.2479</div><div class="sk">Final CDI</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>POIs Covered (30)</h3>
+    <table class='poi-table'><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> 7 Square Mall</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> 7/11 Departmental Store</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Aamina Hospital And Nursing Home</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Ahmed Hospital and Nursing Homes</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Al-Ameen Charitable Hospital And Nursing Home</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Al-Azhar Group</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Chinar Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Classic Hospital and Diagnostic Center</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Daily Needs Mart</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Hanfia Jamia Masjid</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Hop and Shop</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Iqbal Memorial Shopping Mall</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Jamia Masjid Goripora</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Jamia Masjid Gulshan Nagar</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Jamia Masjid Sanat Nagar</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> M.Y Shopping Complex</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Abu Bakr</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Bilal</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Dar Ul Huda Panthachoek</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Hanfia Lal Nagar Chanpora</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Hasan</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Jami Ahli Hadees</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Salafia</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Hamdaan</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid Sharief Wanbal</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Masjid i Ibrahim</td><td style="padding:2px 6px;font-size:10px;color:#666">jamia_masjid</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> MedStar Medical Centre</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Mubarak Hospital</td><td style="padding:2px 6px;font-size:10px;color:#666">hospital</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> SM Traders</td><td style="padding:2px 6px;font-size:10px;color:#666">supermarket</td></tr><tr><td style="padding:2px 6px;font-size:11px"><span style="background:#D32F2F;color:#fff;border-radius:3px;padding:0 4px;font-size:9px">Tier 1</span> Shah Sons Group</td><td style="padding:2px 6px;font-size:10px;color:#666">mall</td></tr></table>
+  </div>
+</div>
+
+<div id="map"></div>
+<script>
+var map = L.map('map').setView([34.03918209245742, 74.84994866666666], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 18}).addTo(map);
+
+var coords = [[34.068715, 74.779627], [34.068955, 74.780136], [34.069017, 74.780238], [34.06908, 74.78027], [34.069175, 74.780244], [34.069224, 74.780256], [34.069298, 74.78034], [34.069388, 74.780517], [34.06946, 74.78068], [34.069015, 74.780937], [34.069171, 74.781235], [34.068838, 74.781721], [34.068688, 74.78199], [34.06847, 74.782321], [34.068418, 74.782398], [34.068091, 74.782113], [34.06753, 74.781612], [34.067047, 74.781182], [34.066623, 74.780823], [34.066185, 74.780434], [34.066146, 74.780397], [34.065293, 74.779599], [34.065192, 74.779496], [34.064887, 74.78034], [34.064552, 74.781262], [34.064446, 74.78161], [34.064306, 74.782017], [34.064197, 74.782253], [34.064077, 74.782514], [34.063941, 74.782786], [34.063784, 74.783079], [34.063469, 74.783622], [34.063377, 74.783736], [34.063093, 74.784047], [34.062875, 74.784277], [34.062558, 74.784569], [34.062493, 74.784628], [34.062466, 74.784654], [34.062199, 74.784906], [34.061922, 74.78513], [34.061725, 74.785281], [34.061554, 74.785397], [34.061408, 74.78549], [34.061209, 74.7856], [34.06106, 74.785674], [34.060943, 74.785723], [34.060773, 74.785782], [34.060519, 74.785857], [34.060296, 74.785911], [34.059983, 74.785994], [34.059533, 74.786135], [34.059135, 74.786256], [34.058715, 74.786372], [34.058492, 74.786425], [34.058294, 74.786472], [34.058122, 74.786519], [34.057945, 74.786566], [34.057095, 74.786765], [34.056195, 74.786937], [34.055171, 74.787141], [34.05468, 74.7872], [34.052567, 74.787455], [34.052264, 74.787498], [34.049803, 74.787982], [34.047941, 74.788381], [34.047308, 74.788499], [34.045972, 74.788741], [34.045446, 74.788857], [34.044612, 74.789042], [34.044132, 74.789115], [34.043616, 74.789214], [34.042896, 74.789352], [34.04221, 74.789462], [34.04198, 74.789508], [34.040707, 74.789769], [34.040014, 74.789917], [34.039449, 74.790026], [34.038376, 74.790268], [34.037476, 74.790416], [34.036882, 74.790534], [34.036486, 74.790614], [34.035994, 74.790726], [34.035408, 74.790869], [34.034869, 74.791004], [34.034595, 74.791081], [34.034345, 74.791154], [34.034155, 74.79122], [34.033955, 74.791312], [34.033748, 74.791424], [34.033106, 74.791792], [34.032838, 74.791953], [34.032629, 74.792111], [34.032438, 74.792269], [34.032232, 74.792458], [34.032041, 74.792638], [34.031891, 74.792794], [34.031533, 74.79319], [34.031312, 74.793496], [34.0311, 74.793806], [34.030986, 74.793984], [34.030857, 74.794197], [34.030752, 74.794407], [34.03067, 74.794565], [34.030506, 74.794917], [34.030321, 74.795351], [34.029989, 74.796134], [34.029718, 74.796797], [34.02946, 74.797432], [34.02934, 74.797715], [34.029149, 74.798197], [34.029112, 74.798284], [34.028909, 74.798814], [34.028723, 74.799298], [34.028587, 74.799656], [34.028429, 74.800049], [34.028194, 74.800631], [34.028081, 74.800911], [34.027984, 74.801166], [34.027863, 74.801513], [34.02776, 74.801794], [34.027662, 74.802057], [34.027437, 74.802604], [34.027227, 74.803142], [34.026834, 74.804161], [34.026747, 74.80441], [34.026663, 74.80467], [34.026476, 74.805192], [34.026234, 74.805904], [34.02597, 74.806657], [34.025783, 74.807177], [34.025472, 74.808046], [34.025267, 74.80859], [34.025115, 74.808955], [34.024992, 74.80925], [34.024873, 74.809498], [34.024723, 74.809814], [34.024603, 74.810064], [34.024514, 74.810278], [34.024439, 74.81051], [34.024354, 74.810819], [34.024272, 74.811147], [34.024205, 74.811507], [34.024148, 74.81188], [34.024118, 74.812181], [34.0241, 74.812508], [34.024102, 74.812859], [34.024104, 74.813311], [34.02412, 74.81363], [34.024144, 74.813895], [34.024176, 74.814118], [34.024219, 74.814321], [34.024309, 74.814666], [34.024372, 74.8149], [34.024723, 74.816343], [34.025081, 74.817713], [34.025375, 74.818811], [34.025772, 74.820388], [34.025861, 74.820745], [34.02597, 74.821179], [34.026071, 74.821578], [34.026259, 74.82231], [34.026493, 74.823233], [34.0266, 74.82364], [34.02676, 74.824255], [34.026893, 74.824734], [34.026977, 74.825082], [34.027058, 74.825408], [34.027207, 74.826018], [34.027371, 74.826662], [34.027461, 74.82702], [34.027546, 74.827361], [34.02776, 74.828197], [34.027955, 74.828946], [34.028171, 74.829831], [34.02823, 74.830071], [34.028314, 74.830479], [34.028353, 74.830608], [34.028453, 74.831], [34.028523, 74.831276], [34.028619, 74.83168], [34.028851, 74.832653], [34.029181, 74.834001], [34.029362, 74.834777], [34.029647, 74.836038], [34.029774, 74.836603], [34.029916, 74.837156], [34.030219, 74.838387], [34.030429, 74.83924], [34.030623, 74.840018], [34.030738, 74.840477], [34.03084, 74.840851], [34.031541, 74.843703], [34.031965, 74.845396], [34.03225, 74.846514], [34.032441, 74.847322], [34.032821, 74.848867], [34.033228, 74.85046], [34.033446, 74.851337], [34.033548, 74.851829], [34.033712, 74.852443], [34.033999, 74.853586], [34.034081, 74.853933], [34.034087, 74.853959], [34.034182, 74.854333], [34.034479, 74.855551], [34.03468, 74.85636], [34.034835, 74.856986], [34.035311, 74.858901], [34.03549, 74.859633], [34.035621, 74.860167], [34.035655, 74.860287], [34.035754, 74.860672], [34.035825, 74.860947], [34.035872, 74.861123], [34.03592, 74.861286], [34.035967, 74.861427], [34.036029, 74.861563], [34.036107, 74.861763], [34.036156, 74.861901], [34.03621, 74.862087], [34.036352, 74.862642], [34.036574, 74.863525], [34.036628, 74.863737], [34.036654, 74.863869], [34.036668, 74.863998], [34.036682, 74.864025], [34.036686, 74.864292], [34.036695, 74.864435], [34.036714, 74.86459], [34.036745, 74.864737], [34.037267, 74.866815], [34.037334, 74.867085], [34.037347, 74.867137], [34.037368, 74.86722], [34.037422, 74.867436], [34.03744, 74.867507], [34.037531, 74.867879], [34.037663, 74.868408], [34.03774, 74.868743], [34.037829, 74.869124], [34.037929, 74.869548], [34.038079, 74.870154], [34.038205, 74.870641], [34.038343, 74.871207], [34.03884, 74.873294], [34.038939, 74.873757], [34.039343, 74.875469], [34.039494, 74.876128], [34.03962, 74.876656], [34.039738, 74.877136], [34.039822, 74.877472], [34.039859, 74.877612], [34.03989, 74.877699], [34.03992, 74.877762], [34.039971, 74.877831], [34.040052, 74.877906], [34.040114, 74.877966], [34.040076, 74.878064], [34.039637, 74.879368], [34.039554, 74.87961], [34.03948, 74.879862], [34.039434, 74.880105], [34.039411, 74.880297], [34.03939, 74.880435], [34.039372, 74.880511], [34.039353, 74.880592], [34.039256, 74.881029], [34.039176, 74.881453], [34.039133, 74.881699], [34.03911, 74.881913], [34.039069, 74.882204], [34.039047, 74.882389], [34.039036, 74.882579], [34.039038, 74.88275], [34.039047, 74.882936], [34.03907, 74.883248], [34.039119, 74.883889], [34.039135, 74.884207], [34.039144, 74.884517], [34.039148, 74.885011], [34.039123, 74.885669], [34.039109, 74.886015], [34.039076, 74.886375], [34.039016, 74.88668], [34.038898, 74.887037], [34.038709, 74.887544], [34.038391, 74.888363], [34.038142, 74.888998], [34.037739, 74.890013], [34.037584, 74.890403], [34.037362, 74.891063], [34.037242, 74.89152], [34.03714, 74.891905], [34.036835, 74.893136], [34.036566, 74.894176], [34.036223, 74.895574], [34.036142, 74.895906], [34.036047, 74.896292], [34.035956, 74.8967], [34.035827, 74.897201], [34.035685, 74.897713], [34.035665, 74.89776], [34.035632, 74.897807], [34.035593, 74.897902], [34.035537, 74.898039], [34.035171, 74.898934], [34.035054, 74.899221], [34.035179, 74.899457], [34.035265, 74.89965], [34.035309, 74.899778], [34.035348, 74.899936], [34.0354, 74.90026], [34.035455, 74.900799], [34.035473, 74.90105], [34.035483, 74.901311], [34.035494, 74.901535], [34.035518, 74.901748], [34.035556, 74.901877], [34.035606, 74.901999], [34.035659, 74.902107], [34.035781, 74.902293], [34.036535, 74.90318], [34.03659, 74.903253], [34.036628, 74.903345], [34.036655, 74.903471], [34.036665, 74.903989], [34.03669, 74.904091], [34.036732, 74.904211], [34.036851, 74.904464], [34.036992, 74.904779], [34.037011, 74.904833], [34.03703, 74.904974], [34.037019, 74.905086], [34.036984, 74.905198], [34.03674, 74.905629], [34.036492, 74.906032], [34.036, 74.906823], [34.035813, 74.907156], [34.035764, 74.907254], [34.035715, 74.907381], [34.035704, 74.907462], [34.0357, 74.90756], [34.03572, 74.907654], [34.035857, 74.908021], [34.036202, 74.908822], [34.036441, 74.909298], [34.036578, 74.909688], [34.036747, 74.910121], [34.036808, 74.910303], [34.037376, 74.91211], [34.03743, 74.912303], [34.03759, 74.912878], [34.037701, 74.913374], [34.037772, 74.913869], [34.037825, 74.914182], [34.03786, 74.91448], [34.037963, 74.915097], [34.038042, 74.915699], [34.038074, 74.916169], [34.038183, 74.916859], [34.038404, 74.917897], [34.038415, 74.917965], [34.038445, 74.918254], [34.038462, 74.918406], [34.038525, 74.918966], [34.038551, 74.919193], [34.038582, 74.919409], [34.038588, 74.919516], [34.038592, 74.919638], [34.038591, 74.919778], [34.038587, 74.92002], [34.03856, 74.920429], [34.038539, 74.920609], [34.038525, 74.920782], [34.038506, 74.92134], [34.03848, 74.922112], [34.038479, 74.922158], [34.038455, 74.923015], [34.038449, 74.923255], [34.038433, 74.92352], [34.03842, 74.92368], [34.038409, 74.923904], [34.038399, 74.924005], [34.03832, 74.924521], [34.038511, 74.924527], [34.038647, 74.924518], [34.038797, 74.924498], [34.039355, 74.924352], [34.039599, 74.925441], [34.039615, 74.925572], [34.039617, 74.925596], [34.039622, 74.925623], [34.039629, 74.925644], [34.039663, 74.92573], [34.039689, 74.925808], [34.039713, 74.925895], [34.039738, 74.926027], [34.039792, 74.926274], [34.039809, 74.926346], [34.039815, 74.926358], [34.039822, 74.926365], [34.039831, 74.92637], [34.039843, 74.92637], [34.039947, 74.926351], [34.040124, 74.926295], [34.040138, 74.926296], [34.040147, 74.926301], [34.040153, 74.926307], [34.04016, 74.926319], [34.04022, 74.926536], [34.040281, 74.926779]];
+var line = L.polyline(coords, {color: '#1A237E', weight: 5, opacity: 0.9}).addTo(map);
+map.fitBounds(line.getBounds(), {padding: [30, 30]});
+
+// Start marker
+var startIcon = L.divIcon({
+  html: '<div style="background:#1B5E20;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">S</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[0], {icon: startIcon}).addTo(map)
+  .bindPopup('<b>START</b><br>34.0687, 74.7796');
+
+// End marker
+var endIcon = L.divIcon({
+  html: '<div style="background:#B71C1C;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">E</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map)
+  .bindPopup('<b>END</b><br>34.0403, 74.9268');
+
+// Via points
+var viaCoords = [];
+viaCoords.forEach(function(pt, i) {
+  var viaIcon = L.divIcon({
+    html: '<div style="background:#5C6BC0;color:#fff;border-radius:50%;width:10px;height:10px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
+    iconSize: [10, 10], iconAnchor: [5, 5], className: ''
+  });
+  L.marker(pt, {icon: viaIcon}).addTo(map).bindPopup('Via point ' + (i+1));
+});
+</script>
+<div style="position:fixed;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.85);border:1px solid #ccc;border-radius:4px;padding:3px 10px;font-size:10px;color:#666;z-index:9999;pointer-events:none;white-space:nowrap">
+  &#9888; Open-source global tiles (OpenStreetMap/CartoDB) — may not reflect India's official political boundaries
+</div>
+</body>
+</html>

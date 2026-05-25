@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🚌 Bus Tracker Dashboard
 
@@ -129,6 +129,9 @@ BusTrackerAppDashboard-main/
 ├── components/
 │   ├── rationalization-kashmir/            # ⭐ Kashmir dashboard components
 │   │   ├── KashmirPresentationDashboard    # Main presentation view
+│   │   ├── KashmirBeforeAfterDashboard     # Before & After comparison dashboard
+│   │   ├── KashmirBeforeAfterMap           # Before & After side-by-side map
+│   │   ├── KashmirBeforeAfter              # Trunk consolidation & permit lookup card
 │   │   ├── KashmirNetworkMap               # Leaflet network explorer
 │   │   ├── KashmirRouteTable               # Sortable route table
 │   │   ├── KashmirCards                    # KPI & policy cards
@@ -153,6 +156,7 @@ BusTrackerAppDashboard-main/
 │       │   └── impact.json                 # Passenger impact analysis
 │       ├── Rationalised_Routes_Kashmir_v3.geojson
 │       ├── Master_Transit_Map_Kashmir_v3.html
+│       ├── before-after.html               # ⭐ Before & After standalone comparative map
 │       ├── Kashmir_Route_Frequency_Plan_v3.xlsx
 │       ├── Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx
 │       └── route_maps_kashmir/             # Per-route HTML maps
@@ -322,4 +326,3 @@ MIT
 *Kashmir Valley Transit • Route Rationalisation • Fleet Intelligence*
 
 </div>
-]]>

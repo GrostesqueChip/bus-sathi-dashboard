@@ -1,4 +1,4 @@
-<![CDATA[# 🗺️ Kashmir Valley Route Rationalisation — Technical Handover
+# 🗺️ Kashmir Valley Route Rationalisation — Technical Handover
 
 > **Document Version:** 1.0  
 > **Engine Version:** v3.3.5  
@@ -798,4 +798,3 @@ interface RouteRationalizationKashmirSummary {
 ---
 
 > **This document was generated from live codebase analysis. All numbers, route IDs, and merge maps are derived directly from the data files in the repository.**
-]]>

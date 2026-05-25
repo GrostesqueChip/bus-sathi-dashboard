@@ -144,6 +144,10 @@ const STUDY_AREA_POPULATION = 1_660_000;
 const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
 const NETWORK_COVERAGE_PERCENT = 69.78;
 
+// Service-plan comparison data lives in the client-safe module
+// `lib/kashmirServicePlans.ts` (no server-only imports) so client components
+// can consume it without pulling this `fs`-dependent loader into the bundle.
+
 let datasetPromise: Promise<RouteRationalizationKashmirDataset> | null = null;
 
 export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
