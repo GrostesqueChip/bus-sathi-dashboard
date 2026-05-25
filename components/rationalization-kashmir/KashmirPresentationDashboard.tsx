@@ -135,11 +135,11 @@ export default function KashmirPresentationDashboard({
                   <MapIcon size={16} /> View GeoJSON
                 </a>
                 <a
-                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.xlsx"
+                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx"
                   download
                   className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 shadow-lg transition-all hover:translate-y-[-1px]"
                 >
-                  <Download size={16} /> Download workbook
+                  <Download size={16} /> Download RTO Workbook
                 </a>
               </div>
             </div>
@@ -160,6 +160,37 @@ export default function KashmirPresentationDashboard({
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── RTO OFFICIAL DOWNLOADS SECTION ─── */}
+      <section className="overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50/50 p-6 md:p-8 shadow-sm">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-1 text-xs font-black uppercase tracking-[0.15em] text-emerald-800">
+              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" /> Official Submission
+            </span>
+            <h2 className="text-2xl font-black text-slate-900 md:text-3xl">RTO Route &amp; Fleet Workbooks</h2>
+            <p className="max-w-3xl text-sm font-semibold leading-relaxed text-slate-600">
+              Download the official Excel sheets prepared for the RTO officer presentation. The Master Workbook includes route calibration, operator registers, and buyback estimates.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row md:shrink-0">
+            <a
+              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx"
+              download
+              className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-base font-black text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:translate-y-[-1px] hover:shadow-emerald-700/30"
+            >
+              <Download size={20} /> Download RTO Master Workbook (.xlsx)
+            </a>
+            <a
+              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.xlsx"
+              download
+              className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-350"
+            >
+              <Download size={18} className="text-slate-400" /> Legacy 4-Sheet Plan (.xlsx)
+            </a>
           </div>
         </div>
       </section>
