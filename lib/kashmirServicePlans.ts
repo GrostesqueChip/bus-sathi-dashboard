@@ -2,10 +2,10 @@
 // Both plans run the SAME 207 routes with identical geometry. The only
 // difference is service frequency (headways), which sets fleet size.
 //
-// Authoritative figures from the engine README:
-//   kashmir final/kashmir-transit-rationalisation-main/README.md
-//   - "Changes in v3.3.4 (Honest fleet sizing)"  → Phase-2 Aspirational, 1,113 buses
-//   - "Changes in v3.3.5 (Conservative phase-1 headways)" → Phase-1 Recommended, 988 buses
+// Authoritative figures from the engine:
+//   - Phase-1 Recommended = the LIVE v3.3.7 plan → 1,009 buses (80 HPV /
+//     807 MPV / 122 LPV). 35-min headway ceiling, trunk fleet balanced 50/50.
+//   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
 // This module is intentionally free of any server-only imports (no `fs`) so it
@@ -46,16 +46,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.3.5',
+    version: 'v3.3.7',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
-    tagline: 'Ambitious but operationally achievable from day one.',
-    totalFleet: 988,
-    hpv: 138,
-    mpv: 730,
-    lpv: 120,
-    busesPer1000: 0.6,
-    expansionPercent: 65,
+    tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
+    totalFleet: 1009,
+    hpv: 80,
+    mpv: 807,
+    lpv: 122,
+    busesPer1000: 0.61,
+    expansionPercent: 68,
     recommended: true,
   },
   phase2: {
@@ -98,9 +98,9 @@ export const KASHMIR_SERVICE_PLANS: {
     {
       band: 'Lifeline routes (LP)',
       scope: '~23 routes',
-      phase1Min: 60,
-      phase2Min: 60,
-      note: 'Unchanged — already at the floor for inter-district lifelines.',
+      phase1Min: 35,
+      phase2Min: 30,
+      note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
     },
   ],
   sharedRoutes: 207,

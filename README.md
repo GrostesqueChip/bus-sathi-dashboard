@@ -39,13 +39,15 @@ Bus Tracker Dashboard is a full-stack web platform that connects to a companion 
 - **Cached snapshot architecture** — Vercel Cron pre-computes a compact data snapshot every 12 hours
 - **Streaming responses** — OpenAI-powered answers streamed in real-time via the chat widget
 
-### 🗺️ Kashmir Valley Route Rationalisation (v3.3.5)
-- **342 legacy routes → 192 optimised routes** with a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
+### 🗺️ Kashmir Valley Route Rationalisation (v3.3.7)
+- **342 legacy routes → 207 active routes** with a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
 - **Composite Demand Index (CDI)** — population, POI density, road quality, and congestion-weighted scoring
 - **SSCL e-bus backbone integration** — 30 trunk routes from CHALO ridership data with 15-min headways
+- **35-minute headway ceiling** — no route waits longer than 35 min anywhere (headways are 15 / 20 / 35 min)
+- **Balanced trunk fleet** — 50/50 HPV/MPV split so neither bus class dominates a trunk corridor
 - **Interactive network explorer** — native Leaflet map + generated master transit HTML map
 - **Per-route decision audit trail** — every merge, retention, or upgrade decision is logged with reasoning
-- **Downloadable workbooks** — Excel + GeoJSON + CSV outputs for RTO submission
+- **One-click bus-schedule download** — the pretty RTO Excel workbook front-and-centre, with all other Excel / GeoJSON / CSV outputs one click away
 
 ### 🔐 Admin-Only Access
 - Firebase Custom Claims (`admin: true`) for role-based access control
@@ -158,7 +160,9 @@ BusTrackerAppDashboard-main/
 │       ├── Master_Transit_Map_Kashmir_v3.html
 │       ├── before-after.html               # ⭐ Before & After standalone comparative map
 │       ├── Kashmir_Route_Frequency_Plan_v3.xlsx
-│       ├── Kashmir_Route_Frequency_Plan_v3.3.5_RTO.xlsx
+│       ├── Kashmir_Route_Frequency_Plan_v3.3.7_RTO.xlsx          # 9-sheet master
+│       ├── Kashmir_Route_Frequency_Plan_v3.3.7_RTO_Pretty.xlsx   # ⭐ bus schedule (primary download)
+│       ├── Routes_with_Codes.xlsx
 │       └── route_maps_kashmir/             # Per-route HTML maps
 │
 ├── scripts/

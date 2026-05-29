@@ -114,12 +114,19 @@ export interface RouteRationalizationKashmirDataset {
   summary: RouteRationalizationKashmirSummary;
 }
 
+// v3.3.7: downloads are grouped by tier so the Kashmir section can surface the
+// one file the RTO actually needs (the pretty bus-schedule workbook) as a hero
+// CTA, keep the master workbook + map as secondary links, and tuck every
+// technical artefact (CSV / GeoJSON / logs) into a collapsed expander.
+export type KashmirFileTier = 'primary' | 'secondary' | 'technical';
+
 export interface KashmirSourceFile {
   label: string;
   description: string;
   href: string;
   download?: boolean;
   fileName: string;
+  tier: KashmirFileTier;
 }
 
 const PUBLIC_ROUTE = '/route-rationalization-kashmir';
@@ -132,16 +139,20 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Using the README figure as the study-area total.
 const STUDY_AREA_POPULATION = 1_660_000;
 
-// Deduplicated network coverage — taken directly from the v3.3.6 engine log:
+// Deduplicated network coverage — taken directly from the v3.3.7 engine log:
 //   "Deduplicated network population: 1,158,399 (69.78% of CMP 2024 total: 1,660,000)"
 // (Engine computes this via the dissolved-union of all active-route walksheds
-// against the WorldPop raster, so it is exact rather than estimated.)
-// v3.3.6 counts: 207 active routes, 1,003 total fleet (84 HPV / 797 MPV /
-// 122 LPV), 69 tourist corridors tagged. Phase-1 conservative headways:
-// SSCL trunks 15 min (design target), non-SSCL HP 20 min, MP 35 min,
-// LP 35 min (was 60 — RTO Kashmir ask, '1 hour is too long'). SSCL HPV
-// share capped at 60% per route, also a v3.3.6 RTO ask. Fleet density:
-// 0.60 buses / 1000 residents — Chandigarh CTU peer band.
+// against the WorldPop raster, so it is exact rather than estimated. The
+// v3.3.7 changes are headway + vehicle-mix only — the active route set and
+// geometry are identical to v3.3.6, so coverage is unchanged.)
+// v3.3.7 counts: 207 active routes, 1,009 total fleet (80 HPV / 807 MPV /
+// 122 LPV), 69 tourist corridors tagged. RTO-asked changes this build:
+//   • 35-min headway CEILING — no route waits longer than 35 min anywhere
+//     (the old 60-min LP and 60/90-min rural-lifeline bands are eliminated;
+//     headways are now only 15 / 20 / 35 min).
+//   • Trunk vehicle mix balanced to 50/50 HPV/MPV (SSCL HPV cap 60% → 50%)
+//     so NEITHER class is the majority on a trunk route.
+// Fleet density: 0.61 buses / 1000 residents — Chandigarh CTU peer band.
 const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
 const NETWORK_COVERAGE_PERCENT = 69.78;
 
@@ -152,38 +163,46 @@ const NETWORK_COVERAGE_PERCENT = 69.78;
 let datasetPromise: Promise<RouteRationalizationKashmirDataset> | null = null;
 
 export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
+  // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
+  {
+    label: 'Bus Schedule Workbook (Pretty Excel)',
+    description: 'The RTO submission file. A clean 4-sheet workbook — Summary KPIs, the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split), Operator Absorption register, and a Sign-off page. Regenerated live from the v3.3.7 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.7_RTO_Pretty.xlsx`,
+    download: true,
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.7_RTO_Pretty.xlsx',
+    tier: 'primary',
+  },
+  // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
     label: 'RTO Master Workbook (9 sheets)',
-    description: 'Sign-off-ready Excel: cover sheet, route plan, operator absorption register with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.6_RTO.xlsx`,
+    description: 'The full detail pack: cover sheet, route plan, operator absorption with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.7_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.6_RTO.xlsx',
-  },
-  {
-    label: '4-sheet workbook (legacy)',
-    description: 'Engineering Excel report with route plan, priority summary, and type summary.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.xlsx`,
-    download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.7_RTO.xlsx',
+    tier: 'secondary',
   },
   {
     label: 'Master transit map',
     description: 'Interactive Folium map with trunk, feeder, SSCL, and regional layers.',
     href: `${PUBLIC_ROUTE}/Master_Transit_Map_Kashmir_v3.html`,
     fileName: 'Master_Transit_Map_Kashmir_v3.html',
+    tier: 'secondary',
   },
-  {
-    label: 'Network GeoJSON',
-    description: 'All 207 active route features (v3.3.6) for GIS integration.',
-    href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
-    fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
-  },
+  // ── TECHNICAL ── collapsed by default ─────────────────────────────────────
   {
     label: 'Operational CSV',
     description: 'Route-level plan with fleet, priority, headways, and operational metrics.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.csv`,
     download: true,
     fileName: 'Rationalised_Routes_Kashmir_v3.csv',
+    tier: 'technical',
+  },
+  {
+    label: 'Network GeoJSON',
+    description: 'All active route features (v3.3.7) for GIS integration.',
+    href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
+    fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
+    tier: 'technical',
   },
   {
     label: 'Passenger impact CSV',
@@ -191,6 +210,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     href: `${PUBLIC_ROUTE}/Passenger_Impact_Kashmir_v3.csv`,
     download: true,
     fileName: 'Passenger_Impact_Kashmir_v3.csv',
+    tier: 'technical',
   },
   {
     label: 'Audit log CSV',
@@ -198,40 +218,38 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     href: `${PUBLIC_ROUTE}/Rationalisation_Log_Kashmir_v3.csv`,
     download: true,
     fileName: 'Rationalisation_Log_Kashmir_v3.csv',
-  },
-  {
-    label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.3.6 engine.',
-    href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
-    fileName: 'transit_v3.log.txt',
+    tier: 'technical',
   },
   {
     label: 'Routes with Sectored Codes (Excel)',
-    description: 'Excel sheet containing routes matched with their corresponding sectored codes.',
+    description: 'Routes matched with their 12-character sectored stop codes.',
     href: `${PUBLIC_ROUTE}/Routes_with_Codes.xlsx`,
     download: true,
     fileName: 'Routes_with_Codes.xlsx',
-  },
-  {
-    label: 'Route Code Generator Script (Python)',
-    description: 'Python script used to match routes with sectored stop codes and generate codes.',
-    href: `${PUBLIC_ROUTE}/generate_route_codes (1).py`,
-    download: true,
-    fileName: 'generate_route_codes (1).py',
+    tier: 'technical',
   },
   {
     label: 'Sectored Stops Database (CSV)',
-    description: 'Database of stops with their corresponding sector IDs and stop numbers.',
+    description: 'Master stops with their sector IDs and stop numbers.',
     href: `${PUBLIC_ROUTE}/Kashmir_Stops_Sectored_V2.csv`,
     download: true,
     fileName: 'Kashmir_Stops_Sectored_V2.csv',
+    tier: 'technical',
   },
   {
-    label: 'Formatted Kashmir Routes (Pretty)',
-    description: 'Formatted and styled Excel sheet containing Kashmir routes for submission.',
-    href: `${PUBLIC_ROUTE}/Formatted_Kashmir_Routes_Pretty.xlsx`,
+    label: '4-sheet workbook (legacy)',
+    description: 'Engineering Excel report with route plan, priority summary, and type summary.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.xlsx`,
     download: true,
-    fileName: 'Formatted_Kashmir_Routes_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.xlsx',
+    tier: 'technical',
+  },
+  {
+    label: 'Pipeline log',
+    description: 'Quality checks and export run details from the v3.3.7 engine.',
+    href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
+    fileName: 'transit_v3.log.txt',
+    tier: 'technical',
   },
 ];
 
