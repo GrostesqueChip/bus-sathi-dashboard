@@ -1,6 +1,7 @@
-// ── Two service plans the decision-maker chooses between ──────────────────
-// Both plans run the SAME 207 routes with identical geometry. The only
-// difference is service frequency (headways), which sets fleet size.
+// ── Service plan ──────────────────────────────────────────────────────────
+// The dashboard surfaces Phase-1 (the recommended, deployable plan) as the
+// single plan. The Phase-2 aspirational figures are retained below for
+// reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
 //   - Phase-1 Recommended = the LIVE v3.3.7 plan → 1,009 buses (80 HPV /
