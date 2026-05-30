@@ -53,7 +53,7 @@ export default function KashmirRouteTable({ routes, selectedRouteKey, onSelectRo
       .filter((route) => routeMatchesSearch(route, searchQuery))
       .sort((a, b) => {
         if (sortMode === 'demand') return b.finalCdi - a.finalCdi;
-        if (sortMode === 'population') return b.populationServed - a.populationServed;
+        if (sortMode === 'population') return b.populationServedRaw - a.populationServedRaw;
         if (sortMode === 'service') return a.headwayMin - b.headwayMin;
         return b.fleetRequired - a.fleetRequired;
       });

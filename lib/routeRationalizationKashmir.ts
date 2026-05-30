@@ -31,6 +31,7 @@ export interface RationalizedRouteKashmir {
   cmpTrunk: boolean;
   cmpRouteId: string;
   populationServed: number;
+  populationServedRaw: number;
   hvPoiCount: number;
   overlapMetric: number;
   geoSource: string;
@@ -303,6 +304,7 @@ function normalizeRoute(row: Record<string, unknown>): RationalizedRouteKashmir 
     cmpTrunk: toBoolean(row.CMP_Trunk),
     cmpRouteId: readString(row, 'CMP_Route_ID'),
     populationServed: toNumber(row.Population_Served),
+    populationServedRaw: toNumber(row.Population_Served_Raw),
     hvPoiCount: toNumber(row.HV_POI_Count),
     overlapMetric: toNumber(row.Overlap_Metric),
     geoSource: readString(row, 'Geo_Source'),

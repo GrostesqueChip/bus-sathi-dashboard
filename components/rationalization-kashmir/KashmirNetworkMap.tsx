@@ -220,7 +220,7 @@ export default function KashmirNetworkMap({ selectedRouteId }: KashmirNetworkMap
                 <div><strong>Buses needed:</strong> ${formatNumber(properties.Fleet_Required)}</div>
                 <div><strong>HPV/MPV:</strong> ${formatNumber(properties.HPV_Count)} / ${formatNumber(properties.MPV_Count)}</div>
                 <div><strong>Demand score:</strong> ${formatDecimal(properties.Final_CDI, 4)}</div>
-                <div><strong>Population:</strong> ${formatNumber(properties.Population_Served)}</div>
+                <div><strong>Population:</strong> ${formatNumber(properties.Population_Served_Raw || properties.Population_Served)}</div>
                 <div><strong>Zone:</strong> ${properties.Congestion_Zone || 'n/a'}</div>
               </div>
               ${
