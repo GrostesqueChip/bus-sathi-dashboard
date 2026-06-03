@@ -24,7 +24,7 @@
 
 ## 1. Executive Summary
 
-The Kashmir Valley Route Rationalisation is a data-driven transit planning project that analysed **342 legacy bus routes** from the Kashmir RTO permit register and restructured them into an optimised **192-route network** with a 3-tier hierarchy.
+The Kashmir Valley Route Rationalisation is a data-driven transit planning project that analysed **342 legacy bus permits** from the Kashmir RTO permit register and restructured them into an optimised **207-route network** with a 3-tier hierarchy.
 
 ### The Problem (Before)
 - 342 individual bus permits issued over decades (some from 1990)
@@ -34,7 +34,7 @@ The Kashmir Valley Route Rationalisation is a data-driven transit planning proje
 - No integration with the SSCL e-bus system
 
 ### The Solution (After)
-- **192 unique routes** in a 3-tier hierarchy: Trunk (TRK), Feeder (FDR), SSCL Backbone
+- **207 active routes** — 50 trunk (incl. 30 SSCL e-bus backbone) + 157 feeder
 - Every route has a **12-character alphanumeric code** based on geographic sectors
 - Fleet sizing and headways computed from a **Composite Demand Index (CDI)**
 - Full integration with 30 SSCL e-bus backbone routes from CHALO ridership data
@@ -69,7 +69,7 @@ The Kashmir Valley Route Rationalisation is a data-driven transit planning proje
 ┌──────────────────────────────────────────────────────────────────┐
 │                     AFTER (New System)                           │
 │                                                                  │
-│   192 unique routes in 3-tier hierarchy:                        │
+│   207 active routes in 3-tier hierarchy:                        │
 │     ├── 5 Trunk routes (TRK) — high-capacity corridors          │
 │     ├── 157 Feeder routes (FDR) — neighbourhood connectors      │
 │     └── 30 SSCL Backbone routes — e-bus with 15-min headways    │
@@ -741,7 +741,7 @@ interface RationalizedRouteKashmir {
 
 interface RouteRationalizationKashmirSummary {
   totalRouteRows: number;       // 342
-  activeRoutes: number;         // 192
+  activeRoutes: number;         // 207
   mergedRoutes: number;         // 135
   trunkRoutes: number;          // 5
   feederRoutes: number;         // 157

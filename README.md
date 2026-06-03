@@ -18,7 +18,7 @@
 
 ## 🎯 Overview
 
-Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a data-driven system that transformed 342 legacy bus routes into an optimised 192-route network serving 2.6L+ residents.
+Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a data-driven system that transformed 342 legacy permits into an optimised 207-route network serving ~1.16M residents within walking distance.
 
 > **📖 For detailed technical documentation on the Kashmir route rationalisation, see [`KASHMIR_HANDOVER.md`](./KASHMIR_HANDOVER.md)**
 
@@ -299,7 +299,7 @@ The platform includes a comprehensive route rationalisation engine for the Kashm
 
 **Quick Summary:**
 - **Input:** 342 legacy bus routes from RTO permit register
-- **Output:** 192 optimised routes (5 trunk + 157 feeder + 30 SSCL backbone)
+- **Output:** 207 active routes (50 trunk — incl. 30 SSCL e-bus backbone — + 157 feeder)
 - **Method:** Composite Demand Index (CDI) scoring with population, POI, road quality, and congestion factors
 - **Coverage:** ~2.6 lakh residents across 10 districts in the Kashmir Valley
 
