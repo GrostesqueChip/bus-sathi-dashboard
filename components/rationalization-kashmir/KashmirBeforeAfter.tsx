@@ -75,7 +75,7 @@ export default function KashmirBeforeAfter({ summary }: KashmirBeforeAfterProps)
           <p className="text-sm font-bold text-emerald-700">clean rationalised routes</p>
           <ul className="mt-3 space-y-1.5 text-xs font-semibold leading-5 text-emerald-900/85">
             <li>• {summary.trunkRoutes} high-capacity trunk corridors</li>
-            <li>• {summary.ssclBackboneRoutes} SSCL e-bus backbone routes</li>
+            <li>• …including the {summary.ssclBackboneRoutes} SSCL e-bus backbone routes</li>
             <li>• {summary.feederRoutes} feeders with demand-based frequency</li>
             <li>• Standard route codes for every service</li>
           </ul>

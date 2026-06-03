@@ -376,16 +376,20 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
   const mpvTotal = active.reduce((sum, route) => sum + route.mpvCount, 0);
   const lpvTotal = active.reduce((sum, route) => sum + route.lpvCount, 0);
 
-  const uniqueActiveRoutes = new Set(active.map((route) => route.newRouteId)).size;
+  // Definitions match the engine and the briefing decks exactly (by Action_Taken),
+  // so the dashboard, workbook and slides all show the same headline numbers:
+  //   active = rows not merged (207) · trunk = UPGRADED_TO_TRUNK (50) ·
+  //   feeder = RETAINED_AS_FEEDER (157) · merged (135). The 30 SSCL backbone
+  //   routes are a SUBSET of the 50 trunks (45 SSCL permits → 30 unique routes).
   const uniqueSsclRoutes = new Set(
     active.filter((route) => route.newRouteId.startsWith('SSCL-')).map((route) => route.newRouteId)
   ).size;
 
   return {
     totalRouteRows: routes.length,
-    activeRoutes: uniqueActiveRoutes,
-    trunkRoutes: active.filter((route) => route.newRouteId.startsWith('TRK-')).length,
-    feederRoutes: routes.filter((route) => route.actionTaken.includes('FEEDER')).length,
+    activeRoutes: active.length,
+    trunkRoutes: active.filter((route) => route.actionTaken === 'UPGRADED_TO_TRUNK').length,
+    feederRoutes: routes.filter((route) => route.actionTaken === 'RETAINED_AS_FEEDER').length,
     mergedRoutes: routes.filter((route) => route.actionTaken === 'MERGED_INTO_TRUNK').length,
     ssclBackboneRoutes: uniqueSsclRoutes,
     socialObligationRoutes: routes.filter((route) => route.socialFlag).length,
