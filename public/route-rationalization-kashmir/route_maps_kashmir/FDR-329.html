@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Route FDR-329 — Kashmir Transit</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f5f7fa}
+  #sidebar{width:360px;min-width:280px;height:100vh;overflow-y:auto;background:#fff;
+            border-right:1px solid #e0e4ea;display:flex;flex-direction:column}
+  #map{flex:1;height:100vh}
+  .header{background:#00695C;color:#fff;padding:14px 16px}
+  .header h2{font-size:17px;font-weight:700;margin-bottom:2px}
+  .header .sub{font-size:11px;opacity:0.85}
+  .badges{padding:8px 16px;background:#f8f9fb;border-bottom:1px solid #e8eaed;display:flex;flex-wrap:wrap;gap:4px}
+  .badge{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;color:#fff}
+  .section{padding:12px 16px;border-bottom:1px solid #f0f2f5}
+  .section h3{font-size:11px;font-weight:700;text-transform:uppercase;color:#9aa;letter-spacing:.05em;margin-bottom:8px}
+  .kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .kv .k{color:#666;font-size:12px}
+  .kv .v{font-size:12px;font-weight:600;color:#222;text-align:right;max-width:60%}
+  .terminal-box{background:#f8f9fb;border-radius:6px;padding:8px 10px;margin-bottom:6px}
+  .terminal-box .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .terminal-box .value{font-size:13px;font-weight:700}
+  .via-list{list-style:none;padding:0}
+  .via-list li{font-size:11px;color:#444;padding:2px 0;border-bottom:1px dotted #e8eaed}
+  .via-list li::before{content:"• ";color:#5C6BC0}
+  .poi-table{width:100%;border-collapse:collapse}
+  .pop-bar-bg{background:#e8eaed;border-radius:4px;height:8px;margin-top:4px}
+  .pop-bar{background:#00695C;border-radius:4px;height:8px}
+  .score-row{display:flex;gap:8px;margin-bottom:4px}
+  .score-box{flex:1;background:#f8f9fb;border-radius:6px;padding:6px 8px;text-align:center}
+  .score-box .sv{font-size:15px;font-weight:700}
+  .score-box .sk{font-size:9px;color:#888;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div class="header">
+    <div class="sub">Kashmir Valley Transit — Route Detail</div>
+    <h2>FDR-329</h2>
+    <div style="font-size:12px;opacity:0.9;margin-top:2px">Parimpora to Budgam</div>
+  </div>
+  <div class="badges">
+    <span class="badge" style="background:#00695C">RETAINED AS FEEDER</span>
+    <span class="badge" style="background:#B71C1C">LP Priority</span>
+    <span class="badge" style="background:#37474F">Peri Urban</span>
+    
+    
+  </div>
+
+  <div class="section">
+    <h3>Terminals</h3>
+    <div class="terminal-box" style="border-left:4px solid #1B5E20">
+      <div class="label" style="color:#1B5E20">&#9650; Origin / Start</div>
+      <div class="value">PARIMPORA</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.08141, 74.71310</div>
+    </div>
+    <div class="terminal-box" style="border-left:4px solid #B71C1C">
+      <div class="label" style="color:#B71C1C">&#9660; Destination / End</div>
+      <div class="value">BUDGAM</div>
+      <div style="font-size:10px;color:#999;margin-top:2px">34.00619, 74.64163</div>
+    </div>
+    
+  </div>
+
+  <div class="section">
+    <h3>Area &amp; Zone</h3>
+    <div class="kv"><span class="k">Congestion Zone</span><span class="v">City Core</span></div>
+    <div class="kv"><span class="k">Route Type</span><span class="v">Peri Urban</span></div>
+    <div class="kv"><span class="k">Route Length</span><span class="v">15.2 km</span></div>
+    <div class="kv"><span class="k">Est. Stops</span><span class="v">30</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Population Served</h3>
+    <div class="kv"><span class="k">Residents within walkshed</span><span class="v" style="color:#00695C">1,363</span></div>
+    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#00695C">1.19%</span></div>
+    <div class="pop-bar-bg"><div class="pop-bar" style="width:4.8%"></div></div>
+  </div>
+
+  <div class="section">
+    <h3>Service Plan</h3>
+    <div class="kv"><span class="k">Headway</span><span class="v">35 min</span></div>
+    <div class="kv"><span class="k">Cycle Time</span><span class="v">75.9 min</span></div>
+    <div class="kv"><span class="k">Fleet Required</span><span class="v">4 buses</span></div>
+    <div class="kv"><span class="k">HPV (12m)</span><span class="v">0</span></div>
+    <div class="kv"><span class="k">MPV (9m)</span><span class="v">4</span></div>
+  </div>
+
+  <div class="section">
+    <h3>Demand Scores</h3>
+    <div class="score-row">
+      <div class="score-box"><div class="sv" style="color:#1565C0">0.000</div><div class="sk">Pop Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#E65100">0.000</div><div class="sk">POI Score</div></div>
+      <div class="score-box"><div class="sv" style="color:#1B5E20">0.0000</div><div class="sk">Final CDI</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>POIs Covered (0)</h3>
+    <div style='color:#999;font-size:11px'>No POIs within 400m walkshed.</div>
+  </div>
+</div>
+
+<div id="map"></div>
+<script>
+var map = L.map('map').setView([34.02677744444444, 74.68135229539295], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 18}).addTo(map);
+
+var coords = [[34.08141, 74.713105], [34.081241, 74.712679], [34.080554, 74.711134], [34.08044, 74.710985], [34.080149, 74.710701], [34.080088, 74.71059], [34.079742, 74.709845], [34.079609, 74.70956], [34.07958, 74.709526], [34.079129, 74.708981], [34.078788, 74.708517], [34.078512, 74.708034], [34.078335, 74.707733], [34.078045, 74.707514], [34.077825, 74.70713], [34.077569, 74.706827], [34.077506, 74.706763], [34.077335, 74.706591], [34.077101, 74.70646], [34.07696, 74.706414], [34.076499, 74.706237], [34.076382, 74.706104], [34.076017, 74.705293], [34.075911, 74.705258], [34.075413, 74.705358], [34.075065, 74.705491], [34.074733, 74.705728], [34.074358, 74.706024], [34.074325, 74.70605], [34.074151, 74.706312], [34.073951, 74.706653], [34.073878, 74.706779], [34.073359, 74.7078], [34.073178, 74.707946], [34.073122, 74.707994], [34.07266, 74.708391], [34.072173, 74.708683], [34.071703, 74.7089], [34.070855, 74.709496], [34.070072, 74.709949], [34.069094, 74.710654], [34.068916, 74.71081], [34.068812, 74.71093], [34.068534, 74.711248], [34.068017, 74.711508], [34.067512, 74.711763], [34.066793, 74.711734], [34.065903, 74.711806], [34.065746, 74.711793], [34.063262, 74.7116], [34.063015, 74.711634], [34.062711, 74.711807], [34.062242, 74.712197], [34.061301, 74.712463], [34.061171, 74.7125], [34.060887, 74.712531], [34.060428, 74.712479], [34.060331, 74.712474], [34.059922, 74.712481], [34.058691, 74.712304], [34.058234, 74.71236], [34.058127, 74.712373], [34.057034, 74.712561], [34.056149, 74.71275], [34.056056, 74.712743], [34.05598, 74.712718], [34.055405, 74.712117], [34.055195, 74.711948], [34.055011, 74.711902], [34.054735, 74.711741], [34.054357, 74.711486], [34.053731, 74.711344], [34.053564, 74.711353], [34.053405, 74.711425], [34.053236, 74.711558], [34.053112, 74.711733], [34.053038, 74.711856], [34.052585, 74.712194], [34.052357, 74.712342], [34.051895, 74.712428], [34.051371, 74.712224], [34.05098, 74.711634], [34.050224, 74.711505], [34.049673, 74.711248], [34.049397, 74.711097], [34.049157, 74.710979], [34.048204, 74.709534], [34.047486, 74.708533], [34.047224, 74.708498], [34.047166, 74.70849], [34.046473, 74.708083], [34.046117, 74.707943], [34.045779, 74.707396], [34.045064, 74.707251], [34.043053, 74.707125], [34.042841, 74.707112], [34.042474, 74.707106], [34.042308, 74.707043], [34.042488, 74.706615], [34.042544, 74.706299], [34.042464, 74.706107], [34.042391, 74.705789], [34.042401, 74.705215], [34.042334, 74.704772], [34.042231, 74.704594], [34.041796, 74.70393], [34.041671, 74.703787], [34.041526, 74.70375], [34.041083, 74.703772], [34.04064, 74.703806], [34.039943, 74.703806], [34.039638, 74.703792], [34.039234, 74.703467], [34.038913, 74.703596], [34.038419, 74.703787], [34.037722, 74.70361], [34.03731, 74.703543], [34.036562, 74.703772], [34.03598, 74.703863], [34.035509, 74.703887], [34.034594, 74.70403], [34.034416, 74.703935], [34.033545, 74.703706], [34.032321, 74.703084], [34.032108, 74.702616], [34.031739, 74.702306], [34.03111, 74.701164], [34.030813, 74.700638], [34.03048, 74.700696], [34.03014, 74.70049], [34.029653, 74.699946], [34.029281, 74.699023], [34.028841, 74.69834], [34.028536, 74.697948], [34.028061, 74.69771], [34.027732, 74.697261], [34.027408, 74.696553], [34.026944, 74.6961], [34.026632, 74.696033], [34.026244, 74.695803], [34.025609, 74.695471], [34.025424, 74.695373], [34.025254, 74.695336], [34.025079, 74.695316], [34.025015, 74.695058], [34.025051, 74.694638], [34.024988, 74.694165], [34.024825, 74.693859], [34.024528, 74.693572], [34.024311, 74.6933], [34.02414, 74.692899], [34.023808, 74.692569], [34.023681, 74.692139], [34.023562, 74.691642], [34.02357, 74.691279], [34.023428, 74.69083], [34.023325, 74.690319], [34.023166, 74.689593], [34.023067, 74.689048], [34.022933, 74.688556], [34.022806, 74.687954], [34.022628, 74.687663], [34.022442, 74.687753], [34.022085, 74.687663], [34.021812, 74.6874], [34.021685, 74.686984], [34.021551, 74.686406], [34.021436, 74.685976], [34.021262, 74.685699], [34.020976, 74.685551], [34.020557, 74.685642], [34.020105, 74.685417], [34.019868, 74.685126], [34.019583, 74.684791], [34.019214, 74.684605], [34.019028, 74.684433], [34.018933, 74.684132], [34.018624, 74.683903], [34.018375, 74.683688], [34.018347, 74.683353], [34.018458, 74.68288], [34.018636, 74.682522], [34.018525, 74.682111], [34.018268, 74.681619], [34.017848, 74.681485], [34.017496, 74.681275], [34.017104, 74.681251], [34.016692, 74.681356], [34.016114, 74.681404], [34.015543, 74.681423], [34.015052, 74.681299], [34.01472, 74.681356], [34.01432, 74.681495], [34.013892, 74.681576], [34.013452, 74.681471], [34.013013, 74.68126], [34.012696, 74.681017], [34.012574, 74.680869], [34.0125, 74.680764], [34.012415, 74.680422], [34.012273, 74.679946], [34.012008, 74.67911], [34.011984, 74.67882], [34.011963, 74.678777], [34.011806, 74.678456], [34.011575, 74.678222], [34.011159, 74.67784], [34.010744, 74.677629], [34.010375, 74.677496], [34.010268, 74.677333], [34.009998, 74.676604], [34.009879, 74.676419], [34.009579, 74.67612], [34.009194, 74.675644], [34.009039, 74.675502], [34.008777, 74.675392], [34.008574, 74.67536], [34.00837, 74.675446], [34.007987, 74.675618], [34.007571, 74.67589], [34.007298, 74.675905], [34.007062, 74.675712], [34.006954, 74.675576], [34.006881, 74.675418], [34.006941, 74.675124], [34.006946, 74.674729], [34.006925, 74.67469], [34.006867, 74.674582], [34.006734, 74.674487], [34.006623, 74.674355], [34.006526, 74.67424], [34.006465, 74.674071], [34.006477, 74.673904], [34.006497, 74.67365], [34.006476, 74.673266], [34.006203, 74.672761], [34.006135, 74.672396], [34.006202, 74.671948], [34.006193, 74.671887], [34.00617, 74.671728], [34.006185, 74.671509], [34.006235, 74.670966], [34.006249, 74.670811], [34.006244, 74.670602], [34.006233, 74.670029], [34.006258, 74.669194], [34.006273, 74.668591], [34.006213, 74.668262], [34.006119, 74.667799], [34.006117, 74.667634], [34.006203, 74.667236], [34.006328, 74.666865], [34.006458, 74.666421], [34.006486, 74.6659], [34.006538, 74.665599], [34.006751, 74.665225], [34.006817, 74.665025], [34.006815, 74.664792], [34.006699, 74.664259], [34.006624, 74.663995], [34.00662, 74.663751], [34.006759, 74.663435], [34.006839, 74.663062], [34.006815, 74.662628], [34.006688, 74.662331], [34.00651, 74.661839], [34.006474, 74.66151], [34.005979, 74.660745], [34.005686, 74.660229], [34.00565, 74.659785], [34.005464, 74.659551], [34.005413, 74.659302], [34.005282, 74.659097], [34.005171, 74.65871], [34.00508, 74.658055], [34.004977, 74.65752], [34.004957, 74.657067], [34.004827, 74.656646], [34.004656, 74.656269], [34.004494, 74.656144], [34.0043, 74.65582], [34.004229, 74.655504], [34.004074, 74.655241], [34.003769, 74.654874], [34.003563, 74.654745], [34.0035, 74.654429], [34.003516, 74.654114], [34.003425, 74.653823], [34.003274, 74.653206], [34.003068, 74.652657], [34.002858, 74.652432], [34.002565, 74.652012], [34.002458, 74.65162], [34.002078, 74.651171], [34.001816, 74.65076], [34.001646, 74.650359], [34.001464, 74.649633], [34.001262, 74.649054], [34.000818, 74.648457], [34.000684, 74.648289], [34.000683, 74.648221], [34.000682, 74.648167], [34.000723, 74.64802], [34.000724, 74.647912], [34.000967, 74.647958], [34.001169, 74.648011], [34.001354, 74.647998], [34.001503, 74.647974], [34.001652, 74.648038], [34.001778, 74.648033], [34.002127, 74.648062], [34.002292, 74.647993], [34.002503, 74.647928], [34.00283, 74.647883], [34.003015, 74.647923], [34.003184, 74.648019], [34.003324, 74.648054], [34.003502, 74.648054], [34.003606, 74.648044], [34.003797, 74.647926], [34.004029, 74.647867], [34.004102, 74.647794], [34.004144, 74.647571], [34.004146, 74.647335], [34.004104, 74.647166], [34.004129, 74.647086], [34.00432, 74.646877], [34.004447, 74.646592], [34.004567, 74.646352], [34.004685, 74.646119], [34.004927, 74.645851], [34.004942, 74.645761], [34.004907, 74.645676], [34.004762, 74.645552], [34.004638, 74.645408], [34.004562, 74.645326], [34.004349, 74.64527], [34.004193, 74.645144], [34.004064, 74.644934], [34.003875, 74.644669], [34.003629, 74.644448], [34.003626, 74.644342], [34.003707, 74.644282], [34.003799, 74.644286], [34.004004, 74.644351], [34.004375, 74.644618], [34.004508, 74.644649], [34.0047, 74.644563], [34.00489, 74.644565], [34.005001, 74.644601], [34.005118, 74.644563], [34.005311, 74.644382], [34.005538, 74.644271], [34.005757, 74.644048], [34.005788, 74.643946], [34.005761, 74.643869], [34.005612, 74.643619], [34.005594, 74.643543], [34.005628, 74.643289], [34.005658, 74.643163], [34.005754, 74.643134], [34.005903, 74.643152], [34.005956, 74.643066], [34.005959, 74.642965], [34.005812, 74.642246], [34.005763, 74.641897], [34.005794, 74.641795], [34.006185, 74.641626], [34.006185, 74.641626]];
+var line = L.polyline(coords, {color: '#00695C', weight: 5, opacity: 0.9}).addTo(map);
+map.fitBounds(line.getBounds(), {padding: [30, 30]});
+
+// Start marker
+var startIcon = L.divIcon({
+  html: '<div style="background:#1B5E20;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">S</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[0], {icon: startIcon}).addTo(map)
+  .bindPopup('<b>START</b><br>PARIMPORA');
+
+// End marker
+var endIcon = L.divIcon({
+  html: '<div style="background:#B71C1C;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">E</div>',
+  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
+});
+L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map)
+  .bindPopup('<b>END</b><br>BUDGAM');
+
+// Via points
+var viaCoords = [];
+viaCoords.forEach(function(pt, i) {
+  var viaIcon = L.divIcon({
+    html: '<div style="background:#5C6BC0;color:#fff;border-radius:50%;width:10px;height:10px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
+    iconSize: [10, 10], iconAnchor: [5, 5], className: ''
+  });
+  L.marker(pt, {icon: viaIcon}).addTo(map).bindPopup('Via point ' + (i+1));
+});
+</script>
+<div style="position:fixed;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.85);border:1px solid #ccc;border-radius:4px;padding:3px 10px;font-size:10px;color:#666;z-index:9999;pointer-events:none;white-space:nowrap">
+  &#9888; Open-source global tiles (OpenStreetMap/CartoDB) — may not reflect India's official political boundaries
+</div>
+</body>
+</html>

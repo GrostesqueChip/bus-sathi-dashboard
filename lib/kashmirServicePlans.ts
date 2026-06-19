@@ -4,8 +4,9 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.3.7 plan → 1,009 buses (80 HPV /
-//     807 MPV / 122 LPV). 35-min headway ceiling, trunk fleet balanced 50/50.
+//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated) → 855 buses
+//     (73 HPV / 644 MPV / 138 LPV). 35-min headway ceiling, trunk fleet 50/50,
+//     94.7% population coverage after district-aware re-geocoding.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -47,16 +48,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.3.7',
+    version: 'v3.3.8',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 1009,
-    hpv: 80,
-    mpv: 807,
-    lpv: 122,
-    busesPer1000: 0.61,
-    expansionPercent: 68,
+    totalFleet: 855,
+    hpv: 73,
+    mpv: 644,
+    lpv: 138,
+    busesPer1000: 0.54,
+    expansionPercent: 43,
     recommended: true,
   },
   phase2: {
@@ -77,34 +78,34 @@ export const KASHMIR_SERVICE_PLANS: {
   headwayBands: [
     {
       band: 'SSCL e-bus trunks',
-      scope: '45 permits / 30 routes',
+      scope: '30 routes / 38 trunks',
       phase1Min: 15,
       phase2Min: 15,
       note: 'Unchanged — matches SSCL’s own published 15-min design target.',
     },
     {
       band: 'Main trunk corridors (HP)',
-      scope: '~85 routes',
+      scope: 'main HP corridors',
       phase1Min: 20,
       phase2Min: 15,
       note: 'The core trade-off: 20-min in Phase-1 vs 15-min in Phase-2.',
     },
     {
       band: 'Feeder routes (MP)',
-      scope: '~54 routes',
+      scope: 'feeder corridors',
       phase1Min: 35,
       phase2Min: 30,
       note: 'Slightly relaxed in Phase-1 to match peer-city feeder norms.',
     },
     {
       band: 'Lifeline routes (LP)',
-      scope: '~23 routes',
+      scope: 'lifeline corridors',
       phase1Min: 35,
       phase2Min: 30,
       note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
     },
   ],
-  sharedRoutes: 207,
-  sharedTrunk: 50,
-  sharedFeeder: 157,
+  sharedRoutes: 136,
+  sharedTrunk: 42,
+  sharedFeeder: 94,
 };

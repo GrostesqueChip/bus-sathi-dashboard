@@ -140,22 +140,19 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Using the README figure as the study-area total.
 const STUDY_AREA_POPULATION = 1_660_000;
 
-// Deduplicated network coverage — taken directly from the v3.3.7 engine log:
-//   "Deduplicated network population: 1,158,399 (69.78% of CMP 2024 total: 1,660,000)"
+// Deduplicated network coverage — taken directly from the v3.3.8 engine log:
+//   "Deduplicated network population: 1,572,627 (94.74% of CMP 2024 total: 1,660,000)"
 // (Engine computes this via the dissolved-union of all active-route walksheds
-// against the WorldPop raster, so it is exact rather than estimated. The
-// v3.3.7 changes are headway + vehicle-mix only — the active route set and
-// geometry are identical to v3.3.6, so coverage is unchanged.)
-// v3.3.7 counts: 207 active routes, 1,009 total fleet (80 HPV / 807 MPV /
-// 122 LPV), 69 tourist corridors tagged. RTO-asked changes this build:
-//   • 35-min headway CEILING — no route waits longer than 35 min anywhere
-//     (the old 60-min LP and 60/90-min rural-lifeline bands are eliminated;
-//     headways are now only 15 / 20 / 35 min).
-//   • Trunk vehicle mix balanced to 50/50 HPV/MPV (SSCL HPV cap 60% → 50%)
-//     so NEITHER class is the majority on a trunk route.
-// Fleet density: 0.61 buses / 1000 residents — Chandigarh CTU peer band.
-const DEDUPLICATED_NETWORK_POPULATION = 1_158_399;
-const NETWORK_COVERAGE_PERCENT = 69.78;
+// against the WorldPop raster, so it is exact rather than estimated.)
+// v3.3.8 (independent audit remediation): the endpoint geocoder previously
+// collapsed 118 valley place names onto the Srinagar centroid, deleting ~290
+// routes. After district-aware re-geocoding the network reaches the real valley:
+// coverage jumped 69.8% → 94.7%. v3.3.8 counts: 136 active routes, 855 total
+// fleet (73 HPV / 644 MPV / 138 LPV); headways still capped at 15/20/35;
+// duplicate permits consolidated; population apportionment normalised to the
+// union. Fleet density ≈ 0.54 buses / 1000 residents — Chandigarh CTU peer band.
+const DEDUPLICATED_NETWORK_POPULATION = 1_572_627;
+const NETWORK_COVERAGE_PERCENT = 94.74;
 
 // Service-plan comparison data lives in the client-safe module
 // `lib/kashmirServicePlans.ts` (no server-only imports) so client components
@@ -167,19 +164,19 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 4-sheet workbook — Summary KPIs, the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split), Operator Absorption register, and a Sign-off page. Regenerated live from the v3.3.7 engine.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.7_RTO_Pretty.xlsx`,
+    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.3.8 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.8_RTO_Pretty.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.7_RTO_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.8_RTO_Pretty.xlsx',
     tier: 'primary',
   },
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
     label: 'RTO Master Workbook (9 sheets)',
     description: 'The full detail pack: cover sheet, route plan, operator absorption with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.7_RTO.xlsx`,
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.3.8_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.7_RTO.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.3.8_RTO.xlsx',
     tier: 'secondary',
   },
   {
@@ -200,7 +197,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All active route features (v3.3.7) for GIS integration.',
+    description: 'All active route features (v3.3.8) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
     tier: 'technical',
@@ -247,7 +244,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.3.7 engine.',
+    description: 'Quality checks and export run details from the v3.3.8 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
     tier: 'technical',
