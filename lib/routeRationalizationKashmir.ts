@@ -141,18 +141,18 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 const STUDY_AREA_POPULATION = 1_660_000;
 
 // Deduplicated network coverage — taken directly from the v3.3.8 engine log:
-//   "Deduplicated network population: 1,572,627 (94.74% of CMP 2024 total: 1,660,000)"
+//   "Deduplicated network population: 1,588,964 (95.72% of CMP 2024 total: 1,660,000)"
 // (Engine computes this via the dissolved-union of all active-route walksheds
 // against the WorldPop raster, so it is exact rather than estimated.)
-// v3.3.8 (independent audit remediation): the endpoint geocoder previously
-// collapsed 118 valley place names onto the Srinagar centroid, deleting ~290
-// routes. After district-aware re-geocoding the network reaches the real valley:
-// coverage jumped 69.8% → 94.7%. v3.3.8 counts: 136 active routes, 855 total
-// fleet (73 HPV / 644 MPV / 138 LPV); headways still capped at 15/20/35;
-// duplicate permits consolidated; population apportionment normalised to the
-// union. Fleet density ≈ 0.54 buses / 1000 residents — Chandigarh CTU peer band.
-const DEDUPLICATED_NETWORK_POPULATION = 1_572_627;
-const NETWORK_COVERAGE_PERCENT = 94.74;
+// v3.3.8 (independent audit remediation + re-verification): the endpoint geocoder
+// previously collapsed 118 valley place names onto the Srinagar centroid, deleting
+// ~290 routes. After district-aware re-geocoding the network reaches the real
+// valley: coverage jumped 69.8% → 95.7%. v3.3.8 counts: 133 active routes, 817
+// total fleet (76 HPV / 627 MPV / 114 LPV); headways still capped at 15/20/35;
+// duplicate permits consolidated; population apportionment reconciled to the
+// union. Fleet density ≈ 0.51 buses / 1000 residents — BMTC/Chandigarh peer band.
+const DEDUPLICATED_NETWORK_POPULATION = 1_588_964;
+const NETWORK_COVERAGE_PERCENT = 95.72;
 
 // Service-plan comparison data lives in the client-safe module
 // `lib/kashmirServicePlans.ts` (no server-only imports) so client components

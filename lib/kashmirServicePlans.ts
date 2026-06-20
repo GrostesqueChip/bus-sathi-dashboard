@@ -4,9 +4,9 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated) → 855 buses
-//     (73 HPV / 644 MPV / 138 LPV). 35-min headway ceiling, trunk fleet 50/50,
-//     94.7% population coverage after district-aware re-geocoding.
+//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated + re-verified)
+//     → 817 buses (76 HPV / 627 MPV / 114 LPV). 35-min headway ceiling, trunk
+//     fleet 50/50, 95.7% population coverage after district-aware re-geocoding.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -52,12 +52,12 @@ export const KASHMIR_SERVICE_PLANS: {
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 855,
-    hpv: 73,
-    mpv: 644,
-    lpv: 138,
-    busesPer1000: 0.54,
-    expansionPercent: 43,
+    totalFleet: 817,
+    hpv: 76,
+    mpv: 627,
+    lpv: 114,
+    busesPer1000: 0.51,
+    expansionPercent: 36,
     recommended: true,
   },
   phase2: {
@@ -105,7 +105,7 @@ export const KASHMIR_SERVICE_PLANS: {
       note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
     },
   ],
-  sharedRoutes: 136,
-  sharedTrunk: 42,
-  sharedFeeder: 94,
+  sharedRoutes: 133,
+  sharedTrunk: 45,
+  sharedFeeder: 88,
 };
