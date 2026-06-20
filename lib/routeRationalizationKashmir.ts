@@ -151,8 +151,9 @@ const STUDY_AREA_POPULATION = 5_105_699;
 // routes. After district-aware re-geocoding the network reaches the real valley.
 // F-V9 fix: coverage is measured against the TRUE study-area population (~5.1M,
 // WorldPop), not the Srinagar-UA planning figure (1.66M) which inflated it ~3×.
-// v3.3.8 counts: 133 active routes, 817 fleet (76 HPV / 627 MPV / 114 LPV);
-// headways 15/20/35; fleet density ≈ 0.51 buses / 1000 served — BMTC peer band.
+// v3.3.8 counts: 104 active routes, 670 fleet (76 HPV / 550 MPV / 44 LPV) after
+// corridor de-duplication (trunks + feeders); headways 15/20/35; fleet density
+// ≈ 0.42 buses / 1000 served (lean — duplicate over-provisioning removed).
 const DEDUPLICATED_NETWORK_POPULATION = 1_588_964;
 const NETWORK_COVERAGE_PERCENT = 31.12;
 
