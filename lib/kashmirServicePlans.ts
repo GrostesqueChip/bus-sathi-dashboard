@@ -4,10 +4,10 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated + re-verified)
-//     → 670 buses (76 HPV / 550 MPV / 44 LPV) on 104 active routes. 35-min headway
-//     ceiling; 31% study-area walkshed coverage; corridor-deduplicated (no
-//     duplicate routes). +12% over the current ~600 (a redistribution).
+//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated + re-verified +
+//     village-recovery) → 1,053 buses (170 HPV / 799 MPV / 84 LPV) on 172 active
+//     routes. 35-min headway ceiling; 37.8% study-area walkshed coverage (1.93M);
+//     corridor-deduplicated; rural JKRTC network recovered. +76% over current ~600.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -53,12 +53,12 @@ export const KASHMIR_SERVICE_PLANS: {
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 670,
-    hpv: 76,
-    mpv: 550,
-    lpv: 44,
-    busesPer1000: 0.42,
-    expansionPercent: 12,
+    totalFleet: 1053,
+    hpv: 170,
+    mpv: 799,
+    lpv: 84,
+    busesPer1000: 0.66,
+    expansionPercent: 76,
     recommended: true,
   },
   phase2: {
@@ -106,7 +106,7 @@ export const KASHMIR_SERVICE_PLANS: {
       note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
     },
   ],
-  sharedRoutes: 104,
-  sharedTrunk: 40,
-  sharedFeeder: 64,
+  sharedRoutes: 172,
+  sharedTrunk: 43,
+  sharedFeeder: 129,
 };
