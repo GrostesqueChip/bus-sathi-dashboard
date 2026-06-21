@@ -4,10 +4,12 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.3.8 plan (audit-remediated + re-verified +
-//     village-recovery) → 1,053 buses (170 HPV / 799 MPV / 84 LPV) on 172 active
-//     routes. 35-min headway ceiling; 37.8% study-area walkshed coverage (1.93M);
-//     corridor-deduplicated; rural JKRTC network recovered. +76% over current ~600.
+//   - Phase-1 Recommended = the LIVE v3.3.9 plan (audit-remediated + re-verified +
+//     village-recovery + source re-audit) → 1,005 buses (165 HPV / 751 MPV / 89 LPV)
+//     on 172 active routes (32 trunk / 140 feeder). 35-min headway ceiling; 37.8%
+//     study-area walkshed coverage (1.93M); corridor-deduplicated; rural JKRTC
+//     network recovered. +68% over current ~600. v3.3.9 removed 11 mis-labelled
+//     SSCL trunks (fuzzy-match bug) and fixed a district-geocoding collapse.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -49,16 +51,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.3.8',
+    version: 'v3.3.9',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 1053,
-    hpv: 170,
-    mpv: 799,
-    lpv: 84,
-    busesPer1000: 0.66,
-    expansionPercent: 76,
+    totalFleet: 1005,
+    hpv: 165,
+    mpv: 751,
+    lpv: 89,
+    busesPer1000: 0.52,
+    expansionPercent: 68,
     recommended: true,
   },
   phase2: {
@@ -79,7 +81,7 @@ export const KASHMIR_SERVICE_PLANS: {
   headwayBands: [
     {
       band: 'SSCL e-bus trunks',
-      scope: '30 routes / 38 trunks',
+      scope: '30 SSCL routes (of 32 trunks)',
       phase1Min: 15,
       phase2Min: 15,
       note: 'Unchanged — matches SSCL’s own published 15-min design target.',
@@ -107,6 +109,6 @@ export const KASHMIR_SERVICE_PLANS: {
     },
   ],
   sharedRoutes: 172,
-  sharedTrunk: 43,
-  sharedFeeder: 129,
+  sharedTrunk: 32,
+  sharedFeeder: 140,
 };

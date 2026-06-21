@@ -1,173 +1,173 @@
 ﻿New_Route_ID,Route_Name,Action_Taken,Route_Type,Priority_Band,Headway_Min,Fleet_Required,HPV_Count,MPV_Count,LPV_Count,CMP_Trunk,CMP_Route_ID,Population_Served,Social_Flag
-FDR-025,Soura to LD,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,11299,True
-FDR-436,Parimpora to Budgam,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,0,6,0,False,,9987,False
-FDR-236,Parimpora to Hazratbal,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,0,4,False,,10845,False
-FDR-389,Parimpora to Chadora,RETAINED_AS_FEEDER,Peri_Urban,LP,35,5,0,5,0,False,,15637,False
-FDR-358,Lawaypora to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,LP,35,5,0,5,0,False,,7455,False
-FDR-033,Lalbazar to LD,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,11975,True
-FDR-002,Soura to Gadoora,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,21865,False
-FDR-429,Soura to Ganderbal,RETAINED_AS_FEEDER,Urban,LP,35,4,0,0,4,False,,10970,False
-FDR-045,Lalbazar to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,6009,True
-FDR-087,Jehangir Chowk to Soura,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,6147,True
-TRK-065,Soura to Hazratbal,UPGRADED_TO_TRUNK,Urban,MP,35,3,0,3,0,False,,12657,False
-FDR-134,TRC to Hazratbal,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,5947,False
-FDR-112,Hazratbal to LD,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,10394,True
-FDR-227,Soura to Railway Station,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,11102,False
-FDR-066,Malbagh to LD,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,14604,True
-FDR-230,Jehangir Chowk to JVC,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,4998,False
-FDR-150,Soura to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,9956,False
-FDR-415,Jehangir Chowk to Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,5,0,0,5,False,,12732,False
-FDR-071,Parimpora to Saidakadal,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,7402,False
-FDR-240,Jehangir Chowk to HMT,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,6156,False
-FDR-257,Parimpora to Pantha Chowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,0,5,False,,8698,False
-FDR-231,Baghat Shora to Lalchowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,5615,False
-FDR-303,Parimpora to Rawalpora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,10250,False
-FDR-062,Lalbazar to Qamarwari,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,10510,False
-FDR-104,Safakadal to SMHS,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,4319,True
-SSCL-06,Narbal to Jehangir Chowk,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,5,5,0,True,SSCL-06,8501,False
-FDR-063,Soura to SMHS,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,7778,False
-FDR-235,Soura to Qamarwari,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,8116,False
-FDR-510,Safakadal to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,HP,20,3,0,3,0,False,,3455,True
-FDR-281,Qamarwari to Pathachowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,8419,False
-FDR-075,Qamarwari to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,7537,False
-FDR-102,Saidakadal to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7399,False
-FDR-126,Lalbazar to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,11255,False
-FDR-164,Qamarwari to Hazratbal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,10441,False
-FDR-080,Soura to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,0,5,False,,5878,True
-FDR-332,HMT to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5684,False
-FDR-402,Parimpora to Rangrath,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,10407,False
-FDR-073,Saidakadal to Bypass,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,7092,False
-FDR-365,Jehangir Chowk to Panzinara,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,7505,False
-SSCL-04,Batamallo to Pantha Chowk,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-04,13427,False
-FDR-184,Qamarwari to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5862,False
-FDR-297,Parimpora to Jehangir Chowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,11628,False
-FDR-226,JVC to Batwara,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7268,False
-FDR-298,LD to Panthachowk,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8645,True
-FDR-069,Hazratbal to Bone Joint Hospital Barzalla,RETAINED_AS_FEEDER,Peri_Urban,HP,20,5,0,5,0,False,,8444,False
-FDR-295,Panthachowk to LD,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8463,True
-FDR-396,GBS to LAL Chowk,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,5771,False
-FDR-116,Parimpora to Jawahairnagar,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,7105,True
-FDR-001,Qamarwari to Baghi Mehtab,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,16557,False
-FDR-138,Jehangir Chowk to Bemina,RETAINED_AS_FEEDER,Urban,MP,35,3,0,3,0,False,,4560,False
-FDR-043,Chanapora to Soura,RETAINED_AS_FEEDER,Urban,HP,20,7,0,7,0,False,,8338,False
-FDR-155,Parimpora to Humhama,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,10498,False
-FDR-310,LD to Pampore,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,10241,True
-FDR-051,Batmaloo to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,4,0,4,0,False,,3302,False
-FDR-125,"Hazratbal, Lalbazar",RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,8504,False
-FDR-165,LD to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5534,True
-FDR-061,Soura to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,6,0,0,6,False,,6382,False
-TRK-066,Soura to Chuntwaliwar,UPGRADED_TO_TRUNK,Urban,HP,20,4,0,4,0,False,,13449,False
-SSCL-25,Soura to Batamallo,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-25,8225,False
-FDR-301,Rangpora to Soura,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,7878,False
-FDR-468,LD to Budgam,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,5975,True
-FDR-285,Parimpora to Pampore,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,9668,False
-FDR-070,Rangpora to Dalgate,RETAINED_AS_FEEDER,Peri_Urban,HP,20,5,0,5,0,False,,8191,False
-FDR-053,Rangpora to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,8116,False
-FDR-370,Qamarwari to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,5840,True
-FDR-163,Ma Road to Safakadal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,0,5,False,,6369,True
-FDR-123,Rangpora to LD,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,9994,True
-FDR-016,Soura to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,5881,False
-FDR-289,Ma Road to Parimpora,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,7994,False
-FDR-458,Srinagar to Shanglipora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10648,False
-FDR-414,Srinagar to Isganderpora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9828,False
-FDR-410,Srinagar to Aboora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,10141,False
-FDR-478,Srinagar to Arizal,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10513,False
-FDR-409,Srinagar to Baderkote,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,14238,False
-FDR-462,Srinagar to Loolpora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10325,False
-FDR-004,Srinagar to Ratnipora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7756,False
-FDR-395,Srinagar to Ratsun,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9690,False
-FDR-435,Srinagar to Khag,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10232,False
-FDR-411,Srinagar to Karhama,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,10066,False
-FDR-457,Srinagar to Chewdara,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7477,False
-FDR-412,Srinagar to Badrun,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9884,False
-SSCL-12,Srinagar to Tangmarg,UPGRADED_TO_TRUNK,Regional_District,HP,15,11,0,11,0,True,SSCL-12,14585,False
-SSCL-12,Srinagar to Tarthpora,UPGRADED_TO_TRUNK,Regional_District,HP,15,5,0,5,0,True,SSCL-12,6911,False
-FDR-456,Srinagar to Hajin,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,9412,False
-FDR-434,Srinagar to Safapora Sumbal,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,8701,False
-FDR-452,Srinagar to Safapora GBL,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9117,False
-FDR-461,Srinagar to Narwara Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7352,False
-FDR-413,Srinagar to Charishreef,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9984,False
-FDR-466,Srinagar to Pakherpora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10563,False
-SSCL-29,Srinagar to Pasthoon,UPGRADED_TO_TRUNK,Regional_District,HP,15,12,0,12,0,True,SSCL-29,11574,False
-FDR-486,Srinagar to Pinglish,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,11171,False
-FDR-489,Srinagar to Tral Nowdal,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,9856,False
-FDR-509,Srinagar to Qazigund,RETAINED_AS_FEEDER,Regional_District,LP,35,9,3,6,0,False,,13562,False
-FDR-472,Srinagar to Mirpora Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7621,False
-FDR-455,Srinagar to Vijipopra,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9293,False
-FDR-527,Srinagar to Kupwara DAY,RETAINED_AS_FEEDER,Regional_District,HP,35,2,1,1,0,False,,2905,True
-FDR-483,Bandipora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,11618,False
-FDR-003,Bandipora to Soura,RETAINED_AS_FEEDER,Regional_District,LP,35,6,2,4,0,False,,32998,False
-SSCL-28,Bankoot to Srinagar via Bandipora,UPGRADED_TO_TRUNK,Regional_District,HP,15,15,7,8,0,True,SSCL-28,11656,False
-FDR-528,Malangam to Srinagar,RETAINED_AS_FEEDER,Urban,HP,35,2,1,1,0,False,,2980,True
-FDR-459,Sopore to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,6,2,4,0,False,,13243,False
-FDR-473,Botingue to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,15074,False
-FDR-463,Shopian to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,12626,True
-FDR-481,Sedow to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,13145,True
-FDR-479,Kaprin to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,13646,True
-FDR-482,Nehama to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,14003,True
-FDR-480,Pariwan to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,13875,True
-FDR-503,Kulgam to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,13352,False
-FDR-506,Katrosoo to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12820,False
-FDR-504,Yaripora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12422,False
-FDR-400,Pulwama to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9599,False
-FDR-005,Koil to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9149,False
-FDR-453,Wasoora to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,MP,35,7,3,4,0,False,,11390,True
-FDR-397,Srinagar to Lettar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9775,False
-FDR-398,Letter to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9718,False
-FDR-454,Heff to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,5,2,3,0,False,,11562,True
-FDR-474,Srinagar to Keller,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,11962,True
-FDR-476,Keller to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,11937,True
-FDR-475,Sangerwani to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10504,False
-FDR-467,Pakherpora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10548,False
-SSCL-12,Anantnagh to Srinagar,UPGRADED_TO_TRUNK,Regional_District,HP,15,14,0,14,0,True,SSCL-12,16316,False
-SSCL-24,Phalgam to Anantnagh,UPGRADED_TO_TRUNK,Urban,HP,15,6,3,3,0,True,SSCL-24,40510,True
-FDR-490,Mawan to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,14864,True
-FDR-505,Devsur to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12438,False
-SSCL-20,Haftnar to Anantnagh,UPGRADED_TO_TRUNK,Regional_District,HP,15,15,7,8,0,True,SSCL-20,12532,True
-SSCL-05,Anantnagh to Shopian,UPGRADED_TO_TRUNK,Regional_District,HP,15,11,0,11,0,True,SSCL-05,112776,False
-FDR-393,Srinagar to NEW Khanda,RETAINED_AS_FEEDER,Urban,LP,35,6,0,6,0,False,,8654,False
-FDR-424,Srinagar to Khrew,RETAINED_AS_FEEDER,Urban,LP,35,6,0,6,0,False,,8998,False
-FDR-058,Srinagar to Railway,RETAINED_AS_FEEDER,Urban,HP,20,4,0,4,0,False,,5987,False
-FDR-088,Srinagar to Bypass,RETAINED_AS_FEEDER,Urban,MP,35,3,0,3,0,False,,5502,False
-FDR-109,Srinagar to Gulabagh,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8942,False
-FDR-006,Srinagar to Ratnipura,RETAINED_AS_FEEDER,Urban,LP,35,7,0,7,0,False,,7784,False
-FDR-018,Srinagar to Buchpora,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,7452,False
-FDR-335,Srinagar to Pampore,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8332,False
-FDR-427,Srinagar to Budgam,RETAINED_AS_FEEDER,Urban,LP,35,7,0,7,0,False,,7186,False
-FDR-464,Srinagar to Gund,RETAINED_AS_FEEDER,Peri_Urban,MP,35,11,0,11,0,False,,14366,True
-FDR-291,Srinagar to Chadoora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8842,False
-FDR-507,Srinagar to Bugam,RETAINED_AS_FEEDER,Peri_Urban,LP,35,11,0,11,0,False,,11587,False
-FDR-539,Srinagar to Rasoo,RETAINED_AS_FEEDER,Urban,HP,20,3,0,3,0,False,,3734,False
-FDR-541,Srinagar to Harwan,RETAINED_AS_FEEDER,Urban,LP,35,5,0,5,0,False,,9286,False
-FDR-256,Srinagar to Ganderbal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8526,False
-FDR-544,TRC Srinagar to Airport,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7703,False
-SSCL-01,Parimpora to Harwan via Brein Nishat,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,0,10,0,True,SSCL-01,18513,False
-SSCL-02,Batamaloo to Nasrullah Pora via Jehangir Chowk Rambagh Hyderpora,UPGRADED_TO_TRUNK,Urban,HP,15,5,0,5,0,True,SSCL-02,8998,False
-SSCL-03,Batamaloo to Hazratbal via Khanyar,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-03,6635,False
-SSCL-04,Batamaloo to Chadoora Chowk via Jehangir Chowk,UPGRADED_TO_TRUNK,Urban,HP,15,6,0,6,0,True,SSCL-04,10654,False
-SSCL-05,LD Hospital to Pandach via Jehangir Chowk Dalgate Khanyar,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-05,13759,True
-SSCL-06,Pantha Chowk to Narbal Crossing via Sonwar Jehangir Chowk Qamarwari,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,9,4,5,0,True,SSCL-06,10651,False
-SSCL-07,Batamaloo to Drussu Pulwama via Marwal,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,13,6,7,0,True,SSCL-07,31631,False
-SSCL-08,Batamaloo to Budgam Railway Station via Khumeni Chowk,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-08,12479,True
-SSCL-09,Parimpora to Naseem Bagh via Noorbagh Gojwara Mill Stop,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-09,10923,False
-SSCL-10,Pantha Chowk to Agri Kalan Kanihama via Bypass,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,5,5,0,True,SSCL-10,11737,False
-SSCL-11,Old City Loop Downtown Srinagar,UPGRADED_TO_TRUNK,Urban,HP,15,2,0,2,0,True,SSCL-11,5311,False
-SSCL-12,Rangreth to District Court Srinagar via Barzulla Jehangir Chowk,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-12,8335,False
-SSCL-13,Batamaloo to Beehama Ganderbal via Hazratbal Zakura,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,11,0,11,0,True,SSCL-13,13884,True
-SSCL-14,TRC to Central University Ganderbal via Karan Nagar Zoonimar 90ft Road,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-14,21931,True
-SSCL-15,TRC to Pulwama via Nowgam Kaanipora,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-15,9443,True
-SSCL-16,Batamaloo Circular via Khonmoh,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-16,11468,False
-SSCL-17,Batamaloo to Womens College Batpora via Rainawari,UPGRADED_TO_TRUNK,Urban,HP,15,4,0,4,0,True,SSCL-17,4651,False
-SSCL-18,Jkpdc Jehangir Chowk to Wadwan,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-18,6804,False
-SSCL-19,Pantha Chowk to Sumbal,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,14,7,7,0,True,SSCL-19,12570,False
-SSCL-20,Pantha Chowk to Safapora,UPGRADED_TO_TRUNK,Regional_District,HP,15,15,7,8,0,True,SSCL-20,14682,False
-SSCL-21,Batamaloo to Arath,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-21,18726,False
-SSCL-22,Batamaloo to Khrew Bus Stand,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,9,0,9,0,True,SSCL-22,13653,False
-SSCL-23,Batamaloo to Charesharief via Chadoora,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-23,35878,False
-SSCL-24,Pantha Chowk to Palhalan via Sangrama Sopore,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,15,7,8,0,True,SSCL-24,13768,False
-SSCL-25,Batamaloo to Dadsara Tral via Awantipora,UPGRADED_TO_TRUNK,Regional_District,HP,15,11,0,11,0,True,SSCL-25,23803,False
-SSCL-26,Batamaloo to Kangan via Hazratbal Manigam,UPGRADED_TO_TRUNK,Regional_District,HP,15,14,0,14,0,True,SSCL-26,15236,False
-SSCL-27,Batamaloo to Manigam,UPGRADED_TO_TRUNK,Regional_District,HP,15,13,0,13,0,True,SSCL-27,14967,False
-SSCL-28,Batamaloo to Pinglena Pampore via Galandar,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,5,5,0,True,SSCL-28,15305,False
-SSCL-29,Pantha Chowk to Panzinara,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-29,11352,False
-SSCL-30,Batamaloo to Dc Office Budgam,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-30,12479,True
+FDR-054,Soura to LD,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,11217,True
+FDR-483,Parimpora to Budgam,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,0,6,0,False,,10117,False
+FDR-266,Parimpora to Hazratbal,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,0,4,False,,10737,False
+FDR-423,Parimpora to Chadora,RETAINED_AS_FEEDER,Peri_Urban,LP,35,5,0,5,0,False,,15524,False
+FDR-389,Lawaypora to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7558,False
+FDR-063,Lalbazar to LD,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,11888,True
+FDR-002,Soura to Gadoora,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,21707,False
+FDR-476,Soura to Ganderbal,RETAINED_AS_FEEDER,Urban,LP,35,4,0,0,4,False,,10891,False
+FDR-076,Lalbazar to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,6066,True
+FDR-117,Jehangir Chowk to Soura,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,6223,True
+TRK-031,Soura to Hazratbal,UPGRADED_TO_TRUNK,Urban,MP,35,3,0,3,0,False,,12568,False
+FDR-156,TRC to Hazratbal,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,5991,False
+FDR-142,Hazratbal to LD,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,10317,True
+FDR-257,Soura to Railway Station,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,10960,False
+FDR-096,Malbagh to LD,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,14496,True
+FDR-260,Jehangir Chowk to JVC,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,5066,False
+FDR-180,Soura to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,9853,False
+FDR-462,Jehangir Chowk to Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,5,0,0,5,False,,12772,False
+FDR-101,Parimpora to Saidakadal,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,7414,False
+FDR-270,Jehangir Chowk to HMT,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,6235,False
+FDR-287,Parimpora to Pantha Chowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,0,5,False,,8715,False
+FDR-261,Baghat Shora to Lalchowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,5630,False
+FDR-333,Parimpora to Rawalpora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,10148,False
+FDR-092,Lalbazar to Qamarwari,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,10399,False
+FDR-134,Safakadal to SMHS,RETAINED_AS_FEEDER,Urban,MP,35,3,0,0,3,False,,4392,True
+FDR-449,Narbal to Jehangir Chowk,RETAINED_AS_FEEDER,Peri_Urban,LP,35,5,0,0,5,False,,8618,False
+FDR-093,Soura to SMHS,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,7866,False
+FDR-265,Soura to Qamarwari,RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,8029,False
+FDR-550,Safakadal to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,HP,20,3,0,3,0,False,,3521,True
+FDR-311,Qamarwari to Pathachowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,8443,False
+FDR-112,Qamarwari to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,7461,False
+FDR-132,Saidakadal to Parimpora,RETAINED_AS_FEEDER,Urban,HP,20,7,0,7,0,False,,7411,False
+FDR-159,Lalbazar to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,11139,False
+FDR-194,Qamarwari to Hazratbal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,10336,False
+FDR-105,Soura to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,0,5,False,,5950,True
+FDR-362,HMT to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5756,False
+FDR-441,Parimpora to Rangrath,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,10333,False
+FDR-103,Saidakadal to Bypass,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,7107,False
+FDR-396,Jehangir Chowk to Panzinara,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,7605,False
+FDR-402,Batamallo to Pantha Chowk,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,13164,False
+FDR-214,Qamarwari to Jehangir Chowk,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5881,False
+FDR-327,Parimpora to Jehangir Chowk,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,11775,False
+FDR-256,JVC to Batwara,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7289,False
+FDR-328,LD to Panthachowk,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8527,True
+FDR-099,Hazratbal to Bone Joint Hospital Barzalla,RETAINED_AS_FEEDER,Peri_Urban,HP,20,5,0,5,0,False,,8461,False
+FDR-325,Panthachowk to LD,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8348,True
+FDR-433,GBS to LAL Chowk,RETAINED_AS_FEEDER,Peri_Urban,LP,35,4,0,4,0,False,,5797,False
+FDR-146,Parimpora to Jawahairnagar,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,7170,True
+FDR-001,Qamarwari to Baghi Mehtab,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,16437,False
+FDR-168,Jehangir Chowk to Bemina,RETAINED_AS_FEEDER,Urban,MP,35,3,0,3,0,False,,4621,False
+FDR-073,Chanapora to Soura,RETAINED_AS_FEEDER,Urban,HP,20,7,0,7,0,False,,8355,False
+FDR-185,Parimpora to Humhama,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,10618,False
+FDR-339,LD to Pampore,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,10101,True
+FDR-075,Batmaloo to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,4,0,4,0,False,,3314,False
+FDR-155,"Hazratbal, Lalbazar",RETAINED_AS_FEEDER,Urban,MP,35,4,0,0,4,False,,8414,False
+FDR-195,LD to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,5587,True
+FDR-091,Soura to Dalgate,RETAINED_AS_FEEDER,Urban,HP,20,6,0,0,6,False,,6398,False
+TRK-032,Soura to Chuntwaliwar,UPGRADED_TO_TRUNK,Urban,HP,20,4,0,4,0,False,,13352,False
+FDR-062,Soura to Batamallo,RETAINED_AS_FEEDER,Urban,HP,20,6,0,6,0,False,,8311,False
+FDR-331,Rangpora to Soura,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,7900,False
+FDR-516,LD to Budgam,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,6060,True
+FDR-315,Parimpora to Pampore,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,9687,False
+FDR-100,Rangpora to Dalgate,RETAINED_AS_FEEDER,Peri_Urban,HP,20,5,0,5,0,False,,8214,False
+FDR-083,Rangpora to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,7,0,0,7,False,,8135,False
+FDR-401,Qamarwari to Parimpora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,5922,True
+FDR-193,Ma Road to Safakadal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,0,5,False,,6392,True
+FDR-153,Rangpora to LD,RETAINED_AS_FEEDER,Peri_Urban,MP,35,5,0,5,0,False,,10013,True
+FDR-045,Soura to Lalchowk,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,5897,False
+FDR-319,Ma Road to Parimpora,RETAINED_AS_FEEDER,Peri_Urban,MP,35,4,0,4,0,False,,8013,False
+FDR-505,Srinagar to Shanglipora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10687,False
+FDR-461,Srinagar to Isganderpora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9866,False
+FDR-457,Srinagar to Aboora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,10179,False
+FDR-527,Srinagar to Arizal,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10562,False
+FDR-448,Srinagar to Baderkote,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,14292,False
+FDR-509,Srinagar to Loolpora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10374,False
+FDR-379,Srinagar to Beeru,RETAINED_AS_FEEDER,Regional_District,MP,35,3,1,2,0,False,,6941,False
+FDR-033,Srinagar to Ratnipora,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7834,False
+FDR-432,Srinagar to Ratsun,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9725,False
+FDR-482,Srinagar to Khag,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10270,False
+FDR-458,Srinagar to Karhama,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,10104,False
+FDR-504,Srinagar to Chewdara,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7511,False
+FDR-459,Srinagar to Badrun,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9922,False
+FDR-434,Srinagar to Tangmarg,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,14640,False
+FDR-503,Srinagar to Hajin,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,9449,False
+FDR-481,Srinagar to Safapora Sumbal,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,8734,False
+FDR-499,Srinagar to Safapora GBL,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9154,False
+FDR-508,Srinagar to Narwara Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7386,False
+FDR-460,Srinagar to Charishreef,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,10029,False
+FDR-514,Srinagar to Pakherpora,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10612,False
+FDR-546,Srinagar to Pasthoon,RETAINED_AS_FEEDER,Regional_District,LP,35,6,2,4,0,False,,11690,False
+FDR-534,Srinagar to Pinglish,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,11283,False
+FDR-539,Srinagar to Tral Nowdal,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,9957,False
+FDR-004,Srinagar to Qazigund,RETAINED_AS_FEEDER,Regional_District,LP,35,9,3,6,0,False,,13697,False
+FDR-520,Srinagar to Mirpora Budgam,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,7656,False
+FDR-502,Srinagar to Vijipopra,RETAINED_AS_FEEDER,Regional_District,LP,35,4,2,2,0,False,,9327,False
+FDR-531,Bandipora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,11662,False
+FDR-003,Bandipora to Soura,RETAINED_AS_FEEDER,Regional_District,LP,35,6,2,4,0,False,,32482,False
+FDR-537,Bankoot to Srinagar via Bandipora,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,11700,False
+FDR-506,Sopore to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,6,2,4,0,False,,13292,False
+FDR-521,Botingue to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,15133,False
+FDR-510,Shopian to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,12687,True
+FDR-529,Sedow to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,13208,True
+FDR-513,Harman to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,12587,True
+FDR-526,Kaprin to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,13712,True
+FDR-530,Nehama to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,14067,True
+FDR-005,Khull Ahmadabad to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,13411,False
+FDR-528,Pariwan to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,7,3,4,0,False,,13938,True
+FDR-007,Kulgam to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,13484,False
+FDR-008,Katrosoo to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12947,False
+FDR-009,Yaripora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12546,False
+FDR-439,Pulwama to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9643,False
+FDR-034,Koil to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9242,False
+FDR-500,Wasoora to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,MP,35,7,3,4,0,False,,11443,True
+FDR-435,Srinagar to Lettar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9822,False
+FDR-437,Letter to Srinagar,RETAINED_AS_FEEDER,Peri_Urban,LP,35,6,2,4,0,False,,9765,False
+FDR-501,Heff to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,5,2,3,0,False,,11615,True
+FDR-522,Srinagar to Keller,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,12016,True
+FDR-524,Keller to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,11991,True
+FDR-523,Sangerwani to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10549,False
+FDR-515,Pakherpora to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,10596,False
+FDR-010,Anantnagh to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,16474,False
+FDR-020,Mawan to Srinagar,RETAINED_AS_FEEDER,Regional_District,MP,35,6,2,4,0,False,,15010,True
+FDR-021,Devsur to Srinagar,RETAINED_AS_FEEDER,Regional_District,LP,35,7,3,4,0,False,,12562,False
+FDR-022,Lammer to Anantnagh,RETAINED_AS_FEEDER,Urban,MP,35,2,1,1,0,False,,40216,True
+FDR-030,Anantnagh to Shopian,RETAINED_AS_FEEDER,Regional_District,LP,35,5,2,3,0,False,,102363,False
+FDR-430,Srinagar to NEW Khanda,RETAINED_AS_FEEDER,Urban,LP,35,6,0,6,0,False,,8696,False
+FDR-567,Srinagar to By Pass,RETAINED_AS_FEEDER,Urban,HP,20,3,0,3,0,False,,2922,True
+FDR-471,Srinagar to Khrew,RETAINED_AS_FEEDER,Urban,LP,35,6,0,6,0,False,,9088,False
+FDR-088,Srinagar to Railway,RETAINED_AS_FEEDER,Urban,HP,20,4,0,4,0,False,,6016,False
+FDR-118,Srinagar to Bypass,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,5527,False
+FDR-139,Srinagar to Gulabagh,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8985,False
+FDR-035,Srinagar to Ratnipura,RETAINED_AS_FEEDER,Urban,LP,35,7,0,7,0,False,,7863,False
+FDR-047,Srinagar to Buchpora,RETAINED_AS_FEEDER,Urban,HP,20,5,0,5,0,False,,7486,False
+FDR-365,Srinagar to Pampore,RETAINED_AS_FEEDER,Urban,MP,35,4,0,4,0,False,,8417,False
+FDR-474,Srinagar to Budgam,RETAINED_AS_FEEDER,Urban,LP,35,7,0,7,0,False,,7220,False
+FDR-511,Srinagar to Gund,RETAINED_AS_FEEDER,Peri_Urban,MP,35,11,0,11,0,False,,14433,True
+FDR-321,Srinagar to Chadoora,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8881,False
+FDR-031,Srinagar to Bugam,RETAINED_AS_FEEDER,Peri_Urban,LP,35,11,0,11,0,False,,11703,False
+FDR-568,Srinagar to Rasoo,RETAINED_AS_FEEDER,Urban,HP,20,3,0,3,0,False,,3759,False
+FDR-570,Srinagar to Harwan,RETAINED_AS_FEEDER,Urban,LP,35,5,0,5,0,False,,9396,False
+FDR-286,Srinagar to Ganderbal,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,8568,False
+FDR-573,TRC Srinagar to Airport,RETAINED_AS_FEEDER,Urban,MP,35,5,0,5,0,False,,7737,False
+SSCL-01,Parimpora to Harwan via Brein Nishat,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,0,10,0,True,SSCL-01,18321,False
+SSCL-02,Batamaloo to Nasrullah Pora via Jehangir Chowk Rambagh Hyderpora,UPGRADED_TO_TRUNK,Urban,HP,15,5,0,5,0,True,SSCL-02,9004,False
+SSCL-03,Batamaloo to Hazratbal via Khanyar,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-03,6652,False
+SSCL-04,Batamaloo to Chadoora Chowk via Jehangir Chowk,UPGRADED_TO_TRUNK,Urban,HP,15,6,0,6,0,True,SSCL-04,10659,False
+SSCL-05,LD Hospital to Pandach via Jehangir Chowk Dalgate Khanyar,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-05,13659,True
+SSCL-06,Pantha Chowk to Narbal Crossing via Sonwar Jehangir Chowk Qamarwari,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,9,4,5,0,True,SSCL-06,10543,False
+SSCL-07,Batamaloo to Drussu Pulwama via Marwal,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,13,6,7,0,True,SSCL-07,31165,False
+SSCL-08,Batamaloo to Budgam Railway Station via Khumeni Chowk,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-08,12487,True
+SSCL-09,Parimpora to Naseem Bagh via Noorbagh Gojwara Mill Stop,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-09,10813,False
+SSCL-10,Pantha Chowk to Agri Kalan Kanihama via Bypass,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,5,5,0,True,SSCL-10,11615,False
+SSCL-11,Old City Loop Downtown Srinagar,UPGRADED_TO_TRUNK,Urban,HP,15,2,0,2,0,True,SSCL-11,5270,False
+SSCL-12,Rangreth to District Court Srinagar via Barzulla Jehangir Chowk,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-12,8449,False
+SSCL-13,Batamaloo to Beehama Ganderbal via Hazratbal Zakura,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,11,0,11,0,True,SSCL-13,14120,True
+SSCL-14,TRC to Central University Ganderbal via Karan Nagar Zoonimar 90ft Road,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-14,21772,True
+SSCL-15,TRC to Pulwama via Nowgam Kaanipora,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-15,9540,True
+SSCL-16,Batamaloo Circular via Khonmoh,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-16,11248,False
+SSCL-17,Batamaloo to Womens College Batpora via Rainawari,UPGRADED_TO_TRUNK,Urban,HP,15,4,0,4,0,True,SSCL-17,4756,False
+SSCL-18,Jkpdc Jehangir Chowk to Wadwan,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-18,6831,False
+SSCL-19,Pantha Chowk to Sumbal,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,14,7,7,0,True,SSCL-19,12443,False
+SSCL-20,Pantha Chowk to Safapora,UPGRADED_TO_TRUNK,Regional_District,HP,15,15,7,8,0,True,SSCL-20,14534,False
+SSCL-21,Batamaloo to Arath,UPGRADED_TO_TRUNK,Urban,HP,15,9,0,9,0,True,SSCL-21,18456,False
+SSCL-22,Batamaloo to Khrew Bus Stand,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,9,0,9,0,True,SSCL-22,13393,False
+SSCL-23,Batamaloo to Charesharief via Chadoora,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,12,0,12,0,True,SSCL-23,35620,False
+SSCL-24,Pantha Chowk to Palhalan via Sangrama Sopore,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,15,7,8,0,True,SSCL-24,13628,False
+SSCL-25,Batamaloo to Dadsara Tral via Awantipora,UPGRADED_TO_TRUNK,Regional_District,HP,15,11,0,11,0,True,SSCL-25,23205,False
+SSCL-26,Batamaloo to Kangan via Hazratbal Manigam,UPGRADED_TO_TRUNK,Regional_District,HP,15,14,0,14,0,True,SSCL-26,15126,False
+SSCL-27,Batamaloo to Manigam,UPGRADED_TO_TRUNK,Regional_District,HP,15,13,0,13,0,True,SSCL-27,14857,False
+SSCL-28,Batamaloo to Pinglena Pampore via Galandar,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,10,5,5,0,True,SSCL-28,15010,False
+SSCL-29,Pantha Chowk to Panzinara,UPGRADED_TO_TRUNK,Urban,HP,15,7,0,7,0,True,SSCL-29,11270,False
+SSCL-30,Batamaloo to Dc Office Budgam,UPGRADED_TO_TRUNK,Peri_Urban,HP,15,7,0,7,0,True,SSCL-30,12487,True
