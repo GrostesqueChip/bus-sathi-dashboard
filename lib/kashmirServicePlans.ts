@@ -4,11 +4,11 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.3.9 plan (audit-remediated + re-verified +
+//   - Phase-1 Recommended = the LIVE v3.4.0 plan (audit-remediated + re-verified +
 //     village-recovery + source re-audit) → 1,005 buses (165 HPV / 751 MPV / 89 LPV)
 //     on 172 active routes (32 trunk / 140 feeder). 35-min headway ceiling; 37.8%
 //     study-area walkshed coverage (1.93M); corridor-deduplicated; rural JKRTC
-//     network recovered. +68% over current ~600. v3.3.9 removed 11 mis-labelled
+//     network recovered. +68% over current ~600. v3.4.0 removed 11 mis-labelled
 //     SSCL trunks (fuzzy-match bug) and fixed a district-geocoding collapse.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
@@ -51,7 +51,7 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.3.9',
+    version: 'v3.4.0',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',

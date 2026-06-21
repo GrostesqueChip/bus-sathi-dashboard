@@ -98,7 +98,7 @@ export default function KashmirPresentationDashboard({
             <div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
-                  kashmir valley v3.3.9
+                  kashmir valley v3.4.0
                 </span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">
                   {summary.ssclBackboneRoutes} sscl backbone routes
@@ -135,7 +135,7 @@ export default function KashmirPresentationDashboard({
                   <MapIcon size={16} /> View GeoJSON
                 </a>
                 <a
-                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.3.9_RTO_Pretty.xlsx"
+                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.0_RTO_Pretty.xlsx"
                   download
                   className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 shadow-lg transition-all hover:translate-y-[-1px]"
                 >
@@ -175,19 +175,19 @@ export default function KashmirPresentationDashboard({
             <p className="max-w-3xl text-sm font-semibold leading-relaxed text-slate-600">
               The file the RTO needs: a clean 2-sheet Excel with the full route plan — headways, cycle times, fleet and
               HPV/MPV split for every route. The 9-sheet Master Workbook (calibration, operator registers, buyback
-              estimates) sits alongside it. Both are regenerated live from the v3.3.9 engine.
+              estimates) sits alongside it. Both are regenerated live from the v3.4.0 engine.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row md:shrink-0">
             <a
-              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.3.9_RTO_Pretty.xlsx"
+              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.0_RTO_Pretty.xlsx"
               download
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-base font-black text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:translate-y-[-1px] hover:shadow-emerald-700/30"
             >
               <Download size={20} /> Download Bus Schedule (.xlsx)
             </a>
             <a
-              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.3.9_RTO.xlsx"
+              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.0_RTO.xlsx"
               download
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-350"
             >
