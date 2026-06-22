@@ -23,7 +23,7 @@ export default function KashmirServicePlans() {
         <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">Phase-1 service plan</h2>
         <p className="mt-2 max-w-3xl text-sm font-semibold leading-7 text-slate-200/85">
           The deployable Year-1 network: <span className="text-white">{sharedRoutes} routes</span> — {sharedTrunk} trunk + {sharedFeeder} feeder —
-          with a <span className="text-white">35-minute headway ceiling</span> (no route waits longer) and a balanced
+          with a <span className="text-white">35-minute city headway ceiling</span> (rural lifelines demand-sized) and a balanced
           50/50 HPV/MPV trunk fleet.
         </p>
       </div>
@@ -38,7 +38,7 @@ export default function KashmirServicePlans() {
         </div>
         <h3 className="mt-2 text-2xl font-black text-slate-950">Frequency by service tier</h3>
         <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-          Lower minutes = buses come more often. Every tier is capped at 35 minutes — no route waits longer.
+          Lower minutes = buses come more often. City + feeder tiers are capped at 35 min; long rural lifelines run a demand-matched 35–120 min (≥2-hourly).
         </p>
 
         <div className="mt-5 overflow-hidden rounded-[1.4rem] border border-slate-200">
@@ -68,7 +68,7 @@ export default function KashmirServicePlans() {
           <p className="mt-3 text-base font-semibold leading-7 text-slate-700">
             Phase-1 delivers a strong, reliable network with <span className="font-black text-emerald-700">{formatNumber(phase1.totalFleet)} buses</span> —
             a {phase1.expansionPercent}% step up from today’s ~{formatNumber(KASHMIR_CURRENT_FLEET)} buses — with no route
-            waiting longer than 35 minutes and a balanced 50/50 HPV/MPV trunk fleet. Ambitious, but achievable in Year-1.
+            city routes waiting longer than 35 minutes (rural lifelines demand-sized) and a balanced HPV/MPV trunk fleet. Achievable in Year-1.
           </p>
         </div>
       </div>

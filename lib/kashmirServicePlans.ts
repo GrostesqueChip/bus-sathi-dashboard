@@ -4,13 +4,13 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.4.1 plan → 1,144 buses (221 HPV / 839 MPV
-//     / 84 LPV) on 186 active routes (32 trunk / 154 feeder). 35-min headway
-//     ceiling; 35.2% walkshed coverage (2.32M of the 6.58M Kashmir Division).
-//     +91% over current ~600. v3.4.1 (system audit) extended the study bbox to
-//     the full 10-district division (recovered ~29 Kupwara/Baramulla/SE-Anantnag
-//     routes) and made corridor consolidation UNDIRECTED (removed reverse-
-//     direction double-counting). Built on v3.4.0 geo-canonical route codes.
+//   - Phase-1 Recommended = the LIVE v3.4.2 plan → 924 buses (139 HPV / 703 MPV
+//     / 82 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
+//     15/20/35 min, rural lifelines demand-sized 35–120; 35.2% walkshed coverage
+//     (2.32M of the 6.58M Kashmir Division). +54% over current ~600. v3.4.1
+//     extended the bbox to the full 10-district division (recovered ~29 routes)
+//     and made consolidation UNDIRECTED. v3.4.2 added Hybrid demand-responsive
+//     sizing for rural Regional lifelines (fleet 1,144→924). On v3.4.0 geo codes.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -52,16 +52,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.4.1',
+    version: 'v3.4.2',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
-    tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 1144,
-    hpv: 221,
-    mpv: 839,
-    lpv: 84,
-    busesPer1000: 0.49,
-    expansionPercent: 91,
+    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–120 min) — a recommended year-round level.',
+    totalFleet: 924,
+    hpv: 139,
+    mpv: 703,
+    lpv: 82,
+    busesPer1000: 0.40,
+    expansionPercent: 54,
     recommended: true,
   },
   phase2: {
@@ -106,7 +106,7 @@ export const KASHMIR_SERVICE_PLANS: {
       scope: 'lifeline corridors',
       phase1Min: 35,
       phase2Min: 30,
-      note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
+      note: 'City + feeder routes ≤35 min. Long rural lifelines are now demand-responsive (35/60/90/120 min, ≥2-hourly floor) — a recommended size the RTO can reduce at execution.',
     },
   ],
   sharedRoutes: 186,

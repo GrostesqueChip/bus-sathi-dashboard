@@ -138,23 +138,23 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // Study-area population = the full Kashmir Division (10 districts), measured by
 // point-in-polygon of the WorldPop 2026 raster against the authoritative OSM
 // district boundaries.
-// v3.4.1 (system audit): the study bbox had been clipped to lat[33.50,34.50]
+// v3.4.2 (system audit): the study bbox had been clipped to lat[33.50,34.50]
 // lon[74.40,75.20] and the raster pre-cropped to it, so the denominator was only
 // the in-box population (5.1M). Extending to the true division recovered ~29
 // routes (Kupwara/Handwara/Tangdar, Baramulla/Uri, SE Anantnag) and the honest
 // denominator is the 10-district union: 6,584,762.
 const STUDY_AREA_POPULATION = 6_584_762;
 
-// Deduplicated network coverage — from the v3.4.1 engine (dissolved-union of all
+// Deduplicated network coverage — from the v3.4.2 engine (dissolved-union of all
 // active-route 400m walksheds vs the WorldPop raster — exact, not estimated):
 //   "Deduplicated network population: 2,317,958 (35.20% of the 6,584,762 residents
 //    living in the Kashmir Division)".
-// v3.4.1 (system audit) also fixed reverse-direction double-counting: a route's
+// v3.4.2 (system audit) also fixed reverse-direction double-counting: a route's
 // cycle time is a ROUND TRIP, so corridor consolidation is now UNDIRECTED —
 // "A→B" and "B→A" collapse to one bidirectional service (removed ~10 duplicate
-// pairs, e.g. Srinagar↔Kupwara). v3.4.1 counts: 186 active routes, 1,144 fleet
-// (221 HPV / 839 MPV / 84 LPV) — 32 trunk / 154 feeder; headways 15/20/35; fleet
-// density ≈ 0.49 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
+// pairs, e.g. Srinagar↔Kupwara). v3.4.2 counts: 186 active routes, 924 fleet
+// (139 HPV / 703 MPV / 82 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
+// rural lifelines demand-sized 35–120; fleet density ≈ 0.40 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
 // geocode collapse; v3.3.9 fixed 11 false SSCL trunks + a district-geocode
 // collapse; v3.4.0 rebuilt route codes geo-canonically.)
 const DEDUPLICATED_NETWORK_POPULATION = 2_317_958;
@@ -170,19 +170,19 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.1 engine.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx`,
+    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.2 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.2_RTO_Pretty.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.2_RTO_Pretty.xlsx',
     tier: 'primary',
   },
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
     label: 'RTO Master Workbook (9 sheets)',
     description: 'The full detail pack: cover sheet, route plan, operator absorption with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.1_RTO.xlsx`,
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.2_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.1_RTO.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.2_RTO.xlsx',
     tier: 'secondary',
   },
   {
@@ -203,7 +203,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All active route features (v3.4.1) for GIS integration.',
+    description: 'All active route features (v3.4.2) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
     tier: 'technical',
@@ -250,7 +250,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.4.1 engine.',
+    description: 'Quality checks and export run details from the v3.4.2 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
     tier: 'technical',
