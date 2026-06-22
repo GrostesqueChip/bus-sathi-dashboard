@@ -4,12 +4,13 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.4.0 plan (audit-remediated + re-verified +
-//     village-recovery + source re-audit) → 1,005 buses (165 HPV / 751 MPV / 89 LPV)
-//     on 172 active routes (32 trunk / 140 feeder). 35-min headway ceiling; 37.8%
-//     study-area walkshed coverage (1.93M); corridor-deduplicated; rural JKRTC
-//     network recovered. +68% over current ~600. v3.4.0 removed 11 mis-labelled
-//     SSCL trunks (fuzzy-match bug) and fixed a district-geocoding collapse.
+//   - Phase-1 Recommended = the LIVE v3.4.1 plan → 1,144 buses (221 HPV / 839 MPV
+//     / 84 LPV) on 186 active routes (32 trunk / 154 feeder). 35-min headway
+//     ceiling; 35.2% walkshed coverage (2.32M of the 6.58M Kashmir Division).
+//     +91% over current ~600. v3.4.1 (system audit) extended the study bbox to
+//     the full 10-district division (recovered ~29 Kupwara/Baramulla/SE-Anantnag
+//     routes) and made corridor consolidation UNDIRECTED (removed reverse-
+//     direction double-counting). Built on v3.4.0 geo-canonical route codes.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -51,16 +52,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.4.0',
+    version: 'v3.4.1',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
     tagline: 'Ambitious but operationally achievable from day one — no route waits over 35 min.',
-    totalFleet: 1005,
-    hpv: 165,
-    mpv: 751,
-    lpv: 89,
-    busesPer1000: 0.52,
-    expansionPercent: 68,
+    totalFleet: 1144,
+    hpv: 221,
+    mpv: 839,
+    lpv: 84,
+    busesPer1000: 0.49,
+    expansionPercent: 91,
     recommended: true,
   },
   phase2: {
@@ -108,7 +109,7 @@ export const KASHMIR_SERVICE_PLANS: {
       note: 'Brought down from 60 min (RTO ask, “1 hour is too long”) — no route waits longer than 35 min anywhere.',
     },
   ],
-  sharedRoutes: 172,
+  sharedRoutes: 186,
   sharedTrunk: 32,
-  sharedFeeder: 140,
+  sharedFeeder: 154,
 };

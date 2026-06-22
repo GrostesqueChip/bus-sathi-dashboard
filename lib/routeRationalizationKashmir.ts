@@ -135,30 +135,30 @@ const PUBLIC_DIR = path.join(process.cwd(), 'public', 'route-rationalization-kas
 const DATA_DIR = path.join(PUBLIC_DIR, 'data');
 const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 
-// Kashmir Valley population — from Census 2011 + SMC projection (README: 1,660,000)
-// The engine's walk-catchment analysis produces a deduplicated served population.
-// Using the README figure as the study-area total.
-// F-V9: the TRUE study-area population (WorldPop total in the study bbox). The
-// old 1,660,000 was the Srinagar-UA planning figure and inflated coverage ~3×.
-const STUDY_AREA_POPULATION = 5_105_699;
+// Study-area population = the full Kashmir Division (10 districts), measured by
+// point-in-polygon of the WorldPop 2026 raster against the authoritative OSM
+// district boundaries.
+// v3.4.1 (system audit): the study bbox had been clipped to lat[33.50,34.50]
+// lon[74.40,75.20] and the raster pre-cropped to it, so the denominator was only
+// the in-box population (5.1M). Extending to the true division recovered ~29
+// routes (Kupwara/Handwara/Tangdar, Baramulla/Uri, SE Anantnag) and the honest
+// denominator is the 10-district union: 6,584,762.
+const STUDY_AREA_POPULATION = 6_584_762;
 
-// Deduplicated network coverage — from the v3.4.0 engine (dissolved-union of all
-// active-route 400m walksheds against the WorldPop raster — exact, not estimated):
-//   "Deduplicated network population: 1,930,287 (37.81% of the 5,105,699 residents
-//    living in the study area)".
-// v3.4.0 (audit remediation): the endpoint geocoder previously collapsed 118 valley
-// place names onto the Srinagar centroid, deleting ~290 routes. After district-aware
-// re-geocoding the network reaches the real valley.
-// F-V9 fix: coverage is measured against the TRUE study-area population (~5.1M,
-// WorldPop), not the Srinagar-UA planning figure (1.66M) which inflated it ~3×.
-// v3.4.0 (source re-audit): fixed (a) 11 conventional JKRTC permits mis-labelled as
-// SSCL e-bus trunks by a loose fuzzy matcher, and (b) a district-geocoding collapse
-// (15 villages mapped to one Srinagar point). v3.4.0 counts: 172 active routes,
-// 1,005 fleet (165 HPV / 751 MPV / 89 LPV) — 32 trunk / 140 feeder — after corridor
-// de-duplication + village-geocode recovery of the rural JKRTC network; headways
-// 15/20/35; fleet density ≈ 0.52 buses / 1000 served (BMTC peer band).
-const DEDUPLICATED_NETWORK_POPULATION = 1_930_287;
-const NETWORK_COVERAGE_PERCENT = 37.81;
+// Deduplicated network coverage — from the v3.4.1 engine (dissolved-union of all
+// active-route 400m walksheds vs the WorldPop raster — exact, not estimated):
+//   "Deduplicated network population: 2,317,958 (35.20% of the 6,584,762 residents
+//    living in the Kashmir Division)".
+// v3.4.1 (system audit) also fixed reverse-direction double-counting: a route's
+// cycle time is a ROUND TRIP, so corridor consolidation is now UNDIRECTED —
+// "A→B" and "B→A" collapse to one bidirectional service (removed ~10 duplicate
+// pairs, e.g. Srinagar↔Kupwara). v3.4.1 counts: 186 active routes, 1,144 fleet
+// (221 HPV / 839 MPV / 84 LPV) — 32 trunk / 154 feeder; headways 15/20/35; fleet
+// density ≈ 0.49 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
+// geocode collapse; v3.3.9 fixed 11 false SSCL trunks + a district-geocode
+// collapse; v3.4.0 rebuilt route codes geo-canonically.)
+const DEDUPLICATED_NETWORK_POPULATION = 2_317_958;
+const NETWORK_COVERAGE_PERCENT = 35.20;
 
 // Service-plan comparison data lives in the client-safe module
 // `lib/kashmirServicePlans.ts` (no server-only imports) so client components
@@ -170,19 +170,19 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.0 engine.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.0_RTO_Pretty.xlsx`,
+    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.1 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.0_RTO_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx',
     tier: 'primary',
   },
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
     label: 'RTO Master Workbook (9 sheets)',
     description: 'The full detail pack: cover sheet, route plan, operator absorption with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.0_RTO.xlsx`,
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.1_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.0_RTO.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.1_RTO.xlsx',
     tier: 'secondary',
   },
   {
@@ -203,7 +203,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All active route features (v3.4.0) for GIS integration.',
+    description: 'All active route features (v3.4.1) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
     tier: 'technical',
@@ -250,7 +250,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.4.0 engine.',
+    description: 'Quality checks and export run details from the v3.4.1 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
     tier: 'technical',
