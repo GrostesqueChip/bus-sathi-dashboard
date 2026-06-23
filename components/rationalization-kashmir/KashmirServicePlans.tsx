@@ -38,7 +38,7 @@ export default function KashmirServicePlans() {
         </div>
         <h3 className="mt-2 text-2xl font-black text-slate-950">Frequency by service tier</h3>
         <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-          Lower minutes = buses come more often. City + feeder tiers are capped at 35 min; long rural lifelines run a demand-matched 35–120 min (≥2-hourly).
+          Lower minutes = buses come more often. City + feeder tiers are capped at 35 min; long rural lifelines run a demand-matched 35–50 min (50-min max wait).
         </p>
 
         <div className="mt-5 overflow-hidden rounded-[1.4rem] border border-slate-200">

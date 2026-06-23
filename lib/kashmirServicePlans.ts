@@ -4,13 +4,13 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.4.2 plan → 924 buses (139 HPV / 703 MPV
-//     / 82 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
-//     15/20/35 min, rural lifelines demand-sized 35–120; 35.2% walkshed coverage
-//     (2.32M of the 6.58M Kashmir Division). +54% over current ~600. v3.4.1
+//   - Phase-1 Recommended = the LIVE v3.4.3 plan → 1,044 buses (185 HPV / 776 MPV
+//     / 83 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
+//     15/20/35 min, rural lifelines demand-sized 35–50 (max 50-min wait); 35.2% walkshed coverage
+//     (2.32M of the 6.58M Kashmir Division). +74% over current ~600. v3.4.1
 //     extended the bbox to the full 10-district division (recovered ~29 routes)
 //     and made consolidation UNDIRECTED. v3.4.2 added Hybrid demand-responsive
-//     sizing for rural Regional lifelines (fleet 1,144→924). On v3.4.0 geo codes.
+//     sizing for rural Regional lifelines (fleet 1,144→924→1,044 after capping the rural wait at 50 min). On v3.4.0 geo codes.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -52,16 +52,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.4.2',
+    version: 'v3.4.3',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
-    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–120 min) — a recommended year-round level.',
-    totalFleet: 924,
-    hpv: 139,
-    mpv: 703,
-    lpv: 82,
-    busesPer1000: 0.40,
-    expansionPercent: 54,
+    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–50 min) — a recommended year-round level.',
+    totalFleet: 1044,
+    hpv: 185,
+    mpv: 776,
+    lpv: 83,
+    busesPer1000: 0.45,
+    expansionPercent: 74,
     recommended: true,
   },
   phase2: {
@@ -106,7 +106,7 @@ export const KASHMIR_SERVICE_PLANS: {
       scope: 'lifeline corridors',
       phase1Min: 35,
       phase2Min: 30,
-      note: 'City + feeder routes ≤35 min. Long rural lifelines are now demand-responsive (35/60/90/120 min, ≥2-hourly floor) — a recommended size the RTO can reduce at execution.',
+      note: 'City + feeder routes ≤35 min. Long rural lifelines are now demand-responsive (35/40/45/50 min, 50-min hard max wait) — a recommended size the RTO can reduce at execution.',
     },
   ],
   sharedRoutes: 186,
