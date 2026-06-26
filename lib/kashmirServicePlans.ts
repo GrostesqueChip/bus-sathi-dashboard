@@ -4,13 +4,14 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.4.3 plan → 1,044 buses (185 HPV / 776 MPV
-//     / 83 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
+//   - Phase-1 Recommended = the LIVE v3.4.4 plan → 1,004 buses (187 HPV / 748 MPV
+//     / 69 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
 //     15/20/35 min, rural lifelines demand-sized 35–50 (max 50-min wait); 35.2% walkshed coverage
-//     (2.32M of the 6.58M Kashmir Division). +74% over current ~600. v3.4.1
-//     extended the bbox to the full 10-district division (recovered ~29 routes)
-//     and made consolidation UNDIRECTED. v3.4.2 added Hybrid demand-responsive
-//     sizing for rural Regional lifelines (fleet 1,144→924→1,044 after capping the rural wait at 50 min). On v3.4.0 geo codes.
+//     (2.32M of the 6.58M Kashmir Division). +67% over current ~600. v3.4.4 applied
+//     the AI route-by-route real-world verification: every active route checked vs
+//     Google Maps / JKRTC / gazetteers; 48 distance corrections (cited per route)
+//     replaced wrong-coordinate / OSRM-detour distances with the verified real km,
+//     cycle+fleet recomputed (fleet 1,044→1,004). See ROUTE_VERIFICATION_RTO_APPENDIX.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -52,16 +53,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.4.3',
+    version: 'v3.4.4',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
-    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–50 min) — a recommended year-round level.',
-    totalFleet: 1044,
-    hpv: 185,
-    mpv: 776,
-    lpv: 83,
-    busesPer1000: 0.45,
-    expansionPercent: 74,
+    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–50 min) — a recommended year-round level. Route distances independently verified (v3.4.4).',
+    totalFleet: 1004,
+    hpv: 187,
+    mpv: 748,
+    lpv: 69,
+    busesPer1000: 0.43,
+    expansionPercent: 67,
     recommended: true,
   },
   phase2: {

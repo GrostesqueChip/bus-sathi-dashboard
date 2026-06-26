@@ -152,11 +152,12 @@ const STUDY_AREA_POPULATION = 6_584_762;
 // v3.4.3 (system audit) also fixed reverse-direction double-counting: a route's
 // cycle time is a ROUND TRIP, so corridor consolidation is now UNDIRECTED —
 // "A→B" and "B→A" collapse to one bidirectional service (removed ~10 duplicate
-// pairs, e.g. Srinagar↔Kupwara). v3.4.3 counts: 186 active routes, 1,044 fleet
-// (185 HPV / 776 MPV / 83 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
-// rural lifelines demand-sized 35–50 (50-min hard max wait); fleet density ≈ 0.45 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
+// pairs, e.g. Srinagar↔Kupwara). v3.4.4 counts: 186 active routes, 1,004 fleet
+// (187 HPV / 748 MPV / 69 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
+// rural lifelines demand-sized 35–50 (50-min hard max wait); fleet density ≈ 0.43 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
 // geocode collapse; v3.3.9 fixed 11 false SSCL trunks + a district-geocode
-// collapse; v3.4.0 rebuilt route codes geo-canonically.)
+// collapse; v3.4.0 rebuilt route codes geo-canonically; v3.4.4 applied the AI
+// route-by-route real-world verification — 48 distance corrections, fleet 1,044→1,004.)
 const DEDUPLICATED_NETWORK_POPULATION = 2_317_958;
 const NETWORK_COVERAGE_PERCENT = 35.20;
 
@@ -170,19 +171,27 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.3 engine.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.3_RTO_Pretty.xlsx`,
+    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.4 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.3_RTO_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx',
     tier: 'primary',
   },
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
+    label: 'Route Verification Appendix (v3.4.4)',
+    description: 'Appendix R — independent route-by-route real-world verification of all 186 active routes (vs Google Maps / JKRTC / gazetteers): 93 PASS / 88 REVIEW / 5 FAIL, the 48 distance corrections applied, the deferred worklist, and the full per-route ledger with sources.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx`,
+    download: true,
+    fileName: 'Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx',
+    tier: 'secondary',
+  },
+  {
     label: 'RTO Master Workbook (9 sheets)',
     description: 'The full detail pack: cover sheet, route plan, operator absorption with buyback estimates, trunk/social/tourist detail sheets, calibration sources, and limitations.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.3_RTO.xlsx`,
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.3_RTO.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx',
     tier: 'secondary',
   },
   {
@@ -203,7 +212,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All active route features (v3.4.3) for GIS integration.',
+    description: 'All active route features (v3.4.4) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
     tier: 'technical',
@@ -250,7 +259,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.4.3 engine.',
+    description: 'Quality checks and export run details from the v3.4.4 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
     tier: 'technical',
