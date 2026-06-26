@@ -9,6 +9,7 @@ import {
   Mountain,
   ScrollText,
   ShieldCheck,
+  Signpost,
   Users,
 } from 'lucide-react';
 
@@ -55,6 +56,12 @@ const LIMITATIONS = [
     title: 'Coverage is measured division-wide',
     body: 'The 35.2% walkshed coverage is against the full 6.58M Kashmir Division (much of it dispersed rural). Coverage of built-up settlement is substantially higher.',
     fix: 'A built-up-area coverage view can be added on request.',
+  },
+  {
+    icon: Signpost,
+    title: 'Map lines vs planning distance',
+    body: 'Drawn lines come from the road router between the verified endpoints. On ~16 corridors the router takes a longer path than the verified real road, so a line can read up to ~2× the listed km. The endpoints and the listed (verified) km are the authoritative figures.',
+    fix: 'Tightens with the RTO stop register / road-network refresh.',
   },
 ];
 

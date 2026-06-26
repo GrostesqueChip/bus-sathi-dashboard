@@ -46,6 +46,17 @@ section added (`KashmirAssurance.tsx`), hero shows v3.4.4 + verified trust chips
   searchable/tabbed Stops + Route-codes browser; wired after the route table.
 - [x] Downloads hub now serves the v4 register (replaced the retired V2 file). tsc clean.
 
+## Add-on (2026-06-26): plotted-line geometry follow-through
+- Found that the v3.4.4 distance corrections updated the *numbers* everywhere but
+  42 corrected routes still drew their old (pre-correction) GeoJSON line — some
+  absurd (e.g. a ~3 km route drawn as 14.6 km).
+- [x] Re-routed all 42 stale lines via OSRM (throttled) using their current
+  endpoints — lines are now real road paths. **171/186 (91%) within 1.3× of the
+  listed km; worst 2.0× (was ~6×).** km/fleet UNCHANGED (1,004) — only geometry.
+- [x] Disclosed the residual on the Limitations panel ("Map lines vs planning
+  distance" — ~16 corridors where the router draws a longer path than the verified
+  real road). tsc clean.
+
 ## Notes
 - Two download surfaces exist: the inline "RTO Official Downloads" hero band (top)
   and `KashmirSourceFiles` (bottom hub). Kept both: band = 3 hero CTAs, hub = full
