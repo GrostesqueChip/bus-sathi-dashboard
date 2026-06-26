@@ -79,7 +79,10 @@ export default function KashmirAssurance() {
             Every active route was verified against Google Maps, JKRTC timetables and district gazetteers — not just
             against the model that produced it. Wrong-coordinate and detour distances were replaced with the verified
             real road distance (each cited per route), and the fleet recomputed with the published formulas. A second,
-            independent blind audit reproduced the result (100% within-one-level agreement).
+            independent blind audit reproduced the result (100% within-one-level agreement). A
+            network-integrity check confirms the routes also work as a <b>system</b>: 184 of 186 form one
+            connected network with clear interchange hubs, redundancy is low, and only three tehsils
+            (Gurez, Kokernag, Karnah) remain genuine coverage gaps.
           </p>
         </div>
 
