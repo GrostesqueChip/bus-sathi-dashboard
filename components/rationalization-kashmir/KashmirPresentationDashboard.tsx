@@ -38,6 +38,7 @@ import KashmirSourceFiles from '@/components/rationalization-kashmir/KashmirSour
 import KashmirBeforeAfter from '@/components/rationalization-kashmir/KashmirBeforeAfter';
 import KashmirServicePlans from '@/components/rationalization-kashmir/KashmirServicePlans';
 import KashmirAssurance from '@/components/rationalization-kashmir/KashmirAssurance';
+import KashmirStopsCodes from '@/components/rationalization-kashmir/KashmirStopsCodes';
 import { getRouteKey, getRouteMapHref, PRIORITY_ORDER } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
 const NETWORK_MAP_ANCHOR_ID = 'kashmir-network-map';
@@ -519,6 +520,8 @@ export default function KashmirPresentationDashboard({
         selectedRouteKey={selectedRouteKey}
         onSelectRoute={(route) => setSelectedRouteKey(getRouteKey(route))}
       />
+
+      <KashmirStopsCodes />
 
       <KashmirSourceFiles files={sourceFiles} selectedRoute={selectedRoute} />
     </div>

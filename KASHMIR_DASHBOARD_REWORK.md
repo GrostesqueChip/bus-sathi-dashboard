@@ -35,6 +35,17 @@ downloads section adds the Verification Appendix, new Assurance + Limitations
 section added (`KashmirAssurance.tsx`), hero shows v3.4.4 + verified trust chips.
 `npx tsc --noEmit` passes for the changed files. Pushed to dashboard main.
 
+## Add-on (2026-06-26): Stops, districts & route-codes register
+- [x] Published the v4 geo-canonical stops registry to the dashboard
+  (`data/stops_master.json` = 143 stops, `data/route_codes.json` = 186 decoded
+  routes, + `Kashmir_Stops_Master_v4.csv` download). Coord-patched the 4
+  re-geocoded stops (Budgam/GBS/Hazratbal/Manigam).
+- [x] **CHECK**: 186/186 active route codes decode to two registry stops; all 143
+  stops used; 10 districts map 1:1 to the 2-letter codes.
+- [x] New `KashmirStopsCodes.tsx` — district legend, code-format explainer, and a
+  searchable/tabbed Stops + Route-codes browser; wired after the route table.
+- [x] Downloads hub now serves the v4 register (replaced the retired V2 file). tsc clean.
+
 ## Notes
 - Two download surfaces exist: the inline "RTO Official Downloads" hero band (top)
   and `KashmirSourceFiles` (bottom hub). Kept both: band = 3 hero CTAs, hub = full

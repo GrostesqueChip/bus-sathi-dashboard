@@ -242,11 +242,11 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     tier: 'technical',
   },
   {
-    label: 'Sectored Stops Database (CSV)',
-    description: 'Master stops with their sector IDs and stop numbers.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Stops_Sectored_V2.csv`,
+    label: 'Stops & Codes Register (CSV)',
+    description: 'The 143 canonical bus stops with district, tehsil/sector, stop number, coordinates and 12-char code (v4 geo-canonical, point-in-polygon districts).',
+    href: `${PUBLIC_ROUTE}/Kashmir_Stops_Master_v4.csv`,
     download: true,
-    fileName: 'Kashmir_Stops_Sectored_V2.csv',
+    fileName: 'Kashmir_Stops_Master_v4.csv',
     tier: 'technical',
   },
   {
