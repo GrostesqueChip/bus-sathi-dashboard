@@ -36,3 +36,6 @@ scripts/serviceAccountKey.json
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# local preview / tooling config
+.claude/

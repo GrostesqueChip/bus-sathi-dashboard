@@ -25,9 +25,11 @@ function inline(text: string): string {
   );
   // bold **text**
   t = t.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
-  // italic *text* or _text_
-  t = t.replace(/(^|[^*])\*([^*\n]+)\*([^*]|$)/g, '$1<em>$2</em>$3');
-  t = t.replace(/(^|[^_])_([^_\n]+)_([^_]|$)/g, '$1<em>$2</em>$3');
+  // italic *text* (not intra-word) — bold already consumed ** pairs above
+  t = t.replace(/(^|[^*\w])\*(?!\s)([^*\n]+?)\*(?!\w)/g, '$1<em>$2</em>');
+  // italic _text_ ONLY at word boundaries, so snake_case identifiers
+  // (FIREBASE_PRIVATE_KEY, Load_Ratio, route_codes) are never italicised
+  t = t.replace(/(^|[\s(])_(?!\s)([^_\n]+?)_(?=[\s).,!?;:]|$)/g, '$1<em>$2</em>');
   // inline code `code`
   t = t.replace(
     /`([^`]+)`/g,
