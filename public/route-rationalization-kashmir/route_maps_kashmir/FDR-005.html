@@ -56,12 +56,12 @@
     <h3>Terminals</h3>
     <div class="terminal-box" style="border-left:4px solid #1B5E20">
       <div class="label" style="color:#1B5E20">&#9650; Origin / Start</div>
-      <div class="value">BARAMULA</div>
+      <div class="value">34.2087, 74.3426</div>
       <div style="font-size:10px;color:#999;margin-top:2px">34.20873, 74.34259</div>
     </div>
     <div class="terminal-box" style="border-left:4px solid #B71C1C">
       <div class="label" style="color:#B71C1C">&#9660; Destination / End</div>
-      <div class="value">KUPWRA</div>
+      <div class="value">34.5261, 74.2549</div>
       <div style="font-size:10px;color:#999;margin-top:2px">34.52614, 74.25490</div>
     </div>
     
@@ -78,8 +78,8 @@
   <div class="section">
     <h3>Population Served</h3>
     <div class="kv"><span class="k">Residents within walkshed</span><span class="v" style="color:#00695C">94,924</span></div>
-    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#00695C">3.95%</span></div>
-    <div class="pop-bar-bg"><div class="pop-bar" style="width:15.8%"></div></div>
+    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#00695C">0.00%</span></div>
+    <div class="pop-bar-bg"><div class="pop-bar" style="width:0.0%"></div></div>
   </div>
 
   <div class="section">
@@ -121,7 +121,7 @@ var startIcon = L.divIcon({
   iconSize: [16, 16], iconAnchor: [8, 8], className: ''
 });
 L.marker(coords[0], {icon: startIcon}).addTo(map)
-  .bindPopup('<b>START</b><br>BARAMULA');
+  .bindPopup('<b>START</b><br>34.2087, 74.3426');
 
 // End marker
 var endIcon = L.divIcon({
@@ -129,7 +129,7 @@ var endIcon = L.divIcon({
   iconSize: [16, 16], iconAnchor: [8, 8], className: ''
 });
 L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map)
-  .bindPopup('<b>END</b><br>KUPWRA');
+  .bindPopup('<b>END</b><br>34.5261, 74.2549');
 
 // Via points
 var viaCoords = [];

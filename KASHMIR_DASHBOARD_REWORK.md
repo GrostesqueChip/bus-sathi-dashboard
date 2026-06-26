@@ -57,6 +57,16 @@ section added (`KashmirAssurance.tsx`), hero shows v3.4.4 + verified trust chips
   distance" — ~16 corridors where the router draws a longer path than the verified
   real road). tsc clean.
 
+## Add-on (2026-06-26): regenerate stale Folium maps
+- Bug sweep found the **Folium maps were stale** (v3.4.3 dated): the master map
+  (hero "Open master map" + "Original map" toggle) and all 186 per-route maps
+  (route-table "Map" buttons) were pre-correction.
+- [x] Regenerated all 186 per-route maps + the master map from the corrected
+  v3.4.4 gdf with the re-routed geometry (eng.build_individual_maps /
+  build_master_map, empty POI layer). Copied to public; 0 broken per-route links.
+- [x] Confirmed the **Pretty Excel was always correct** (km/fleet from the CSV;
+  no geometry) — the line bug was visuals-only.
+
 ## Notes
 - Two download surfaces exist: the inline "RTO Official Downloads" hero band (top)
   and `KashmirSourceFiles` (bottom hub). Kept both: band = 3 hero CTAs, hub = full
