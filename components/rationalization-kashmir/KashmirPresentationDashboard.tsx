@@ -37,6 +37,7 @@ import KashmirRouteTable from '@/components/rationalization-kashmir/KashmirRoute
 import KashmirSourceFiles from '@/components/rationalization-kashmir/KashmirSourceFiles';
 import KashmirBeforeAfter from '@/components/rationalization-kashmir/KashmirBeforeAfter';
 import KashmirServicePlans from '@/components/rationalization-kashmir/KashmirServicePlans';
+import KashmirAssurance from '@/components/rationalization-kashmir/KashmirAssurance';
 import { getRouteKey, getRouteMapHref, PRIORITY_ORDER } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
 const NETWORK_MAP_ANCHOR_ID = 'kashmir-network-map';
@@ -98,7 +99,10 @@ export default function KashmirPresentationDashboard({
             <div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
-                  kashmir valley v3.4.1
+                  kashmir valley v3.4.4
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
+                  <ShieldCheck size={12} /> {summary.activeRoutes} routes verified
                 </span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">
                   {summary.ssclBackboneRoutes} sscl backbone routes
@@ -135,7 +139,7 @@ export default function KashmirPresentationDashboard({
                   <MapIcon size={16} /> View GeoJSON
                 </a>
                 <a
-                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx"
+                  href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx"
                   download
                   className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 shadow-lg transition-all hover:translate-y-[-1px]"
                 >
@@ -174,25 +178,35 @@ export default function KashmirPresentationDashboard({
             <h2 className="text-2xl font-black text-slate-900 md:text-3xl">Bus Schedule Workbook</h2>
             <p className="max-w-3xl text-sm font-semibold leading-relaxed text-slate-600">
               The file the RTO needs: a clean 2-sheet Excel with the full route plan — headways, cycle times, fleet and
-              HPV/MPV split for every route. The 9-sheet Master Workbook (calibration, operator registers, buyback
-              estimates) sits alongside it. Both are regenerated live from the v3.4.1 engine.
+              HPV/MPV split for every route. Alongside it sit the 9-sheet Master Workbook (calibration, operator
+              registers, buyback estimates) and the Route Verification Appendix (every route checked against the real
+              world, with the corrections applied). All regenerated live from the v3.4.4 engine.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row md:shrink-0">
+          <div className="flex w-full flex-col gap-3 md:w-auto md:shrink-0">
             <a
-              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.1_RTO_Pretty.xlsx"
+              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx"
               download
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-base font-black text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:translate-y-[-1px] hover:shadow-emerald-700/30"
             >
               <Download size={20} /> Download Bus Schedule (.xlsx)
             </a>
-            <a
-              href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.1_RTO.xlsx"
-              download
-              className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-350"
-            >
-              <Download size={18} className="text-slate-400" /> Master Workbook (9 sheets)
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <a
+                href="/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx"
+                download
+                className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+              >
+                <Download size={16} className="text-slate-400" /> Master Workbook (9 sheets)
+              </a>
+              <a
+                href="/route-rationalization-kashmir/Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx"
+                download
+                className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+              >
+                <ShieldCheck size={16} className="text-emerald-500" /> Verification Appendix
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -497,6 +511,8 @@ export default function KashmirPresentationDashboard({
       <KashmirBeforeAfter summary={summary} />
 
       <KashmirServicePlans />
+
+      <KashmirAssurance />
 
       <KashmirRouteTable
         routes={routes}
