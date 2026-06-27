@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildLocalCopilotReply, buildRecoveryReply } from '@/lib/copilot';
 import { getAdminDb } from '@/lib/firebaseAdmin';
-import {
-  buildRationalizationReply,
-  getRouteRationalizationDataset,
-  isRationalizationQuestion,
-} from '@/lib/routeRationalization';
 import { FleetSnapshot, generateFleetSnapshot } from '@/lib/snapshot';
 
 export const dynamic = 'force-dynamic';
@@ -139,24 +134,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const latestQuestion = getLatestUserQuestion(messages);
-    const onRationalizationPage = pathname.startsWith('/route-rationalization');
-
-    if (onRationalizationPage || isRationalizationQuestion(latestQuestion)) {
-      try {
-        const rationalizationDataset = await getRouteRationalizationDataset();
-        const rationalizationReply = buildRationalizationReply(latestQuestion, rationalizationDataset, {
-          preferSummaryFallback: isRationalizationQuestion(latestQuestion),
-        });
-
-        if (rationalizationReply) {
-          return new NextResponse(sseFromText(rationalizationReply), {
-            headers: SSE_HEADERS,
-          });
-        }
-      } catch (error) {
-        console.error('Failed to load route rationalization dataset:', error);
-      }
-    }
 
     const snapshot = await getSnapshot();
     const apiKey = process.env.OPENAI_API_KEY;

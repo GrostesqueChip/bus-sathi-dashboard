@@ -12,8 +12,6 @@ export default function Sidebar() {
   const menuItems = [
     { title: "Executive Summary", path: "/", icon: LayoutDashboard },
     { title: "Route Analysis Map", path: "/map-visualizer", icon: MapIcon },
-    { title: "Route Rationalization", path: "/route-rationalization", icon: GitBranch },
-    { title: "V3 Route Plan", path: "/route-rationalization-v3", icon: GitBranch },
     { title: "Kashmir Route Plan", path: "/route-rationalization-kashmir", icon: GitBranch },
     { title: "Driver Database", path: "/registered-drivers", icon: Contact },
     { title: "Data & Trip Logs", path: "/trip-logs", icon: FolderClock },
