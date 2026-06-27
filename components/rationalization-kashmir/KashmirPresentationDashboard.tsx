@@ -14,7 +14,7 @@ import type {
   KashmirSourceFile,
 } from '@/lib/routeRationalizationKashmir';
 import {
-  DistributionCard, formatActionLabel, formatNumber, getActionPillClass,
+  formatActionLabel, formatNumber, getActionPillClass,
   getPriorityPillClass, KpiCard, PolicyCard,
 } from '@/components/rationalization-kashmir/KashmirCards';
 import KashmirRouteTable from '@/components/rationalization-kashmir/KashmirRouteTable';
@@ -22,8 +22,10 @@ import KashmirSourceFiles from '@/components/rationalization-kashmir/KashmirSour
 import KashmirBeforeAfter from '@/components/rationalization-kashmir/KashmirBeforeAfter';
 import KashmirServicePlans from '@/components/rationalization-kashmir/KashmirServicePlans';
 import KashmirAssurance from '@/components/rationalization-kashmir/KashmirAssurance';
+import KashmirMethodology from '@/components/rationalization-kashmir/KashmirMethodology';
 import KashmirStopsCodes from '@/components/rationalization-kashmir/KashmirStopsCodes';
-import { getRouteKey, getRouteMapHref, PRIORITY_ORDER } from '@/components/rationalization-kashmir/KashmirRouteUtils';
+import KashmirDataDistricts from '@/components/rationalization-kashmir/KashmirDataDistricts';
+import { getRouteKey, getRouteMapHref } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
 const KashmirNetworkMap = dynamic(() => import('@/components/rationalization-kashmir/KashmirNetworkMap'), {
   ssr: false,
@@ -45,12 +47,13 @@ type Props = {
   sourceFiles: KashmirSourceFile[];
 };
 
-type TabId = 'overview' | 'map' | 'routes' | 'verification' | 'downloads';
+type TabId = 'overview' | 'map' | 'data' | 'routes' | 'method' | 'downloads';
 const TABS: { id: TabId; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'map', label: 'Network Map', icon: MapIcon },
+  { id: 'data', label: 'Data & Districts', icon: BarChart3 },
   { id: 'routes', label: 'Routes & Stops', icon: Table2 },
-  { id: 'verification', label: 'Verification', icon: ShieldCheck },
+  { id: 'method', label: 'Method & Checks', icon: ShieldCheck },
   { id: 'downloads', label: 'Downloads', icon: Download },
 ];
 
@@ -75,8 +78,6 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
     return m;
   }, [log]);
   const selectedLog = selectedRoute ? logByRouteKey.get(getRouteKey(selectedRoute)) : null;
-  const hpvShare = summary.totalFleetRequired ? (summary.hpvTotal / summary.totalFleetRequired) * 100 : 0;
-  const mpvShare = summary.totalFleetRequired ? (summary.mpvTotal / summary.totalFleetRequired) * 100 : 0;
 
   const goTab = (id: TabId) => {
     setTab(id);
@@ -195,20 +196,6 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
                   )}
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <DistributionCard title="Route type mix" items={summary.routeTypeCounts} total={summary.totalRouteRows} tone="emerald" />
-                <DistributionCard title="Priority bands" items={[...summary.priorityBandCounts].sort((a, b) => PRIORITY_ORDER.indexOf(a.label) - PRIORITY_ORDER.indexOf(b.label))} total={summary.totalRouteRows} tone="orange" />
-                <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
-                  <h3 className="text-sm font-black uppercase tracking-[0.18em] text-slate-400">Vehicle split</h3>
-                  <div className="mt-5 overflow-hidden rounded-2xl bg-slate-100"><div className="flex h-8"><div className="bg-blue-600" style={{ width: `${hpvShare}%` }} /><div className="bg-teal-500" style={{ width: `${mpvShare}%` }} /></div></div>
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl bg-blue-50 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">HPV (12m)</p><p className="mt-2 text-2xl font-black text-blue-900">{formatNumber(summary.hpvTotal)}</p><p className="mt-1 text-xs font-bold text-blue-700">{hpvShare.toFixed(1)}%</p></div>
-                    <div className="rounded-2xl bg-teal-50 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-700">MPV (9m)</p><p className="mt-2 text-2xl font-black text-teal-900">{formatNumber(summary.mpvTotal)}</p><p className="mt-1 text-xs font-bold text-teal-700">{mpvShare.toFixed(1)}%</p></div>
-                  </div>
-                  <div className="mt-3 rounded-2xl bg-orange-50 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-orange-700">LPV</p><p className="mt-2 text-2xl font-black text-orange-900">{formatNumber(summary.lpvTotal)}</p></div>
-                </div>
-              </div>
             </div>
 
             <aside className="space-y-6">
@@ -270,6 +257,15 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
           </section>
         )}
 
+        {/* DATA & DISTRICTS */}
+        {tab === 'data' && (
+          <KashmirDataDistricts
+            routes={routes}
+            summary={summary}
+            onSelectRoute={(r) => { setSelectedRouteKey(getRouteKey(r)); goTab('map'); }}
+          />
+        )}
+
         {/* ROUTES & STOPS */}
         {tab === 'routes' && (
           <>
@@ -278,8 +274,13 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
           </>
         )}
 
-        {/* VERIFICATION */}
-        {tab === 'verification' && <KashmirAssurance />}
+        {/* METHOD & CHECKS */}
+        {tab === 'method' && (
+          <>
+            <KashmirMethodology />
+            <KashmirAssurance />
+          </>
+        )}
 
         {/* DOWNLOADS */}
         {tab === 'downloads' && (
