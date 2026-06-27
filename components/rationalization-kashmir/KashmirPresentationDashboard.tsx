@@ -125,8 +125,8 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
       </section>
 
       {/* ───────────────── STICKY SECTION NAV ───────────────── */}
-      <div ref={topRef} className="sticky top-2 z-30 mt-5 scroll-mt-2">
-        <nav className="flex gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white/90 p-1.5 shadow-sm backdrop-blur-xl">
+      <div ref={topRef} className="sticky top-2 z-[1100] mt-5 scroll-mt-2">
+        <nav className="flex gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.12)]">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button key={id} type="button" onClick={() => goTab(id)}
               className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition-all ${
