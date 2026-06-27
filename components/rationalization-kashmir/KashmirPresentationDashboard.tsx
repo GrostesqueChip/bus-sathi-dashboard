@@ -58,8 +58,6 @@ const TABS: { id: TabId; label: string; icon: typeof LayoutDashboard }[] = [
 ];
 
 const PRETTY = '/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx';
-const RTO9 = '/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx';
-const APPENDIX = '/route-rationalization-kashmir/Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx';
 
 export default function KashmirPresentationDashboard({ routes, log, summary, updatedAt, sourceFiles }: Props) {
   const [tab, setTab] = useState<TabId>('overview');
@@ -284,25 +282,7 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
 
         {/* DOWNLOADS */}
         {tab === 'downloads' && (
-          <>
-            <section className="overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50/50 p-6 shadow-sm md:p-8">
-              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-1 text-xs font-black uppercase tracking-[0.15em] text-emerald-800"><span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" /> Official Submission</span>
-                  <h2 className="text-2xl font-black text-slate-900">Bus Schedule Workbook</h2>
-                  <p className="max-w-3xl text-sm font-semibold leading-relaxed text-slate-600">The file the RTO submits: a clean 2-sheet Excel with the full route plan. Alongside it, the 9-sheet Master Workbook and the Route Verification Appendix — all regenerated live from the v3.4.4 engine.</p>
-                </div>
-                <div className="flex w-full flex-col gap-3 md:w-auto md:shrink-0">
-                  <a href={PRETTY} download className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-base font-black text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:translate-y-[-1px]"><Download size={20} /> Download Bus Schedule (.xlsx)</a>
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <a href={RTO9} download className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"><Download size={16} className="text-slate-400" /> Master Workbook (9 sheets)</a>
-                    <a href={APPENDIX} download className="inline-flex flex-1 items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"><ShieldCheck size={16} className="text-emerald-500" /> Verification Appendix</a>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <KashmirSourceFiles files={sourceFiles} selectedRoute={selectedRoute} />
-          </>
+          <KashmirSourceFiles files={sourceFiles} selectedRoute={selectedRoute} />
         )}
       </div>
     </div>
