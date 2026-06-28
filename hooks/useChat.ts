@@ -112,12 +112,16 @@ export function useChat(options?: UseChatOptions) {
         });
 
         if (!response.ok || !response.body) {
-          const detail = await response.text();
+          const detail = await response.text().catch(() => '');
           let message = FALLBACK_CHAT_ERROR;
           try {
             message = JSON.parse(detail)?.error || message;
           } catch {
-            if (detail.trim()) message = detail.trim();
+            // Never surface a raw HTML error page (e.g. a 500 page) as a chat
+            // message — only use a short, plain-text server detail.
+            const trimmed = detail.trim();
+            const looksLikeHtml = /^<|<!doctype|<html|<\/?[a-z]+[\s>]/i.test(trimmed);
+            if (trimmed && !looksLikeHtml && trimmed.length < 280) message = trimmed;
           }
           throw new Error(message);
         }

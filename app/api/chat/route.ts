@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildLocalCopilotReply, buildRecoveryReply } from '@/lib/copilot';
+import { buildKashmirContext, buildKashmirLocalReply, isKashmirQuestion } from '@/lib/kashmirCopilot';
+import { getRouteRationalizationKashmirDataset } from '@/lib/routeRationalizationKashmir';
 import { getAdminDb } from '@/lib/firebaseAdmin';
 import { FleetSnapshot, generateFleetSnapshot } from '@/lib/snapshot';
 
@@ -24,6 +26,17 @@ function buildSystemPrompt(snapshot: FleetSnapshot): string {
     '',
     'Fleet Snapshot JSON:',
     JSON.stringify(snapshot),
+  ].join('\n');
+}
+
+function buildKashmirSystemPrompt(context: string): string {
+  return [
+    'You are Bus Sathi Bot, the assistant for the Kashmir Valley Route Rationalisation dashboard, helping RTO officers and reviewers.',
+    'Answer ONLY from the Kashmir plan facts below. Do not invent numbers.',
+    'Be concise and operational; lead with the key number. Use short markdown bullets when listing.',
+    'If something is not in the facts, say it is in the downloadable workbooks/appendix on this page.',
+    '',
+    context,
   ].join('\n');
 }
 
@@ -134,6 +147,48 @@ export async function POST(req: NextRequest) {
 
   try {
     const latestQuestion = getLatestUserQuestion(messages);
+
+    // ── Kashmir route-plan questions ────────────────────────────────────────
+    // Answered from the static, server-loaded plan dataset — NO Firebase fleet
+    // snapshot required, so this works even when fleet credentials are absent.
+    if (isKashmirQuestion(pathname, latestQuestion)) {
+      try {
+        const dataset = await getRouteRationalizationKashmirDataset();
+        const kashmirKey = process.env.OPENAI_API_KEY;
+
+        if (kashmirKey) {
+          let resp: Response | null = null;
+          try {
+            resp = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${kashmirKey}` },
+              body: JSON.stringify({
+                model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+                stream: true,
+                temperature: 0.2,
+                messages: [
+                  { role: 'system', content: buildKashmirSystemPrompt(buildKashmirContext(dataset)) },
+                  ...messages.map((message: any) => ({ role: message.role, content: message.content })),
+                ],
+              }),
+            });
+          } catch (error) {
+            console.error('Kashmir chat completion failed, using local copilot:', error);
+          }
+
+          if (resp?.ok && resp.body) {
+            return new NextResponse(sseFromOpenAI(resp.body), { headers: SSE_HEADERS });
+          }
+        }
+
+        return new NextResponse(sseFromText(buildKashmirLocalReply(latestQuestion, dataset)), {
+          headers: SSE_HEADERS,
+        });
+      } catch (error) {
+        console.error('Kashmir copilot failed, falling back:', error);
+        // fall through to the generic fleet path below
+      }
+    }
 
     const snapshot = await getSnapshot();
     const apiKey = process.env.OPENAI_API_KEY;
