@@ -56,14 +56,18 @@ export default function KashmirRealityLayer() {
   const [ops, setOps] = useState<Ops | null>(null);
   const [corridors, setCorridors] = useState<any>(null);
   const [stops, setStops] = useState<any>(null);
+  const [stopsT2, setStopsT2] = useState<any>(null);
   const [speed, setSpeed] = useState<any>(null);
-  const [show, setShow] = useState({ corridors: true, speed: true, stops: false });
+  const [planEvidence, setPlanEvidence] = useState<any>(null);
+  const [show, setShow] = useState({ corridors: true, plan: false, speed: true, stops: false });
 
   useEffect(() => {
     fetch('/kashmir-reality/ops.json').then((r) => r.json()).then(setOps).catch(() => null);
     fetch('/kashmir-reality/corridors.geojson').then((r) => r.json()).then(setCorridors).catch(() => null);
     fetch('/kashmir-reality/stops.geojson').then((r) => r.json()).then(setStops).catch(() => null);
+    fetch('/kashmir-reality/stops_tier2.geojson').then((r) => r.json()).then(setStopsT2).catch(() => null);
     fetch('/kashmir-reality/speed.geojson').then((r) => r.json()).then(setSpeed).catch(() => null);
+    fetch('/kashmir-reality/plan_evidence.geojson').then((r) => r.json()).then(setPlanEvidence).catch(() => null);
   }, []);
 
   const maxCurve = useMemo(
@@ -100,7 +104,7 @@ export default function KashmirRealityLayer() {
         <StatCard icon={Clock} label="Duty day" value={`${ops.duty_span_h} h`} detail={`${ops.in_service_h} h in service (${Math.round(ops.utilisation * 100)}% utilisation), ~${ops.day_start}–${ops.day_end}.`} />
         <StatCard icon={Timer} label="Terminal turn" value={`${ops.turnaround_min} min`} detail={`Median door-to-door turn (n=${ops.turnaround_n.toLocaleString('en-IN')}), incl. layover.`} />
         <StatCard icon={Route} label="Corridors verified" value={`${ops.corridor_tally.matched + ops.corridor_tally.partial}`} detail={`${ops.corridor_tally.matched} match the plan, ${ops.corridor_tally.partial} diverge in geometry.`} />
-        <StatCard icon={MapPin} label="Real stops" value={`${stops?.features?.length ?? '—'}`} detail="Strong observed stops (≥3 drivers, ≥10 visits)." />
+        <StatCard icon={MapPin} label="Real stops" value={`${stops?.features?.length ?? '—'}`} detail={`Strong observed stops (≥3 drivers, ≥10 visits)${stopsT2?.features?.length ? ` + ${stopsT2.features.length} rural Tier-2 candidates` : ''}.`} />
       </section>
 
       {/* map */}
@@ -108,12 +112,12 @@ export default function KashmirRealityLayer() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3">
           <h3 className="text-sm font-black uppercase tracking-[0.14em] text-slate-700">Observed corridors · measured speeds · real stops</h3>
           <div className="flex gap-1.5">
-            {(['corridors', 'speed', 'stops'] as const).map((k) => (
+            {(['corridors', 'plan', 'speed', 'stops'] as const).map((k) => (
               <button key={k} type="button" onClick={() => setShow((s) => ({ ...s, [k]: !s[k] }))}
                 className={`rounded-lg px-3 py-1.5 text-xs font-black capitalize transition-all ${
                   show[k] ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                 }`}>
-                {k}
+                {k === 'plan' ? 'plan evidence' : k}
               </button>
             ))}
           </div>
@@ -126,6 +130,26 @@ export default function KashmirRealityLayer() {
               <CircleMarker key={`sp${i}`} center={[f.geometry.coordinates[1], f.geometry.coordinates[0]]}
                 radius={3} pathOptions={{ color: speedColor(f.properties.kmh), fillOpacity: 0.5, weight: 0 }} />
             ))}
+            {show.plan && planEvidence && (
+              <GeoJSON data={planEvidence}
+                style={(f: any) => {
+                  const o = f?.properties?.obs ?? 0;
+                  return {
+                    color: o >= 0.5 ? '#059669' : o >= 0.2 ? '#d97706' : '#cbd5e1',
+                    weight: o >= 0.5 ? 2.5 : 1.5,
+                    opacity: o >= 0.2 ? 0.75 : 0.45,
+                  };
+                }}
+                onEachFeature={(f: any, layer: any) => {
+                  const p = f.properties;
+                  layer.bindPopup(
+                    `<div style="font-size:12px"><b>${p.name}</b> (${p.id})<br/>` +
+                    `Road driven by app buses: <b>${Math.round((p.obs ?? 0) * 100)}%</b><br/>` +
+                    `${p.runs} run fragments · ${p.drv} distinct drivers<br/>` +
+                    `<i>Fragment evidence — road-level, not end-to-end proof.</i></div>`
+                  );
+                }} />
+            )}
             {show.corridors && corridors && (
               <GeoJSON data={corridors}
                 style={(f: any) => ({
@@ -147,6 +171,12 @@ export default function KashmirRealityLayer() {
                 <Tooltip>{`Stop ${f.properties.stop_id}: ${f.properties.visits} visits · ${f.properties.drivers} drivers`}</Tooltip>
               </CircleMarker>
             ))}
+            {show.stops && stopsT2?.features?.map((f: any, i: number) => (
+              <CircleMarker key={`s2${i}`} center={[f.geometry.coordinates[1], f.geometry.coordinates[0]]}
+                radius={4} pathOptions={{ color: '#7f1d1d', fillColor: '#ef4444', fillOpacity: 0.85, weight: 1 }}>
+                <Tooltip>{`Tier-2 ${f.properties.stop_id} (${f.properties.district}): ${f.properties.visits} visits · ${f.properties.drivers} drivers — field-validate`}</Tooltip>
+              </CircleMarker>
+            ))}
           </MapContainer>
         </div>
         <div className="flex flex-wrap gap-4 border-t border-slate-100 px-5 py-3">
@@ -161,6 +191,19 @@ export default function KashmirRealityLayer() {
             <span className="ml-1 h-2.5 w-2.5 rounded-full bg-yellow-500" /> 15–22
             <span className="ml-1 h-2.5 w-2.5 rounded-full bg-green-500" /> &gt;22 km/h (measured)
           </span>
+          {show.plan && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600">
+              <span className="h-2.5 w-4 rounded-full bg-emerald-600" /> plan route driven ≥50%
+              <span className="ml-1 h-2.5 w-4 rounded-full bg-amber-600" /> 20–50%
+              <span className="ml-1 h-2.5 w-4 rounded-full bg-slate-300" /> little app data
+            </span>
+          )}
+          {show.stops && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600">
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> Tier-1 stop
+              <span className="ml-1 h-2.5 w-2.5 rounded-full bg-red-500" /> Tier-2 (rural recovery, field-validate)
+            </span>
+          )}
         </div>
       </section>
 
