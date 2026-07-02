@@ -59,6 +59,7 @@ export default function KashmirRealityLayer() {
   const [stopsT2, setStopsT2] = useState<any>(null);
   const [speed, setSpeed] = useState<any>(null);
   const [planEvidence, setPlanEvidence] = useState<any>(null);
+  const [connectors, setConnectors] = useState<any>(null);
   const [show, setShow] = useState({ corridors: true, plan: false, speed: true, stops: false });
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function KashmirRealityLayer() {
     fetch('/kashmir-reality/stops_tier2.geojson').then((r) => r.json()).then(setStopsT2).catch(() => null);
     fetch('/kashmir-reality/speed.geojson').then((r) => r.json()).then(setSpeed).catch(() => null);
     fetch('/kashmir-reality/plan_evidence.geojson').then((r) => r.json()).then(setPlanEvidence).catch(() => null);
+    fetch('/kashmir-reality/connectors.geojson').then((r) => r.json()).then(setConnectors).catch(() => null);
   }, []);
 
   const maxCurve = useMemo(
@@ -165,6 +167,18 @@ export default function KashmirRealityLayer() {
                   );
                 }} />
             )}
+            {show.corridors && connectors && (
+              <GeoJSON data={connectors}
+                style={() => ({ color: '#7c3aed', weight: 3, opacity: 0.9, dashArray: '8 6' })}
+                onEachFeature={(f: any, layer: any) => {
+                  const p = f.properties;
+                  layer.bindPopup(
+                    `<div style="font-size:12px"><b>${p.id} — ${p.name}</b><br/>` +
+                    `${p.n_runs} runs · ${p.n_drivers} drivers · ${p.km} km<br/>` +
+                    `<i>${p.note}</i></div>`
+                  );
+                }} />
+            )}
             {show.stops && stops?.features?.map((f: any, i: number) => (
               <CircleMarker key={`st${i}`} center={[f.geometry.coordinates[1], f.geometry.coordinates[0]]}
                 radius={4} pathOptions={{ color: '#0f172a', fillColor: '#fbbf24', fillOpacity: 0.9, weight: 1 }}>
@@ -185,6 +199,11 @@ export default function KashmirRealityLayer() {
               <span className="h-2.5 w-4 rounded-full" style={{ background: v.color }} /> {v.label} ({ops.corridor_tally[k]})
             </span>
           ))}
+          {show.corridors && connectors?.features?.length > 0 && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600">
+              <span className="h-0 w-4 border-t-2 border-dashed border-violet-600" /> unmatched local connector ({connectors.features.length}, thin evidence)
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600">
             <span className="h-2.5 w-2.5 rounded-full bg-red-600" /> &lt;10 km/h
             <span className="ml-1 h-2.5 w-2.5 rounded-full bg-orange-500" /> 10–15

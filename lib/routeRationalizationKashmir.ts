@@ -152,7 +152,7 @@ const STUDY_AREA_POPULATION = 6_584_762;
 // v3.4.3 (system audit) also fixed reverse-direction double-counting: a route's
 // cycle time is a ROUND TRIP, so corridor consolidation is now UNDIRECTED —
 // "A→B" and "B→A" collapse to one bidirectional service (removed ~10 duplicate
-// pairs, e.g. Srinagar↔Kupwara). v3.4.4 counts: 186 active routes, 1,004 fleet
+// pairs, e.g. Srinagar↔Kupwara). v3.4.5 counts: 186 active routes, 1,011 fleet
 // (187 HPV / 748 MPV / 69 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
 // rural lifelines demand-sized 35–50 (50-min hard max wait); fleet density ≈ 0.43 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
 // geocode collapse; v3.3.9 fixed 11 false SSCL trunks + a district-geocode
@@ -171,19 +171,27 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.4 engine.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx`,
+    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.5 engine.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx',
+    fileName: 'Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx',
     tier: 'primary',
   },
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
-    label: 'Route Verification Appendix (v3.4.4)',
+    label: 'Route Verification Appendix (v3.4.5)',
     description: 'Appendix R — independent route-by-route real-world verification of all 186 active routes (vs Google Maps / JKRTC / gazetteers): 93 PASS / 88 REVIEW / 5 FAIL, the 48 distance corrections applied, the deferred worklist, and the full per-route ledger with sources.',
-    href: `${PUBLIC_ROUTE}/Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx`,
+    href: `${PUBLIC_ROUTE}/Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx`,
     download: true,
-    fileName: 'Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx',
+    fileName: 'Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx',
+    tier: 'secondary',
+  },
+  {
+    label: 'Observed Ground-Truth Workbook (app GPS)',
+    description: 'What real buses measurably do — from the Bus Sathi app\'s driver GPS: observed stops coded in the plan\'s district-sector terminology (Tier-1 confirmed-pattern + Tier-2 rural candidates for field validation), the verified corridors, per-route road-driven evidence for all 186 plan routes, and the 2 unmatched local connectors. Aggregate and anonymised; partial-adoption caveats on every sheet.',
+    href: `${PUBLIC_ROUTE}/Kashmir_Observed_GroundTruth_v1.xlsx`,
+    download: true,
+    fileName: 'Kashmir_Observed_GroundTruth_v1.xlsx',
     tier: 'secondary',
   },
   // NOTE: the 9-sheet "RTO Master Workbook" is intentionally NOT surfaced in the
@@ -207,7 +215,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Network GeoJSON',
-    description: 'All active route features (v3.4.4) for GIS integration.',
+    description: 'All active route features (v3.4.5) for GIS integration.',
     href: `${PUBLIC_ROUTE}/Rationalised_Routes_Kashmir_v3.geojson`,
     fileName: 'Rationalised_Routes_Kashmir_v3.geojson',
     tier: 'technical',
@@ -254,7 +262,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Pipeline log',
-    description: 'Quality checks and export run details from the v3.4.4 engine.',
+    description: 'Quality checks and export run details from the v3.4.5 engine.',
     href: `${PUBLIC_ROUTE}/transit_v3.log.txt`,
     fileName: 'transit_v3.log.txt',
     tier: 'technical',
@@ -385,7 +393,7 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
 
   // Definitions match the engine and the briefing decks exactly (by Action_Taken),
   // so the dashboard, workbook and slides all show the same headline numbers.
-  // v3.4.4 (verified against the CSV): active = rows not merged (186) ·
+  // v3.4.5 (verified against the CSV): active = rows not merged (186) ·
   //   trunk = UPGRADED_TO_TRUNK (32) · feeder = RETAINED_AS_FEEDER (154) ·
   //   merged (458). The 30 SSCL backbone routes are a SUBSET of the 32 trunks.
   const uniqueSsclRoutes = new Set(
