@@ -1,5 +1,6 @@
 {
  "scope": "Measured from ~157 observed drivers (partial, self-selected adoption). Per-vehicle physics is robust; this is NOT network supply/frequency/demand.",
+ "data_through": "29 Jun 2026",
  "drivers": 157,
  "driver_days": 855,
  "runs": 2526,

@@ -56,6 +56,25 @@ export async function getRealityOps(): Promise<RealityOps | null> {
   return realityCache;
 }
 
+// per-route observed evidence + real-world verification (for route answers)
+type RouteEvidence = Record<string, { obs: number; drv: number; runs: number; km: number }>;
+type RouteVerification = Record<string, { verdict: string; finding: string; service: string; sources: string }>;
+let evidenceCache: RouteEvidence | null | undefined;
+let verificationCache: RouteVerification | null | undefined;
+
+export async function getRouteExtras(): Promise<{ evidence: RouteEvidence | null; verification: RouteVerification | null }> {
+  const base = path.join(process.cwd(), 'public', 'route-rationalization-kashmir', 'data');
+  if (evidenceCache === undefined) {
+    try { evidenceCache = JSON.parse(await readFile(path.join(base, 'evidence.json'), 'utf8')); }
+    catch { evidenceCache = null; }
+  }
+  if (verificationCache === undefined) {
+    try { verificationCache = JSON.parse(await readFile(path.join(base, 'verification.json'), 'utf8')); }
+    catch { verificationCache = null; }
+  }
+  return { evidence: evidenceCache ?? null, verification: verificationCache ?? null };
+}
+
 function realityFacts(ops: RealityOps): string[] {
   const verified = (ops.corridor_tally.matched ?? 0) + (ops.corridor_tally.partial ?? 0);
   return [
@@ -187,7 +206,11 @@ function findRoute(q: string, active: RationalizedRouteKashmir[]): RationalizedR
   return scored[0]?.r ?? null;
 }
 
-function describeRoute(r: RationalizedRouteKashmir): string {
+function describeRoute(
+  r: RationalizedRouteKashmir,
+  extras?: { evidence: Record<string, { obs: number; drv: number; runs: number; km: number }> | null;
+             verification: Record<string, { verdict: string; finding: string; service: string; sources: string }> | null },
+): string {
   const cls = r.newRouteId.startsWith('SSCL-') ? 'SSCL e-bus trunk'
     : r.actionTaken === 'UPGRADED_TO_TRUNK' ? 'Trunk (main route)' : 'Feeder route';
   const mix = [
@@ -195,7 +218,7 @@ function describeRoute(r: RationalizedRouteKashmir): string {
     r.mpvCount ? `${r.mpvCount} medium` : '',
     r.lpvCount ? `${r.lpvCount} small` : '',
   ].filter(Boolean).join(' + ');
-  return [
+  const lines = [
     `**${r.routeName}**`,
     `- Route code: **${r.routeCode || '—'}** · plan ID ${r.newRouteId} · ${cls}`,
     `- Length: **${r.routeKm.toFixed(1)} km** · a bus every **${r.headwayMin} min**`,
@@ -203,7 +226,16 @@ function describeRoute(r: RationalizedRouteKashmir): string {
     `- Population within a 400 m walk of the route: **${nf(r.populationServedRaw ?? 0)}**`,
     r.socialFlag ? '- **Social-obligation route** — protected (serves townships / hospitals / lifelines).' : '',
     r.touristCorridor ? '- Flagged as a **tourist corridor**.' : '',
-  ].filter(Boolean).join('\n');
+  ];
+  const vf = extras?.verification?.[r.routeCode];
+  if (vf) {
+    lines.push(`- Real-world verification (v3.4.4): **${vf.verdict}**${vf.service && vf.service !== 'nan' ? ` — ${vf.service}` : ''}`);
+  }
+  const ev = extras?.evidence?.[r.newRouteId];
+  if (ev) {
+    lines.push(`- Observed on the ground (app GPS): **${Math.round(ev.obs * 100)}% of the road alignment driven** by app buses (${nf(ev.runs)} run fragments, ${ev.drv} drivers). _Road-level evidence, not end-to-end proof; low evidence ≠ no service (partial adoption)._`);
+  }
+  return lines.filter(Boolean).join('\n');
 }
 
 /** Deterministic answer (no OpenAI needed) for common Kashmir questions. */
@@ -211,6 +243,7 @@ export function buildKashmirLocalReply(
   question: string,
   dataset: RouteRationalizationKashmirDataset,
   reality?: RealityOps | null,
+  extras?: Awaited<ReturnType<typeof getRouteExtras>>,
 ): string {
   const q = (question || '').toLowerCase();
   const s = dataset.summary;
@@ -220,7 +253,7 @@ export function buildKashmirLocalReply(
   // name fragment. Most specific intent — checked first.
   const route = findRoute(q, active);
   if (route) {
-    return describeRoute(route);
+    return describeRoute(route, extras);
   }
 
   // Observed-reality (app GPS) questions.

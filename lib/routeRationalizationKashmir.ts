@@ -187,6 +187,14 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
     tier: 'secondary',
   },
   {
+    label: 'Route Timetables (Excel)',
+    description: 'Departure boards for every active route, expanded from the planned headways — one sheet per district, first/last departures and the full board from each terminus. Service day 08:00–19:00 anchored on the measured operating day (SSCL backbone 07:00–20:00).',
+    href: `${PUBLIC_ROUTE}/Kashmir_Timetables_v1.xlsx`,
+    download: true,
+    fileName: 'Kashmir_Timetables_v1.xlsx',
+    tier: 'secondary',
+  },
+  {
     label: 'Observed Ground-Truth Workbook (app GPS)',
     description: 'What real buses measurably do — from the Bus Sathi app\'s driver GPS: observed stops coded in the plan\'s district-sector terminology (Tier-1 confirmed-pattern + Tier-2 rural candidates for field validation), the verified corridors, per-route road-driven evidence for all 186 plan routes, and the 2 unmatched local connectors. Aggregate and anonymised; partial-adoption caveats on every sheet.',
     href: `${PUBLIC_ROUTE}/Kashmir_Observed_GroundTruth_v1.xlsx`,

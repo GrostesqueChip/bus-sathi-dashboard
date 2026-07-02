@@ -18,6 +18,7 @@ import {
   getPriorityPillClass, KpiCard, PolicyCard,
 } from '@/components/rationalization-kashmir/KashmirCards';
 import KashmirRouteTable from '@/components/rationalization-kashmir/KashmirRouteTable';
+import KashmirRouteDrawer from '@/components/rationalization-kashmir/KashmirRouteDrawer';
 import KashmirSourceFiles from '@/components/rationalization-kashmir/KashmirSourceFiles';
 import KashmirBeforeAfter from '@/components/rationalization-kashmir/KashmirBeforeAfter';
 import KashmirServicePlans from '@/components/rationalization-kashmir/KashmirServicePlans';
@@ -76,6 +77,7 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
   const [tab, setTab] = useState<TabId>('overview');
   const [viewMode, setViewMode] = useState<'native' | 'generated'>('native');
   const [selectedRouteKey, setSelectedRouteKey] = useState(routes[0] ? getRouteKey(routes[0]) : null);
+  const [drawerRoute, setDrawerRoute] = useState<RationalizedRouteKashmir | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
   const selectedRoute = routes.find((r) => getRouteKey(r) === selectedRouteKey) || routes[0] || null;
@@ -283,7 +285,8 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
         {/* ROUTES & STOPS */}
         {tab === 'routes' && (
           <>
-            <KashmirRouteTable routes={routes} selectedRouteKey={selectedRouteKey} onSelectRoute={(r) => setSelectedRouteKey(getRouteKey(r))} />
+            <KashmirRouteTable routes={routes} selectedRouteKey={selectedRouteKey}
+              onSelectRoute={(r) => { setSelectedRouteKey(getRouteKey(r)); setDrawerRoute(r); }} />
             <KashmirStopsCodes />
           </>
         )}
@@ -301,6 +304,9 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
           <KashmirSourceFiles files={sourceFiles} selectedRoute={selectedRoute} />
         )}
       </div>
+
+      {/* ROUTE DETAIL DRAWER — plan + verification + observed evidence in one panel */}
+      {drawerRoute && <KashmirRouteDrawer route={drawerRoute} onClose={() => setDrawerRoute(null)} />}
     </div>
   );
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CircleMarker, GeoJSON, MapContainer, TileLayer, Tooltip, ZoomControl } from 'react-leaflet';
+import { CircleMarker, GeoJSON, MapContainer, TileLayer, Tooltip, ZoomControl, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Activity, AlertTriangle, Clock, Gauge, MapPin, Route, Timer } from 'lucide-react';
+import { Activity, AlertTriangle, Clock, Gauge, GitCompareArrows, MapPin, Route, Timer } from 'lucide-react';
 
 /**
  * Reality Layer — what the Bus Sathi app's real driver GPS shows on the ground.
@@ -12,8 +13,19 @@ import { Activity, AlertTriangle, Clock, Gauge, MapPin, Route, Timer } from 'luc
  * so this validates geometry/speeds/stops — it does NOT measure supply or demand.
  */
 
+function FitToReco({ features }: { features: any[] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!features.length) return;
+    const b = L.geoJSON({ type: 'FeatureCollection', features } as any).getBounds();
+    if (b.isValid()) map.fitBounds(b.pad(0.25), { maxZoom: 14 });
+  }, [features, map]);
+  return null;
+}
+
 type Ops = {
   scope: string;
+  data_through?: string;
   drivers: number; driver_days: number; runs: number; observed_days: number;
   duty_span_h: number; in_service_h: number; utilisation: number;
   runs_per_day: number; km_per_day: number;
@@ -60,6 +72,8 @@ export default function KashmirRealityLayer() {
   const [speed, setSpeed] = useState<any>(null);
   const [planEvidence, setPlanEvidence] = useState<any>(null);
   const [connectors, setConnectors] = useState<any>(null);
+  const [reco, setReco] = useState<any>(null);
+  const [selReco, setSelReco] = useState<number | null>(null);
   const [show, setShow] = useState({ corridors: true, plan: false, speed: true, stops: false });
 
   useEffect(() => {
@@ -70,7 +84,22 @@ export default function KashmirRealityLayer() {
     fetch('/kashmir-reality/speed.geojson').then((r) => r.json()).then(setSpeed).catch(() => null);
     fetch('/kashmir-reality/plan_evidence.geojson').then((r) => r.json()).then(setPlanEvidence).catch(() => null);
     fetch('/kashmir-reality/connectors.geojson').then((r) => r.json()).then(setConnectors).catch(() => null);
+    fetch('/kashmir-reality/reconciliation.geojson').then((r) => r.json()).then(setReco).catch(() => null);
   }, []);
+
+  const recoQueue = useMemo(() => {
+    if (!reco?.features) return [];
+    const seen = new Map<number, any>();
+    reco.features.forEach((f: any) => {
+      if (f.properties.kind === 'observed') seen.set(f.properties.corridor_id, f.properties);
+    });
+    return Array.from(seen.values()).sort((a, b) => b.n_runs - a.n_runs);
+  }, [reco]);
+
+  const selRecoFeatures = useMemo(
+    () => (reco?.features || []).filter((f: any) => f.properties.corridor_id === selReco),
+    [reco, selReco]
+  );
 
   const maxCurve = useMemo(
     () => (ops ? Math.max(...ops.in_service_by_hour, 1) : 1),
@@ -112,7 +141,12 @@ export default function KashmirRealityLayer() {
       {/* map */}
       <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-3">
-          <h3 className="text-sm font-black uppercase tracking-[0.14em] text-slate-700">Observed corridors · measured speeds · real stops</h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-black uppercase tracking-[0.14em] text-slate-700">Observed corridors · measured speeds · real stops</h3>
+            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-700">
+              {ops.runs.toLocaleString('en-IN')} runs{ops.data_through ? ` · data through ${ops.data_through}` : ''}
+            </span>
+          </div>
           <div className="flex gap-1.5">
             {(['corridors', 'plan', 'speed', 'stops'] as const).map((k) => (
               <button key={k} type="button" onClick={() => setShow((s) => ({ ...s, [k]: !s[k] }))}
@@ -167,6 +201,13 @@ export default function KashmirRealityLayer() {
                   );
                 }} />
             )}
+            {selReco != null && selRecoFeatures.map((f: any, i: number) => (
+              <GeoJSON key={`rc${selReco}-${i}`} data={f}
+                style={() => f.properties.kind === 'observed'
+                  ? { color: '#dc2626', weight: 4, opacity: 0.9 }
+                  : { color: '#334155', weight: 3, opacity: 0.8, dashArray: '10 7' }} />
+            ))}
+            {selReco != null && <FitToReco features={selRecoFeatures} />}
             {show.corridors && connectors && (
               <GeoJSON data={connectors}
                 style={() => ({ color: '#7c3aed', weight: 3, opacity: 0.9, dashArray: '8 6' })}
@@ -225,6 +266,44 @@ export default function KashmirRealityLayer() {
           )}
         </div>
       </section>
+
+      {/* reconciliation workbench */}
+      {recoQueue.length > 0 && (
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-slate-700">
+              <GitCompareArrows size={16} className="text-amber-600" /> Geometry reconciliation queue ({recoQueue.length})
+            </h3>
+            {selReco != null && (
+              <button type="button" onClick={() => setSelReco(null)}
+                className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-200">
+                Clear comparison
+              </button>
+            )}
+          </div>
+          <p className="mt-1 text-xs font-semibold text-slate-500">
+            Corridors where buses observably run a different alignment than the plan&apos;s routed line. Click one to
+            compare on the map — <span className="font-black text-red-600">red = observed</span>,{' '}
+            <span className="font-black text-slate-600">dashed = plan route</span>. These feed the next engine
+            geometry pass; they are divergences, not unpermitted routes.
+          </p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            {recoQueue.map((q: any) => (
+              <button key={q.corridor_id} type="button"
+                onClick={() => setSelReco(selReco === q.corridor_id ? null : q.corridor_id)}
+                className={`rounded-xl border p-3 text-left transition-all ${
+                  selReco === q.corridor_id ? 'border-amber-400 bg-amber-50 shadow-sm' : 'border-slate-200 bg-white hover:border-amber-300 hover:bg-amber-50/40'
+                }`}>
+                <p className="text-xs font-black text-slate-900">C{q.corridor_id} · {q.matched || 'no matched route'}</p>
+                <p className="mt-0.5 line-clamp-2 text-[11px] font-semibold leading-4 text-slate-500">{q.od}</p>
+                <p className="mt-1.5 text-[10px] font-black uppercase tracking-[0.1em] text-amber-700">
+                  {q.overlap != null ? `${Math.round(q.overlap * 100)}% on plan line` : 'unmatched'} · {q.n_runs} runs · {q.n_drivers} drv
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* in-service-by-hour */}
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">

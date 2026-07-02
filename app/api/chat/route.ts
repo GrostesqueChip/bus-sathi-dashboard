@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildLocalCopilotReply, buildRecoveryReply } from '@/lib/copilot';
-import { buildKashmirContext, buildKashmirLocalReply, getRealityOps, isKashmirQuestion } from '@/lib/kashmirCopilot';
+import { buildKashmirContext, buildKashmirLocalReply, getRealityOps, getRouteExtras, isKashmirQuestion } from '@/lib/kashmirCopilot';
 import { getRouteRationalizationKashmirDataset } from '@/lib/routeRationalizationKashmir';
 import { getAdminDb } from '@/lib/firebaseAdmin';
 import { FleetSnapshot, generateFleetSnapshot } from '@/lib/snapshot';
@@ -182,7 +182,8 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        return new NextResponse(sseFromText(buildKashmirLocalReply(latestQuestion, dataset, reality)), {
+        const extras = await getRouteExtras();
+        return new NextResponse(sseFromText(buildKashmirLocalReply(latestQuestion, dataset, reality, extras)), {
           headers: SSE_HEADERS,
         });
       } catch (error) {
