@@ -18,7 +18,7 @@
 
 ## 🎯 Overview
 
-Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a data-driven system that transformed 613 legacy permits into an optimised, **independently real-world-verified 186-route network of 1,004 buses** serving 2.32M residents (35.2% of the 6.58M Kashmir Division) within walking distance.
+Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a data-driven system that transformed 613 legacy permits into an optimised, **independently real-world-verified 186-route network of 1,011 buses** serving 2.32M residents (35.2% of the 6.58M Kashmir Division) within walking distance — now **validated against real driver GPS** from the Bus Sathi app (3.8 M points, ~157 drivers) via the built-in **Reality Layer**.
 
 > **📖 For detailed technical documentation on the Kashmir route rationalisation, see [`KASHMIR_HANDOVER.md`](./KASHMIR_HANDOVER.md)**
 
@@ -39,16 +39,19 @@ Bus Tracker Dashboard is a full-stack web platform that connects to a companion 
 - **Cached snapshot architecture** — Vercel Cron pre-computes a compact data snapshot every 12 hours
 - **Streaming responses** — OpenAI-powered answers streamed in real-time via the chat widget
 
-### 🗺️ Kashmir Valley Route Rationalisation (v3.4.4)
-- **613 legacy permits → 186 active routes / 1,004 buses** (187 HPV / 748 MPV / 69 LPV) across all **10 districts** of the Kashmir Division — a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
+### 🗺️ Kashmir Valley Route Rationalisation (v3.4.5)
+- **613 legacy permits → 186 active routes / 1,011 buses** (187 HPV / 754 MPV / 70 LPV) across all **10 districts** of the Kashmir Division — a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
 - **SSCL e-bus backbone** — exactly the 30 published CHALO trunk routes, 15-min headways
 - **Headways** — city 15 / 20 / 35 min; long rural lifelines demand-sized with a **hard 50-min maximum wait** (35 / 40 / 45 / 50)
 - **Independently verified against the real world** — all 186 routes checked vs Google Maps / JKRTC / gazetteers (93 PASS / 88 REVIEW / 5 FAIL → **49 distance corrections** applied); plan-wide distance error cut **37.4% → 13.3%**
+- **🛰️ Reality Layer — validated against real driver GPS** — the [Bus Sathi Trace Intelligence](https://github.com/Princu-Babu/bus-sathi-trace-intelligence) project mined 3.8 M GPS points from ~157 real bus drivers into a measured ground-truth layer: first Srinagar bus speeds (~21 km/h moving / 12.5 km/h effective), 172/186 routes with road-level evidence, an observed stop inventory, and a measured-cycle correction that took the plan to v3.4.5. See the **Reality Layer** tab.
 - **Meets the national fleet benchmark** — 43 buses/lakh served, compliant with the MoHUA Service Level Benchmark (40–60/lakh)
 - **Coverage** — 2.32M residents within 400 m = **35.2%** of the 6.58M division (point-in-polygon)
-- **Interactive network explorer** — native Leaflet map (re-routed v3.4.4 geometry) + generated master transit HTML map + 186 per-route maps
+- **Route detail drawer** — click any route for its plan numbers, real-world verification verdict, and observed GPS evidence in one panel
+- **Interactive network explorer** — native Leaflet map (re-routed v3.4.5 geometry) + generated master transit HTML map + 186 per-route maps
 - **Stops & route-code register** — 143 canonical stops with district / tehsil / 12-char code, browsable on the page
-- **Limitations disclosed up front** — village-coordinate approximations, name-unverifiable stops, demand modelled from open data (not AFC), etc.
+- **Departure-board timetables** — every route's headway expanded into actual per-terminus departure times (service day anchored on the measured operating day)
+- **Limitations disclosed up front** — village-coordinate approximations, name-unverifiable stops, demand modelled from open data (not AFC); the app-GPS layer is partial-adoption and never used to claim demand/frequency
 
 #### 📥 Kashmir downloadables (served from `public/route-rationalization-kashmir/`)
 
@@ -56,9 +59,11 @@ The dashboard's Downloads section surfaces these; the **Bus Schedule (Pretty Exc
 
 | File | Purpose |
 |---|---|
-| `Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx` | ⭐ **Bus Schedule Workbook** — clean 2-sheet RTO submission: every route with headway, cycle time, fleet & HPV/MPV split |
-| `Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx` | **Route Verification Appendix** — every route's real-world check + the 49 corrections + deferred worklist + full ledger (4 sheets) |
-| `Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx` | **RTO Master Workbook (9 sheets)** — full detail pack: cover, route plan, operator absorption/buyback, trunk/social/tourist sheets, calibration sources, limitations |
+| `Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx` | ⭐ **Bus Schedule Workbook** — clean 2-sheet RTO submission: every route with headway, cycle time, fleet & HPV/MPV split |
+| `Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx` | **Route Verification Appendix** — every route's real-world check + the 49 corrections + deferred worklist + full ledger (4 sheets) |
+| `Kashmir_Route_Frequency_Plan_v3.4.5_RTO.xlsx` | **RTO Master Workbook (9 sheets)** — full detail pack: cover, route plan, operator absorption/buyback, trunk/social/tourist sheets, calibration sources, limitations |
+| `Kashmir_Timetables_v1.xlsx` | **Route Timetables** — every route's headway expanded into per-terminus departure boards, one sheet per district (service day from the measured operating day) |
+| `Kashmir_Observed_GroundTruth_v1.xlsx` | 🛰️ **Observed Ground-Truth (app GPS)** — coded observed stops, corridor verdicts, per-route road-driven evidence, unmatched connectors (from the Bus Sathi trace-intelligence layer) |
 | `Master_Transit_Map_Kashmir_v3.html` | **Interactive master map** — all trunk/feeder/SSCL/regional layers (Folium) |
 | `route_maps_kashmir/` (186 files) | **Per-route maps** — one detailed HTML map per active route |
 | `Rationalised_Routes_Kashmir_v3.csv` | **Operational CSV** — full route-level plan with CDI, fleet, headways, all 50+ columns |
@@ -185,9 +190,9 @@ BusTrackerAppDashboard-main/
 │       ├── Master_Transit_Map_Kashmir_v3.html
 │       ├── before-after.html               # ⭐ Before & After standalone comparative map
 │       ├── Kashmir_Route_Frequency_Plan_v3.xlsx
-│       ├── Kashmir_Route_Frequency_Plan_v3.4.4_RTO.xlsx          # 9-sheet RTO master
-│       ├── Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx   # ⭐ bus schedule (primary download)
-│       ├── Kashmir_Route_Verification_Appendix_v3.4.4_RTO.xlsx   # route verification appendix
+│       ├── Kashmir_Route_Frequency_Plan_v3.4.5_RTO.xlsx          # 9-sheet RTO master
+│       ├── Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx   # ⭐ bus schedule (primary download)
+│       ├── Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx   # route verification appendix
 │       ├── Kashmir_Stops_Master_v4.csv                           # stops & codes register
 │       ├── Routes_with_Codes.xlsx
 │       └── route_maps_kashmir/             # 186 per-route HTML maps
