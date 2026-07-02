@@ -188,7 +188,7 @@ export default function KashmirDataDistricts({ routes, summary, onSelectRoute }:
               <ArrowUpRight size={30} />
               <span className="text-sm font-black">+{growthPct}%</span>
             </div>
-            <FleetBar label="Planned (v3.4.4)" value={fleetAfter} max={fleetAfter} tone="emerald" caption={`${formatNumber(fleetAfter)} buses`} />
+            <FleetBar label="Planned (v3.4.5)" value={fleetAfter} max={fleetAfter} tone="emerald" caption={`${formatNumber(fleetAfter)} buses`} />
           </div>
         </ChartCard>
       </section>

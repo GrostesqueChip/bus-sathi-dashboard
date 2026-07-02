@@ -4,14 +4,14 @@
 // reference only — the side-by-side comparison UI was removed (RTO ask).
 //
 // Authoritative figures from the engine:
-//   - Phase-1 Recommended = the LIVE v3.4.4 plan → 1,004 buses (187 HPV / 748 MPV
-//     / 69 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
+//   - Phase-1 Recommended = the LIVE v3.4.5 plan → 1,011 buses (187 HPV / 754 MPV
+//     / 70 LPV) on 186 active routes (32 trunk / 154 feeder). City headways
 //     15/20/35 min, rural lifelines demand-sized 35–50 (max 50-min wait); 35.2% walkshed coverage
-//     (2.32M of the 6.58M Kashmir Division). +67% over current ~600. v3.4.4 applied
-//     the AI route-by-route real-world verification: every active route checked vs
-//     Google Maps / JKRTC / gazetteers; 48 distance corrections (cited per route)
-//     replaced wrong-coordinate / OSRM-detour distances with the verified real km,
-//     cycle+fleet recomputed (fleet 1,044→1,004). See ROUTE_VERIFICATION_RTO_APPENDIX.
+//     (2.32M of the 6.58M Kashmir Division). +69% over current ~600. v3.4.4 applied
+//     the AI route-by-route real-world verification (48 cited distance corrections;
+//     fleet 1,044→1,004); v3.4.5 then anchored 5 GPS-verified Srinagar corridors to
+//     their MEASURED bus moving speeds from the Bus Sathi app traces (cycle/fleet
+//     recomputed, +7 buses). See ROUTE_VERIFICATION_RTO_APPENDIX + REALITY_CHECK.
 //   - Phase-2 Aspirational = v3.3.4 (15-min on every trunk) → 1,113 buses.
 // Srinagar currently runs ~600 buses; expansion % is measured against that.
 //
@@ -53,16 +53,16 @@ export const KASHMIR_SERVICE_PLANS: {
 } = {
   phase1: {
     id: 'phase1',
-    version: 'v3.4.4',
+    version: 'v3.4.5',
     name: 'Phase-1 — Recommended',
     badge: 'Recommended for Year-1',
-    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–50 min) — a recommended year-round level. Route distances independently verified (v3.4.4).',
-    totalFleet: 1004,
+    tagline: 'City routes ≤35 min; long rural lifelines demand-sized (35–50 min) — a recommended year-round level. Route distances independently verified (v3.4.4) and 5 core corridors anchored to measured GPS speeds (v3.4.5).',
+    totalFleet: 1011,
     hpv: 187,
-    mpv: 748,
-    lpv: 69,
-    busesPer1000: 0.43,
-    expansionPercent: 67,
+    mpv: 754,
+    lpv: 70,
+    busesPer1000: 0.44,
+    expansionPercent: 69,
     recommended: true,
   },
   phase2: {

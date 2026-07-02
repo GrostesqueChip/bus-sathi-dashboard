@@ -70,7 +70,7 @@ const TABS: { id: TabId; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'downloads', label: 'Downloads', icon: Download },
 ];
 
-const PRETTY = '/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.4_RTO_Pretty.xlsx';
+const PRETTY = '/route-rationalization-kashmir/Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx';
 
 export default function KashmirPresentationDashboard({ routes, log, summary, updatedAt, sourceFiles }: Props) {
   const [tab, setTab] = useState<TabId>('overview');
@@ -105,7 +105,7 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
           <div className="relative grid gap-7 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
             <div>
               <div className="mb-4 flex flex-wrap gap-2">
-                <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">kashmir valley v3.4.4</span>
+                <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">kashmir valley v3.4.5</span>
                 <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100"><ShieldCheck size={12} /> {summary.activeRoutes} routes verified</span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">{summary.ssclBackboneRoutes} sscl backbone</span>
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-100">Updated {format(new Date(updatedAt), 'dd MMM yyyy')}</span>

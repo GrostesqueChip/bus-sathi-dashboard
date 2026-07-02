@@ -134,7 +134,7 @@ export function buildKashmirContext(
   const headways = headwayRollup(active);
 
   const lines = [
-    'KASHMIR VALLEY ROUTE RATIONALISATION PLAN (v3.4.4) — authoritative facts:',
+    'KASHMIR VALLEY ROUTE RATIONALISATION PLAN (v3.4.5) — authoritative facts:',
     `- Active routes: ${s.activeRoutes} (consolidated from ${nf(s.totalRouteRows)} legacy RTO permits; ${s.mergedRoutes} merged into trunks).`,
     `- Route classes: ${s.trunkRoutes} trunk + ${s.feederRoutes} feeder. SSCL e-bus backbone: ${s.ssclBackboneRoutes} routes at 15-min headway.`,
     `- Total fleet: ${nf(s.totalFleetRequired)} buses = ${nf(s.hpvTotal)} large (HPV/12m) + ${nf(s.mpvTotal)} medium (MPV/9m) + ${nf(s.lpvTotal)} small (LPV). About +67% over today's ~600 buses.`,
@@ -327,7 +327,7 @@ export function buildKashmirLocalReply(
 
   // Default overview
   return [
-    '**Kashmir Valley Route Rationalisation — v3.4.4**',
+    '**Kashmir Valley Route Rationalisation — v3.4.5**',
     `- **${s.activeRoutes} active routes** (from ${nf(s.totalRouteRows)} legacy permits)`,
     `- **${nf(s.totalFleetRequired)} buses** (${nf(s.hpvTotal)} large / ${nf(s.mpvTotal)} medium / ${nf(s.lpvTotal)} small), ~+67% over today`,
     `- **${s.ssclBackboneRoutes} SSCL e-bus trunks** at 15-min headway, across all 10 districts`,
