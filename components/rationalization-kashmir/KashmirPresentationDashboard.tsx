@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import dynamic from 'next/dynamic';
 import { useMemo, useRef, useState } from 'react';
 import {
-  ArrowUpRight, BarChart3, BusFront, Download, GitBranch, LayoutDashboard,
+  Activity, ArrowUpRight, BarChart3, BusFront, Download, GitBranch, LayoutDashboard,
   Map as MapIcon, Mountain, Network, ShieldCheck, Sparkles, Table2,
 } from 'lucide-react';
 import type {
@@ -27,6 +27,18 @@ import KashmirStopsCodes from '@/components/rationalization-kashmir/KashmirStops
 import KashmirDataDistricts from '@/components/rationalization-kashmir/KashmirDataDistricts';
 import { getRouteKey, getRouteMapHref } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
+const KashmirRealityLayer = dynamic(() => import('@/components/rationalization-kashmir/KashmirRealityLayer'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-64 items-center justify-center rounded-3xl border border-slate-200 bg-white">
+      <div className="text-center">
+        <div className="mx-auto h-10 w-10 animate-spin rounded-full border-b-4 border-emerald-600" />
+        <p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-emerald-700">Loading observed reality</p>
+      </div>
+    </div>
+  ),
+});
+
 const KashmirNetworkMap = dynamic(() => import('@/components/rationalization-kashmir/KashmirNetworkMap'), {
   ssr: false,
   loading: () => (
@@ -47,10 +59,11 @@ type Props = {
   sourceFiles: KashmirSourceFile[];
 };
 
-type TabId = 'overview' | 'map' | 'data' | 'routes' | 'method' | 'downloads';
+type TabId = 'overview' | 'map' | 'reality' | 'data' | 'routes' | 'method' | 'downloads';
 const TABS: { id: TabId; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'map', label: 'Network Map', icon: MapIcon },
+  { id: 'reality', label: 'Reality Layer', icon: Activity },
   { id: 'data', label: 'Data & Districts', icon: BarChart3 },
   { id: 'routes', label: 'Routes & Stops', icon: Table2 },
   { id: 'method', label: 'Method & Checks', icon: ShieldCheck },
@@ -256,6 +269,9 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
         )}
 
         {/* DATA & DISTRICTS */}
+        {/* REALITY LAYER (observed app-GPS ground truth) */}
+        {tab === 'reality' && <KashmirRealityLayer />}
+
         {tab === 'data' && (
           <KashmirDataDistricts
             routes={routes}
