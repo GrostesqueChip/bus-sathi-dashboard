@@ -9,7 +9,7 @@
  "utilisation": 0.76,
  "runs_per_day": 2,
  "km_per_day": 55,
- "turnaround_min": 23,
+ "turnaround_min": 24,
  "turnaround_n": 1178,
  "day_start": "10:21",
  "day_end": "18:15",

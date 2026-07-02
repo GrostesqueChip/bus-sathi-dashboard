@@ -384,10 +384,10 @@ function buildSummary(routes: RationalizedRouteKashmir[], routeMapHtmlCount: num
   const lpvTotal = active.reduce((sum, route) => sum + route.lpvCount, 0);
 
   // Definitions match the engine and the briefing decks exactly (by Action_Taken),
-  // so the dashboard, workbook and slides all show the same headline numbers:
-  //   active = rows not merged (207) · trunk = UPGRADED_TO_TRUNK (50) ·
-  //   feeder = RETAINED_AS_FEEDER (157) · merged (135). The 30 SSCL backbone
-  //   routes are a SUBSET of the 50 trunks (45 SSCL permits → 30 unique routes).
+  // so the dashboard, workbook and slides all show the same headline numbers.
+  // v3.4.4 (verified against the CSV): active = rows not merged (186) ·
+  //   trunk = UPGRADED_TO_TRUNK (32) · feeder = RETAINED_AS_FEEDER (154) ·
+  //   merged (458). The 30 SSCL backbone routes are a SUBSET of the 32 trunks.
   const uniqueSsclRoutes = new Set(
     active.filter((route) => route.newRouteId.startsWith('SSCL-')).map((route) => route.newRouteId)
   ).size;
