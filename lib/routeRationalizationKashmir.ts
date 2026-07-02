@@ -188,7 +188,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Route Timetables (Excel)',
-    description: 'Departure boards for every active route, expanded from the planned headways — one sheet per district, first/last departures and the full board from each terminus. Service day 08:00–19:00 anchored on the measured operating day (SSCL backbone 07:00–20:00).',
+    description: 'Departure boards for every active route, expanded from the planned headways — one sheet per district with each route\'s HPV (12 m) / MPV (9 m) / LPV vehicle mix, trips per day, first/last departures and the full board from each terminus. Service day 08:00–19:00 anchored on the measured operating day (SSCL backbone 07:00–20:00).',
     href: `${PUBLIC_ROUTE}/Kashmir_Timetables_v1.xlsx`,
     download: true,
     fileName: 'Kashmir_Timetables_v1.xlsx',
