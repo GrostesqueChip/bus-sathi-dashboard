@@ -1,148 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Route FDR-080 — Kashmir Transit</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;display:flex;height:100vh;overflow:hidden;background:#f5f7fa}
-  #sidebar{width:360px;min-width:280px;height:100vh;overflow-y:auto;background:#fff;
-            border-right:1px solid #e0e4ea;display:flex;flex-direction:column}
-  #map{flex:1;height:100vh}
-  .header{background:#00695C;color:#fff;padding:14px 16px}
-  .header h2{font-size:17px;font-weight:700;margin-bottom:2px}
-  .header .sub{font-size:11px;opacity:0.85}
-  .badges{padding:8px 16px;background:#f8f9fb;border-bottom:1px solid #e8eaed;display:flex;flex-wrap:wrap;gap:4px}
-  .badge{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600;color:#fff}
-  .section{padding:12px 16px;border-bottom:1px solid #f0f2f5}
-  .section h3{font-size:11px;font-weight:700;text-transform:uppercase;color:#9aa;letter-spacing:.05em;margin-bottom:8px}
-  .kv{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-  .kv .k{color:#666;font-size:12px}
-  .kv .v{font-size:12px;font-weight:600;color:#222;text-align:right;max-width:60%}
-  .terminal-box{background:#f8f9fb;border-radius:6px;padding:8px 10px;margin-bottom:6px}
-  .terminal-box .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-  .terminal-box .value{font-size:13px;font-weight:700}
-  .via-list{list-style:none;padding:0}
-  .via-list li{font-size:11px;color:#444;padding:2px 0;border-bottom:1px dotted #e8eaed}
-  .via-list li::before{content:"• ";color:#5C6BC0}
-  .poi-table{width:100%;border-collapse:collapse}
-  .pop-bar-bg{background:#e8eaed;border-radius:4px;height:8px;margin-top:4px}
-  .pop-bar{background:#00695C;border-radius:4px;height:8px}
-  .score-row{display:flex;gap:8px;margin-bottom:4px}
-  .score-box{flex:1;background:#f8f9fb;border-radius:6px;padding:6px 8px;text-align:center}
-  .score-box .sv{font-size:15px;font-weight:700}
-  .score-box .sk{font-size:9px;color:#888;text-transform:uppercase}
-</style>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_19631c5177d7317ad35a4982e4c64668 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
 </head>
 <body>
-<div id="sidebar">
-  <div class="header">
-    <div class="sub">Kashmir Valley Transit — Route Detail</div>
-    <h2>FDR-080</h2>
-    <div style="font-size:12px;opacity:0.9;margin-top:2px">Batmaloo to Dalgate</div>
-  </div>
-  <div class="badges">
-    <span class="badge" style="background:#00695C">RETAINED AS FEEDER</span>
-    <span class="badge" style="background:#1B5E20">HP Priority</span>
-    <span class="badge" style="background:#37474F">Urban</span>
     
     
-  </div>
-
-  <div class="section">
-    <h3>Terminals</h3>
-    <div class="terminal-box" style="border-left:4px solid #1B5E20">
-      <div class="label" style="color:#1B5E20">&#9650; Origin / Start</div>
-      <div class="value">34.0790, 74.7945</div>
-      <div style="font-size:10px;color:#999;margin-top:2px">34.07901, 74.79445</div>
-    </div>
-    <div class="terminal-box" style="border-left:4px solid #B71C1C">
-      <div class="label" style="color:#B71C1C">&#9660; Destination / End</div>
-      <div class="value">34.0816, 74.8269</div>
-      <div style="font-size:10px;color:#999;margin-top:2px">34.08163, 74.82689</div>
-    </div>
-    
-  </div>
-
-  <div class="section">
-    <h3>Area &amp; Zone</h3>
-    <div class="kv"><span class="k">Congestion Zone</span><span class="v">City Core</span></div>
-    <div class="kv"><span class="k">Route Type</span><span class="v">Urban</span></div>
-    <div class="kv"><span class="k">Route Length</span><span class="v">3.5 km</span></div>
-    <div class="kv"><span class="k">Est. Stops</span><span class="v">7</span></div>
-  </div>
-
-  <div class="section">
-    <h3>Population Served</h3>
-    <div class="kv"><span class="k">Residents within walkshed</span><span class="v" style="color:#00695C">2,668</span></div>
-    <div class="kv"><span class="k">% of Srinagar UA (2024)</span><span class="v" style="color:#00695C">0.00%</span></div>
-    <div class="pop-bar-bg"><div class="pop-bar" style="width:0.0%"></div></div>
-  </div>
-
-  <div class="section">
-    <h3>Service Plan</h3>
-    <div class="kv"><span class="k">Headway</span><span class="v">20 min</span></div>
-    <div class="kv"><span class="k">Cycle Time</span><span class="v">28.0 min</span></div>
-    <div class="kv"><span class="k">Fleet Required</span><span class="v">3 buses</span></div>
-    <div class="kv"><span class="k">HPV (12m)</span><span class="v">0</span></div>
-    <div class="kv"><span class="k">MPV (9m)</span><span class="v">3</span></div>
-  </div>
-
-  <div class="section">
-    <h3>Demand Scores</h3>
-    <div class="score-row">
-      <div class="score-box"><div class="sv" style="color:#1565C0">0.804</div><div class="sk">Pop Score</div></div>
-      <div class="score-box"><div class="sv" style="color:#E65100">0.736</div><div class="sk">POI Score</div></div>
-      <div class="score-box"><div class="sv" style="color:#1B5E20">0.7700</div><div class="sk">Final CDI</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h3>POIs Covered (0)</h3>
-    <div style='color:#999;font-size:11px'>No POIs within 400m walkshed.</div>
-  </div>
-</div>
-
-<div id="map"></div>
-<script>
-var map = L.map('map').setView([34.07574410309278, 74.81161277319588], 13);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 18}).addTo(map);
-
-var coords = [[34.079006, 74.794454], [34.079159, 74.794443], [34.079214, 74.794439], [34.079609, 74.794388], [34.079748, 74.79437], [34.08019, 74.794291], [34.080298, 74.794271], [34.080526, 74.794205], [34.080561, 74.794312], [34.080396, 74.794394], [34.079215, 74.794535], [34.078245, 74.79462], [34.07787, 74.794649], [34.077308, 74.794691], [34.076103, 74.794766], [34.075765, 74.794778], [34.075632, 74.794818], [34.075594, 74.794854], [34.075517, 74.794929], [34.075316, 74.795394], [34.075308, 74.795414], [34.075188, 74.795674], [34.075045, 74.796041], [34.074885, 74.796436], [34.074691, 74.796892], [34.074618, 74.797034], [34.074584, 74.797131], [34.073772, 74.798962], [34.073615, 74.799294], [34.073481, 74.799587], [34.072672, 74.801356], [34.072421, 74.801872], [34.072356, 74.802009], [34.071656, 74.803537], [34.071603, 74.803707], [34.071569, 74.803872], [34.071543, 74.804079], [34.071586, 74.804977], [34.07162, 74.80587], [34.071622, 74.806006], [34.07163, 74.806147], [34.071655, 74.807262], [34.071688, 74.808733], [34.071702, 74.808804], [34.071731, 74.808948], [34.071806, 74.809255], [34.071851, 74.809459], [34.07205, 74.810287], [34.072096, 74.810449], [34.072236, 74.810939], [34.072255, 74.811009], [34.072288, 74.811137], [34.07232, 74.81125], [34.072332, 74.811292], [34.072789, 74.813068], [34.072806, 74.813138], [34.073436, 74.815679], [34.07346, 74.815775], [34.073476, 74.815849], [34.073523, 74.816052], [34.073612, 74.816435], [34.074046, 74.818381], [34.074106, 74.818591], [34.074434, 74.819907], [34.074452, 74.819985], [34.07475, 74.821292], [34.07477, 74.821379], [34.075127, 74.822878], [34.076244, 74.827721], [34.076282, 74.827837], [34.076307, 74.827999], [34.07655, 74.829058], [34.076561, 74.829105], [34.076572, 74.829156], [34.076674, 74.829598], [34.076686, 74.829693], [34.076925, 74.829705], [34.077151, 74.829686], [34.07737, 74.829662], [34.077663, 74.829619], [34.078031, 74.829552], [34.078379, 74.829485], [34.078524, 74.829466], [34.078665, 74.82945], [34.078942, 74.829419], [34.079385, 74.829348], [34.079687, 74.829296], [34.079816, 74.829268], [34.079866, 74.82925], [34.0799, 74.829228], [34.079939, 74.829189], [34.079999, 74.829125], [34.080047, 74.829062], [34.080196, 74.82886], [34.080606, 74.828289], [34.081049, 74.827695], [34.081628, 74.826887]];
-var line = L.polyline(coords, {color: '#00695C', weight: 5, opacity: 0.9}).addTo(map);
-map.fitBounds(line.getBounds(), {padding: [30, 30]});
-
-// Start marker
-var startIcon = L.divIcon({
-  html: '<div style="background:#1B5E20;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">S</div>',
-  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
-});
-L.marker(coords[0], {icon: startIcon}).addTo(map)
-  .bindPopup('<b>START</b><br>34.0790, 74.7945');
-
-// End marker
-var endIcon = L.divIcon({
-  html: '<div style="background:#B71C1C;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">E</div>',
-  iconSize: [16, 16], iconAnchor: [8, 8], className: ''
-});
-L.marker(coords[coords.length - 1], {icon: endIcon}).addTo(map)
-  .bindPopup('<b>END</b><br>34.0816, 74.8269');
-
-// Via points
-var viaCoords = [];
-viaCoords.forEach(function(pt, i) {
-  var viaIcon = L.divIcon({
-    html: '<div style="background:#5C6BC0;color:#fff;border-radius:50%;width:10px;height:10px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>',
-    iconSize: [10, 10], iconAnchor: [5, 5], className: ''
-  });
-  L.marker(pt, {icon: viaIcon}).addTo(map).bindPopup('Via point ' + (i+1));
-});
-</script>
-<div style="position:fixed;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.85);border:1px solid #ccc;border-radius:4px;padding:3px 10px;font-size:10px;color:#666;z-index:9999;pointer-events:none;white-space:nowrap">
-  &#9888; Open-source global tiles (OpenStreetMap/CartoDB) — may not reflect India's official political boundaries
-</div>
+            <div class="folium-map" id="map_19631c5177d7317ad35a4982e4c64668" ></div>
+        
 </body>
+<script>
+    
+    
+            var map_19631c5177d7317ad35a4982e4c64668 = L.map(
+                "map_19631c5177d7317ad35a4982e4c64668",
+                {
+                    center: [34.07536479674797, 74.81152227642276],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_050f1b674303bf5d71c0642d3f4196a1 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_050f1b674303bf5d71c0642d3f4196a1.addTo(map_19631c5177d7317ad35a4982e4c64668);
+        
+    
+            var poly_line_8f44155a266e5d4dc7c9f95c034e4339 = L.polyline(
+                [[34.0794, 74.79751], [34.0794, 74.79751], [34.07941, 74.79765], [34.07942, 74.79771], [34.07944, 74.79775], [34.07948, 74.79779], [34.0797, 74.79806], [34.07923, 74.79863], [34.07875, 74.7993], [34.07867, 74.79943], [34.0791, 74.79967], [34.07932, 74.79977], [34.07945, 74.79983], [34.07946, 74.7998], [34.07949, 74.79976], [34.07952, 74.79974], [34.07956, 74.79973], [34.0796, 74.79974], [34.07964, 74.79976], [34.07966, 74.79979], [34.07968, 74.79983], [34.07968, 74.79988], [34.07968, 74.79992], [34.07966, 74.79996], [34.07963, 74.79999], [34.0796, 74.80001], [34.07956, 74.80001], [34.07952, 74.80001], [34.07949, 74.79998], [34.07907, 74.80035], [34.07844, 74.80091], [34.07839, 74.80096], [34.07814, 74.80116], [34.0778, 74.80145], [34.07765, 74.8016], [34.07694, 74.80233], [34.07637, 74.80294], [34.07632, 74.80296], [34.07626, 74.80298], [34.0761, 74.80318], [34.07589, 74.80356], [34.07579, 74.80365], [34.07572, 74.8037], [34.0756, 74.80374], [34.0755, 74.80376], [34.07541, 74.80379], [34.07535, 74.80384], [34.07529, 74.80389], [34.0752, 74.80402], [34.0751, 74.80408], [34.07494, 74.80414], [34.07474, 74.80422], [34.0745, 74.80433], [34.07422, 74.80445], [34.0741, 74.80451], [34.074, 74.80456], [34.07392, 74.80458], [34.07383, 74.80459], [34.07179, 74.80473], [34.07165, 74.80476], [34.07164, 74.80476], [34.07167, 74.80542], [34.07167, 74.80591], [34.07162, 74.80601], [34.07163, 74.80615], [34.07165, 74.80726], [34.07169, 74.80873], [34.0717, 74.8088], [34.07173, 74.80895], [34.07181, 74.80925], [34.07185, 74.80946], [34.07205, 74.81029], [34.0721, 74.81045], [34.07224, 74.81094], [34.07225, 74.81101], [34.07229, 74.81114], [34.07232, 74.81125], [34.07233, 74.81129], [34.07279, 74.81307], [34.07281, 74.81314], [34.07344, 74.81568], [34.07346, 74.81578], [34.07348, 74.81585], [34.07352, 74.81605], [34.07361, 74.81643], [34.07405, 74.81838], [34.07411, 74.81859], [34.07443, 74.81991], [34.07445, 74.81999], [34.07475, 74.82129], [34.07477, 74.82138], [34.07513, 74.82288], [34.07624, 74.82772], [34.07628, 74.82784], [34.07631, 74.828], [34.07622, 74.82803], [34.07513, 74.82835], [34.07502, 74.82833], [34.07495, 74.82835], [34.0748, 74.82842], [34.07444, 74.82856], [34.07415, 74.82866], [34.07397, 74.82872], [34.07357, 74.82885], [34.07327, 74.829], [34.07323, 74.82903], [34.07317, 74.82909], [34.07314, 74.82916], [34.07308, 74.82929], [34.07312, 74.82991], [34.07319, 74.8307], [34.0732, 74.83085], [34.07322, 74.83096], [34.07326, 74.83124], [34.07327, 74.83131], [34.07337, 74.83202], [34.07341, 74.83234], [34.07342, 74.83241], [34.07342, 74.83256], [34.07328, 74.83254], [34.07318, 74.83253], [34.07314, 74.83253], [34.07316, 74.83221]],
+                {"bubblingMouseEvents": true, "color": "#0f6e56", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#0f6e56", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_19631c5177d7317ad35a4982e4c64668);
+        
+    
+            poly_line_8f44155a266e5d4dc7c9f95c034e4339.bindTooltip(
+                `<div>
+                     Batmaloo to Dalgate (FDR-080) — geometry re-anchored (v3.4.5-geo)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b1da613039d6d50af5ce7a57ff89e078 = L.marker(
+                [34.0794, 74.79751],
+                {
+}
+            ).addTo(map_19631c5177d7317ad35a4982e4c64668);
+        
+    
+            marker_b1da613039d6d50af5ce7a57ff89e078.bindTooltip(
+                `<div>
+                     Origin
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_f4575e59688674586e84f8675aff0c95 = L.marker(
+                [34.07316, 74.83221],
+                {
+}
+            ).addTo(map_19631c5177d7317ad35a4982e4c64668);
+        
+    
+            marker_f4575e59688674586e84f8675aff0c95.bindTooltip(
+                `<div>
+                     Destination
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            map_19631c5177d7317ad35a4982e4c64668.fitBounds(
+                [[34.07162, 74.79751], [34.0797, 74.83256]],
+                {}
+            );
+        
+</script>
 </html>
