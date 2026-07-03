@@ -118,7 +118,7 @@ export default function KashmirRouteDrawer({
           {/* real-world verification */}
           <section>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.16em] text-emerald-700">
-              <ShieldCheck size={14} /> Real-world verification (v3.4.4 deep-dive)
+              <ShieldCheck size={14} /> Real-world verification (deep-dive)
             </p>
             {vf ? (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">

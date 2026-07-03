@@ -111,6 +111,19 @@ export default function KashmirMethodology() {
           </p>
         </div>
 
+        {/* Ground-truth note */}
+        <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-teal-200 bg-teal-50/60 p-5 sm:flex-row sm:items-center">
+          <MapPin size={22} className="shrink-0 text-teal-700" />
+          <p className="text-sm font-semibold leading-6 text-slate-700">
+            <span className="font-black text-teal-800">Grounded against real GPS (v3.4.5):</span> the plan is cross-checked against
+            the Bus&nbsp;Sathi app’s <span className="font-black">real driver GPS</span> — 2,526 cleaned service runs from ~157
+            drivers. This confirmed <span className="font-black">172 of 186 routes</span> are actually driven on the ground, re-anchored
+            5 core corridors to measured bus speeds, and <span className="font-black">redrew 15 route map lines</span> whose endpoint
+            pins were wrong. See the <span className="font-black">Reality Layer</span> tab. Adoption is partial (Srinagar-heavy), so
+            this validates geometry and speeds — it does not measure demand or frequency.
+          </p>
+        </div>
+
         {/* References */}
         <div className="mt-6">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Methods &amp; references</p>
