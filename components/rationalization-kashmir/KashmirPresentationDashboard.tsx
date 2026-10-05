@@ -171,7 +171,7 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
 
             <section className="overflow-hidden rounded-[2.2rem] border border-slate-200 bg-slate-950 text-white shadow-sm">
               <div className="grid gap-5 p-6 md:grid-cols-2 xl:grid-cols-4">
-                <PolicyCard title="SSCL e-bus backbone" detail="30 SSCL routes from CHALO ridership form the trunk backbone — 15-min headways, 98 deployed buses." icon={BusFront} />
+                <PolicyCard title="SSCL e-bus backbone" detail="The 30 Srinagar Smart City (SSCL) e-bus routes form the trunk backbone — 15-min headways, 98 deployed buses." icon={BusFront} />
                 <PolicyCard title="3-tier POI system" detail="Year-round anchors, secondary facilities, and seasonal tourism POIs drive demand scoring." icon={Mountain} />
                 <PolicyCard title="Gender-aware demand" detail="64.5% women riders (SSCL data) — routes near women-anchor POIs get a +25% demand boost." icon={Sparkles} />
                 <PolicyCard title="Social protection" detail="Routes serving townships, SKIMS/SMHS hospitals and remote communities are shielded from rationalisation." icon={ShieldCheck} />

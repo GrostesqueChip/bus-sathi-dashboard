@@ -10,7 +10,7 @@ import { Activity, AlertTriangle, Clock, Gauge, GitCompareArrows, MapPin, Route,
  * Reality Layer — what the Bus Sathi app's real driver GPS shows on the ground.
  * Data: /public/kashmir-reality/*, exported from the bus-sathi-trace-intelligence
  * repo (aggregate-only, PII-free). Honest scope: partial adoption (~157 drivers),
- * so this validates geometry/speeds/stops — it does NOT measure supply or demand.
+ * so this cross-checks geometry/speeds/stops — it does NOT measure supply or demand.
  */
 
 function FitToReco({ features }: { features: any[] }) {
@@ -122,7 +122,7 @@ export default function KashmirRealityLayer() {
         <p className="text-sm font-semibold leading-6 text-amber-900">
           <span className="font-black">Observed reality, partial adoption.</span> Everything below is
           measured from the Bus Sathi app&apos;s real driver GPS ({ops.drivers} self-selected drivers,
-          {' '}{ops.runs.toLocaleString('en-IN')} service runs over {ops.observed_days} days). It validates
+          {' '}{ops.runs.toLocaleString('en-IN')} service runs over {ops.observed_days} days). It cross-checks
           route geometry, speeds and stops — it does <span className="font-black">not</span> measure network
           supply, frequency or demand. {ops.coverage_note}
         </p>
@@ -134,7 +134,7 @@ export default function KashmirRealityLayer() {
         <StatCard icon={Activity} label="Effective speed" value={`${ops.effective_kmh} km/h`} detail={`Incl. stops — dwell is ~${Math.round(ops.dwell_share * 100)}% of run time.`} />
         <StatCard icon={Clock} label="Duty day" value={`${ops.duty_span_h} h`} detail={`${ops.in_service_h} h in service (${Math.round(ops.utilisation * 100)}% utilisation), ~${ops.day_start}–${ops.day_end}.`} />
         <StatCard icon={Timer} label="Terminal turn" value={`${ops.turnaround_min} min`} detail={`Median door-to-door turn (n=${ops.turnaround_n.toLocaleString('en-IN')}), incl. layover.`} />
-        <StatCard icon={Route} label="Corridors verified" value={`${ops.corridor_tally.matched + ops.corridor_tally.partial}`} detail={`${ops.corridor_tally.matched} match the plan, ${ops.corridor_tally.partial} diverge in geometry.`} />
+        <StatCard icon={Route} label="Corridors compared" value={`${ops.corridor_tally.matched + ops.corridor_tally.partial}`} detail={`${ops.corridor_tally.matched} match the plan, ${ops.corridor_tally.partial} diverge in geometry.`} />
         <StatCard icon={MapPin} label="Real stops" value={`${stops?.features?.length ?? '—'}`} detail={`Strong observed stops (≥3 drivers, ≥10 visits)${stopsT2?.features?.length ? ` + ${stopsT2.features.length} rural Tier-2 candidates` : ''}.`} />
       </section>
 

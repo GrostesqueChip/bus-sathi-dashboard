@@ -115,12 +115,12 @@ export default function KashmirMethodology() {
         <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-teal-200 bg-teal-50/60 p-5 sm:flex-row sm:items-center">
           <MapPin size={22} className="shrink-0 text-teal-700" />
           <p className="text-sm font-semibold leading-6 text-slate-700">
-            <span className="font-black text-teal-800">Grounded against real GPS (v3.4.5):</span> the plan is cross-checked against
+            <span className="font-black text-teal-800">Cross-checked against real GPS (v3.4.5):</span> the plan is cross-checked against
             the Bus&nbsp;Sathi app’s <span className="font-black">real driver GPS</span> — 2,526 cleaned service runs from ~157
             drivers. <span className="font-black">171 of 186 planned routes</span> have at least half of their alignment observed in driver GPS,
             five core corridors were re-timed to measured bus speeds, and <span className="font-black">15 route map lines</span> whose endpoint
             pins were wrong were redrawn. See the <span className="font-black">Reality Layer</span> tab. Adoption is partial (Srinagar-heavy), so
-            this validates geometry and speeds — it does not measure demand or frequency.
+            this cross-checks geometry and speeds — it does not measure demand or frequency.
           </p>
         </div>
 

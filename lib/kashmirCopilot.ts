@@ -89,12 +89,12 @@ export async function getRouteExtras(): Promise<{ evidence: RouteEvidence | null
 function realityFacts(ops: RealityOps): string[] {
   const verified = (ops.corridor_tally.matched ?? 0) + (ops.corridor_tally.partial ?? 0);
   return [
-    'OBSERVED REALITY LAYER (Bus Sathi app GPS — measured, partial adoption; validates geometry/speeds/stops, NOT supply or demand):',
+    'OBSERVED REALITY LAYER (Bus Sathi app GPS — measured, partial adoption; cross-checks geometry/speeds/stops, NOT supply or demand):',
     `- Sample: ${ops.drivers} self-selected drivers, ${nf(ops.runs)} service runs over ${ops.observed_days} days (${nf(ops.driver_days)} driver-days).`,
     `- Measured bus speeds: ~${ops.moving_kmh} km/h moving, ~${ops.effective_kmh} km/h effective (dwell ≈ ${Math.round(ops.dwell_share * 100)}% of run time).`,
     `- Observed duty day: ${ops.duty_span_h} h span with ${ops.in_service_h} h in service (${Math.round(ops.utilisation * 100)}% utilisation), typically ${ops.day_start}–${ops.day_end} IST; service collapses after ~19:00.`,
     `- Terminal turnaround: median ${ops.turnaround_min} min door-to-door (n=${nf(ops.turnaround_n)}), including layover.`,
-    `- Corridors: ${ops.corridor_tally.matched} observed corridors MATCH the plan's routes; ${ops.corridor_tally.partial} diverge in geometry (reconciliation candidates); 0 informal/unpermitted. ${verified} verified in total.`,
+    `- Corridors: ${ops.corridor_tally.matched} observed corridors MATCH the plan's routes; ${ops.corridor_tally.partial} diverge in geometry (reconciliation candidates); 0 informal/unpermitted. ${verified} compared in total.`,
     `- ${ops.coverage_note}`,
     '- IMPORTANT CAVEAT: adoption is partial and Srinagar-concentrated, so the app data cannot measure network frequency or ridership demand — never claim it does.',
   ];
@@ -277,9 +277,9 @@ export function buildKashmirLocalReply(
       `- Buses move at **~${reality.moving_kmh} km/h**, effective **~${reality.effective_kmh} km/h** with stops (dwell ≈ ${Math.round(reality.dwell_share * 100)}% of run time)`,
       `- Duty day: **${reality.duty_span_h} h** span, **${reality.in_service_h} h** in service (${Math.round(reality.utilisation * 100)}% utilisation), ~${reality.day_start}–${reality.day_end}; service collapses after ~19:00`,
       `- Terminal turnaround: median **${reality.turnaround_min} min** door-to-door (n=${nf(reality.turnaround_n)})`,
-      `- **${verified} observed corridors verified** against the plan (${reality.corridor_tally.matched} match, ${reality.corridor_tally.partial} diverge in geometry); **0 informal routes**`,
+      `- **${verified} observed corridors compared** with the plan (${reality.corridor_tally.matched} match, ${reality.corridor_tally.partial} diverge in geometry); **0 informal routes**`,
       '',
-      '_Adoption is partial and Srinagar-concentrated — this validates geometry, speeds and stops; it does not measure network frequency or demand._',
+      '_Adoption is partial and Srinagar-concentrated — this cross-checks geometry, speeds and stops; it does not measure network frequency or demand._',
     ].join('\n');
   }
 
