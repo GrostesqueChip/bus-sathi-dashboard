@@ -39,3 +39,7 @@ next-env.d.ts
 
 # local preview / tooling config
 .claude/
+
+
+# Raw per-trip export (driver names / vehicle numbers) - never commit
+master_trips.csv

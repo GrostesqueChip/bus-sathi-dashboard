@@ -175,7 +175,6 @@ function main() {
       type: 'Feature',
       properties: {
         permitId: `P${String(permitIndex).padStart(4, '0')}`,
-        registrationNo: (row[COL.regNo] || '').trim(),
         office: (row[COL.office] || '').trim(),
         origin: fromName,
         destination: toName,
