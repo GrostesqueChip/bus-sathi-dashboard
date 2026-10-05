@@ -14,6 +14,11 @@ import type {
   KashmirSourceFile,
 } from '@/lib/routeRationalizationKashmir';
 import {
+  KASHMIR_COVERAGE_NETWORK_PERCENT,
+  KASHMIR_OBSERVED_PACE_NOTE,
+  KASHMIR_PROTOTYPE_NOTE,
+} from '@/lib/kashmirServicePlans';
+import {
   formatActionLabel, formatNumber, getActionPillClass,
   getPriorityPillClass, KpiCard, PolicyCard,
 } from '@/components/rationalization-kashmir/KashmirCards';
@@ -108,13 +113,13 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
             <div>
               <div className="mb-4 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">kashmir valley v3.4.5</span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100"><ShieldCheck size={12} /> {summary.activeRoutes} routes verified</span>
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100"><ShieldCheck size={12} /> {summary.activeRoutes} routes desk-checked</span>
                 <span className="rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-violet-100">{summary.ssclBackboneRoutes} sscl backbone</span>
                 <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-100">Updated {format(new Date(updatedAt), 'dd MMM yyyy')}</span>
               </div>
               <h1 className="max-w-4xl text-3xl font-black tracking-tight md:text-[2.7rem] md:leading-[1.05]">Kashmir Valley Route Rationalisation</h1>
               <p className="mt-3 max-w-3xl text-[15px] font-semibold leading-7 text-slate-200/85">
-                A data-driven frequency plan for {summary.activeRoutes} active routes across the Kashmir Division, built on the 30-route SSCL e-bus backbone and independently verified against the real world.
+                {KASHMIR_PROTOTYPE_NOTE} A frequency plan for {summary.activeRoutes} active routes across the Kashmir Division, built on the 30-route SSCL e-bus backbone and desk-checked with AI-assisted research.
               </p>
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <a href={PRETTY} download className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 shadow-lg transition-all hover:translate-y-[-1px]"><Download size={16} /> Bus Schedule (Excel)</a>
@@ -124,14 +129,14 @@ export default function KashmirPresentationDashboard({ routes, log, summary, upd
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
               <div className="rounded-[1.7rem] border border-white/12 bg-white/10 p-5 backdrop-blur">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-100">Network coverage</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-100">Residents within 400 m</p>
                 <p className="mt-1.5 text-4xl font-black">{summary.networkCoveragePercent.toFixed(1)}%</p>
-                <p className="mt-1 text-sm font-semibold text-slate-200/80">~{formatNumber(summary.deduplicatedNetworkPopulation)} of {formatNumber(summary.studyAreaPopulation)} residents.</p>
+                <p className="mt-1 text-sm font-semibold text-slate-200/80">~{formatNumber(summary.deduplicatedNetworkPopulation)} of {formatNumber(summary.studyAreaPopulation)} residents live within 400 m straight-line distance of a planned route; measured along the walking network the figure is {KASHMIR_COVERAGE_NETWORK_PERCENT}%.</p>
               </div>
               <div className="rounded-[1.7rem] border border-white/12 bg-white/10 p-5 backdrop-blur">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-100">Buses needed</p>
                 <p className="mt-1.5 text-4xl font-black">{formatNumber(summary.totalFleetRequired)}</p>
-                <p className="mt-1 text-sm font-semibold text-slate-200/80">{formatNumber(summary.hpvTotal)} large + {formatNumber(summary.mpvTotal)} medium + {formatNumber(summary.lpvTotal)} small.</p>
+                <p className="mt-1 text-sm font-semibold text-slate-200/80">{formatNumber(summary.hpvTotal)} large + {formatNumber(summary.mpvTotal)} medium + {formatNumber(summary.lpvTotal)} small. {KASHMIR_OBSERVED_PACE_NOTE}</p>
               </div>
             </div>
           </div>

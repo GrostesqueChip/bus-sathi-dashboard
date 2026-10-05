@@ -1,5 +1,7 @@
 # 🗺️ Kashmir Valley Route Rationalisation — Technical Handover
 
+> **HISTORICAL DOCUMENT — superseded.** Written for engine v3.3.7 (May 2026). Every count below (342 permits, 207 routes, 1,003/1,004/1,009 buses, "optimised") is out of date and must not be quoted. Current values (v3.4.5-geo): 614 permits (+ 30 SSCL e-bus routes = 644 route records), 157 corridors, 186 active routes, 1,011 buses (187 large / 754 medium / 70 small). The architecture, route-code and schema sections remain a useful reference only.
+
 > **Document Version:** 1.0  
 > **Engine Version:** v3.3.7  
 > **Date:** May 2026  
@@ -24,7 +26,7 @@
 
 ## 1. Executive Summary
 
-The Kashmir Valley Route Rationalisation is a data-driven transit planning project that analysed **342 legacy bus permits** from the Kashmir RTO permit register and restructured them into an optimised **207-route network** with a 3-tier hierarchy.
+The Kashmir Valley Route Rationalisation is a data-driven transit planning project that analysed **342 legacy bus permits** from the Kashmir RTO permit register and restructured them into a rationalised **207-route network** with a 3-tier hierarchy.
 
 ### The Problem (Before)
 - 342 individual bus permits issued over decades (some from 1990)

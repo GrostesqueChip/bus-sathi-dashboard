@@ -2,7 +2,7 @@
 
 import { BusFront, Check, Clock } from 'lucide-react';
 import {
-  KASHMIR_CURRENT_FLEET,
+  KASHMIR_BASELINE_NOTE,
   KASHMIR_SERVICE_PLANS,
   type KashmirServicePlan,
 } from '@/lib/kashmirServicePlans';
@@ -66,9 +66,9 @@ export default function KashmirServicePlans() {
         <div className="rounded-[1.6rem] border border-slate-200 bg-white p-6">
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Bottom line</p>
           <p className="mt-3 text-base font-semibold leading-7 text-slate-700">
-            Phase-1 delivers a strong, reliable network with <span className="font-black text-emerald-700">{formatNumber(phase1.totalFleet)} buses</span> —
-            a {phase1.expansionPercent}% step up from today’s ~{formatNumber(KASHMIR_CURRENT_FLEET)} buses — with no route
-            city routes waiting longer than 35 minutes (rural lifelines demand-sized) and a balanced HPV/MPV trunk fleet. Achievable in Year-1.
+            Phase-1 sizes the network at <span className="font-black text-emerald-700">{formatNumber(phase1.totalFleet)} buses</span> —
+            +{phase1.expansionPercent}% over {KASHMIR_BASELINE_NOTE}. City routes wait at most 35 minutes
+            (rural lifelines demand-sized, 50-minute maximum) and the trunk fleet is a balanced HPV/MPV mix.
           </p>
         </div>
       </div>
@@ -116,11 +116,14 @@ function PlanCard({ plan }: { plan: KashmirServicePlan }) {
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="rounded-2xl bg-slate-50 p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Buses / 1,000 residents</p>
-          <p className="mt-1 text-2xl font-black text-slate-900">{plan.busesPer1000.toFixed(2)}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Buses / 100,000 residents</p>
+          <p className="mt-1 text-2xl font-black text-slate-900">{(plan.busesPer100kDivision ?? plan.busesPer1000 * 100).toFixed(1)}</p>
+          {plan.busesPer100kNearRoute != null && (
+            <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">of the Division; {plan.busesPer100kNearRoute.toFixed(1)} per 100,000 residents living near a route.</p>
+          )}
         </div>
         <div className="rounded-2xl bg-slate-50 p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Growth over today</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Growth over baseline</p>
           <p className="mt-1 text-2xl font-black text-slate-900">+{plan.expansionPercent}%</p>
         </div>
       </div>

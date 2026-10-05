@@ -14,8 +14,19 @@ import type {
   RouteRationalizationKashmirDataset,
   RouteRationalizationKashmirSummary,
 } from '@/lib/routeRationalizationKashmir';
+import {
+  KASHMIR_BASELINE_NOTE,
+  KASHMIR_CHALO_NOTE,
+  KASHMIR_COVERAGE_NETWORK_PERCENT,
+  KASHMIR_COVERAGE_NOTE,
+  KASHMIR_CURRENT_FLEET,
+  KASHMIR_DENSITY_NOTE,
+  KASHMIR_DESK_CHECK_NOTE,
+  KASHMIR_OBSERVED_PACE_NOTE,
+  KASHMIR_PROTOTYPE_NOTE,
+} from '@/lib/kashmirServicePlans';
 
-// Static verification facts (from the v3.4.4 assurance pass / appendix).
+// Static desk-check facts (from the v3.4.4 AI-assisted desk-check pass / appendix).
 const VERIFICATION = {
   pass: 93,
   review: 88,
@@ -24,10 +35,10 @@ const VERIFICATION = {
   mapeBefore: 37.4,
   mapeAfter: 13.3,
   mapeMedian: 6.3,
-  busesPerLakh: 43,
-  mohuaBand: '40–60 per lakh',
-  todayBusesPerLakh: 26,
 };
+
+// Uplift over the 777-bus baseline, computed from the live fleet total (1,011 / 777 = +30%).
+const upliftPct = (fleet: number) => Math.round((fleet / KASHMIR_CURRENT_FLEET - 1) * 100);
 
 // ── Reality Layer (observed app-GPS) facts ─────────────────────────────────
 // Loaded from public/kashmir-reality/ops.json (exported by the trace-intelligence
@@ -154,20 +165,21 @@ export function buildKashmirContext(
 
   const lines = [
     'KASHMIR VALLEY ROUTE RATIONALISATION PLAN (v3.4.5) — authoritative facts:',
+    `STATUS: ${KASHMIR_PROTOTYPE_NOTE} Never describe the plan as adopted, approved, issued by or official for any government body.`,
     `- Active routes: ${s.activeRoutes} (consolidated from ${nf(s.totalRouteRows)} legacy RTO permits; ${s.mergedRoutes} merged into trunks).`,
     `- Route classes: ${s.trunkRoutes} trunk + ${s.feederRoutes} feeder. SSCL e-bus backbone: ${s.ssclBackboneRoutes} routes at 15-min headway.`,
-    `- Total fleet: ${nf(s.totalFleetRequired)} buses = ${nf(s.hpvTotal)} large (HPV/12m) + ${nf(s.mpvTotal)} medium (MPV/9m) + ${nf(s.lpvTotal)} small (LPV). About +67% over today's ~600 buses.`,
+    `- Total fleet: ${nf(s.totalFleetRequired)} buses = ${nf(s.hpvTotal)} large (HPV/12m) + ${nf(s.mpvTotal)} medium (MPV/9m) + ${nf(s.lpvTotal)} small (LPV). About +${upliftPct(s.totalFleetRequired)}% over ${KASHMIR_BASELINE_NOTE}. ${KASHMIR_OBSERVED_PACE_NOTE}`,
     `- Districts served: ${districts.length} (whole Kashmir Division).`,
-    `- Network coverage: ${s.networkCoveragePercent.toFixed(1)}% — ${nf(s.deduplicatedNetworkPopulation)} of ${nf(s.studyAreaPopulation)} residents within a 400 m walk.`,
+    `- Coverage: ${s.networkCoveragePercent.toFixed(1)}% (${nf(s.deduplicatedNetworkPopulation)} of ${nf(s.studyAreaPopulation)}) of residents ${KASHMIR_COVERAGE_NOTE}.`,
     `- Social-obligation (protected) routes: ${nf(s.socialObligationRoutes)}. Tourist corridors flagged: ${nf(s.touristCorridorCount)}.`,
     `- Headways (minutes : route count): ${headways.map(([h, c]) => `${h}min:${c}`).join(', ')}. City tiers 15/20/35; long rural lifelines demand-sized 35/40/45/50 with a hard 50-min max wait.`,
     `- Per-district (routes touching / buses): ${districts.map((d) => `${d.name} ${d.routes}/${nf(d.fleet)}`).join('; ')}.`,
-    'VERIFICATION (v3.4.4): every active route checked against the real world (Google Maps / JKRTC / gazetteers).',
-    `- Outcome: ${VERIFICATION.pass} PASS / ${VERIFICATION.review} REVIEW / ${VERIFICATION.fail} FAIL; ${VERIFICATION.corrections} distance corrections applied.`,
-    `- Distance accuracy vs reality improved from MAPE ${VERIFICATION.mapeBefore}% to ${VERIFICATION.mapeAfter}% (median ${VERIFICATION.mapeMedian}%).`,
-    `- Fleet density ${VERIFICATION.busesPerLakh} buses/lakh served — clears the MoHUA Service Level Benchmark (${VERIFICATION.mohuaBand}); today's ~600 buses sit at ~${VERIFICATION.todayBusesPerLakh}/lakh.`,
-    'METHOD: open-data pipeline — geocode permit endpoints, route on real roads (OSRM/OpenStreetMap), score demand from population (WorldPop) + points-of-interest, set headway within RTO ceilings, size fleet = ceil(cycle time / headway) x 1.15 spare. Calibrated to CHALO published totals (11.6M trips, May 2025–Apr 2026, 30 SSCL routes).',
-    'DOWNLOADS available on this page: Bus Schedule Workbook (Pretty Excel, the RTO submission), Route Verification Appendix, Master transit map, plus technical CSV/GeoJSON files.',
+    'DESK CHECK (v3.4.4): AI-assisted desk research against web sources (Google Maps / JKRTC / gazetteers). It is not a field survey or an independent audit; never call the plan verified or validated.',
+    `- Outcome: ${KASHMIR_DESK_CHECK_NOTE}; ${VERIFICATION.corrections} distance corrections applied.`,
+    `- Distance error (MAPE) of planned km vs web-sourced km went from ${VERIFICATION.mapeBefore}% to ${VERIFICATION.mapeAfter}% after correction (median ${VERIFICATION.mapeMedian}%).`,
+    `- Fleet density: ${KASHMIR_DENSITY_NOTE} Do not say the plan meets or clears any benchmark.`,
+    `METHOD: geocode permit endpoints, route on real roads (OSRM/OpenStreetMap), score demand from population (WorldPop) + points-of-interest, set headway within RTO ceilings, size fleet = ceil(cycle time / headway) x 1.15 spare. Built from open population, street-network and points-of-interest data plus the permit register; five routes were later re-timed from driver GPS. The plan is ${KASHMIR_CHALO_NOTE} (11.6M trips, May 2025–Apr 2026, 30 SSCL routes).`,
+    'DOWNLOADS available on this page: Bus Schedule Workbook (Pretty Excel), Route Verification Appendix (the desk-check ledger), Master transit map, plus technical CSV/GeoJSON files.',
   ];
   if (reality) {
     lines.push('', ...realityFacts(reality));
@@ -223,13 +235,13 @@ function describeRoute(
     `- Route code: **${r.routeCode || '—'}** · plan ID ${r.newRouteId} · ${cls}`,
     `- Length: **${r.routeKm.toFixed(1)} km** · a bus every **${r.headwayMin} min**`,
     `- Fleet: **${r.fleetRequired} buses**${mix ? ` (${mix})` : ''}`,
-    `- Population within a 400 m walk of the route: **${nf(r.populationServedRaw ?? 0)}**`,
+    `- Population within 400 m (straight-line) of the route: **${nf(r.populationServedRaw ?? 0)}**`,
     r.socialFlag ? '- **Social-obligation route** — protected (serves townships / hospitals / lifelines).' : '',
     r.touristCorridor ? '- Flagged as a **tourist corridor**.' : '',
   ];
   const vf = extras?.verification?.[r.routeCode];
   if (vf) {
-    lines.push(`- Real-world verification (v3.4.4): **${vf.verdict}**${vf.service && vf.service !== 'nan' ? ` — ${vf.service}` : ''}`);
+    lines.push(`- AI-assisted desk check (v3.4.4): **${vf.verdict}**${vf.service && vf.service !== 'nan' ? ` — ${vf.service}` : ''}`);
   }
   const ev = extras?.evidence?.[r.newRouteId];
   if (ev) {
@@ -295,12 +307,12 @@ export function buildKashmirLocalReply(
 
   if (/(verif|accura|audit|mape|pass|review|fail|real.?world|check)/.test(q)) {
     return [
-      '**Independent verification (v3.4.4)**',
-      `Every one of the **${s.activeRoutes}** active routes was checked against the real world (Google Maps, JKRTC timetables, district gazetteers).`,
-      `- **${VERIFICATION.pass} PASS / ${VERIFICATION.review} REVIEW / ${VERIFICATION.fail} FAIL**`,
-      `- **${VERIFICATION.corrections} distance corrections** applied (wrong coordinates / detours replaced with verified road km)`,
-      `- Distance error vs reality cut from **MAPE ${VERIFICATION.mapeBefore}% → ${VERIFICATION.mapeAfter}%** (median ${VERIFICATION.mapeMedian}%)`,
-      `- **${VERIFICATION.busesPerLakh} buses/lakh** served — clears the MoHUA benchmark (${VERIFICATION.mohuaBand})`,
+      '**AI-assisted desk check (v3.4.4)**',
+      `All **${s.activeRoutes}** active routes were desk-checked using AI-assisted desk research against web sources (Google Maps, JKRTC timetables, district gazetteers). This is not a field survey or an independent audit.`,
+      `- **${VERIFICATION.pass} pass / ${VERIFICATION.review} flagged for review / ${VERIFICATION.fail} flagged as failing**`,
+      `- **${VERIFICATION.corrections} distance corrections** applied (wrong coordinates / detours replaced with web-sourced road km)`,
+      `- Distance error (MAPE) of planned km vs web-sourced km cut from **${VERIFICATION.mapeBefore}% → ${VERIFICATION.mapeAfter}%** (median ${VERIFICATION.mapeMedian}%)`,
+      `- Fleet density: ${KASHMIR_DENSITY_NOTE}`,
     ].join('\n');
   }
 
@@ -326,8 +338,8 @@ export function buildKashmirLocalReply(
   if (/(coverage|population|residents|reach|walk)/.test(q)) {
     return [
       '**Network coverage**',
-      `The network reaches **${nf(s.deduplicatedNetworkPopulation)}** residents within a 400 m walk — **${s.networkCoveragePercent.toFixed(1)}%** of the ${nf(s.studyAreaPopulation)} people across the 10-district Kashmir Division.`,
-      'Coverage is measured division-wide (much of it dispersed rural); coverage of built-up settlement is substantially higher.',
+      `**${s.networkCoveragePercent.toFixed(1)}%** of residents (${nf(s.deduplicatedNetworkPopulation)} of the ${nf(s.studyAreaPopulation)} people across the 10-district Kashmir Division) ${KASHMIR_COVERAGE_NOTE}.`,
+      'Coverage is measured division-wide, much of it dispersed rural.',
     ].join('\n');
   }
 
@@ -335,14 +347,15 @@ export function buildKashmirLocalReply(
     return [
       '**SSCL e-bus backbone**',
       `The plan is built on the **${s.ssclBackboneRoutes}** SSCL electric-bus routes that form the trunk backbone, running every **15 minutes**.`,
-      `In total there are **${s.trunkRoutes} trunk** routes and **${s.feederRoutes} feeders**. The backbone is calibrated to CHALO's published ridership (11.6M trips, May 2025–Apr 2026).`,
+      `In total there are **${s.trunkRoutes} trunk** routes and **${s.feederRoutes} feeders**. The plan is ${KASHMIR_CHALO_NOTE} (11.6M trips, May 2025–Apr 2026).`,
     ].join('\n');
   }
 
   if (/(bus|fleet|vehicle|hpv|mpv|lpv|how many)/.test(q)) {
     return [
       '**Fleet plan**',
-      `- **${nf(s.totalFleetRequired)} buses** total (about **+67%** over today's ~600)`,
+      `- **${nf(s.totalFleetRequired)} buses** total (about **+${upliftPct(s.totalFleetRequired)}%** over ${KASHMIR_BASELINE_NOTE})`,
+      `- ${KASHMIR_OBSERVED_PACE_NOTE}`,
       `- **${nf(s.hpvTotal)}** large (HPV, 12 m) · **${nf(s.mpvTotal)}** medium (MPV, 9 m) · **${nf(s.lpvTotal)}** small (LPV)`,
       `- Deployed across **${s.activeRoutes}** active routes (${s.trunkRoutes} trunk + ${s.feederRoutes} feeder)`,
     ].join('\n');
@@ -351,8 +364,8 @@ export function buildKashmirLocalReply(
   if (/(download|excel|workbook|file|appendix|map)/.test(q)) {
     return [
       '**Downloads on this page**',
-      '- **Bus Schedule Workbook (Pretty Excel)** — the RTO submission file (Summary KPIs + full Route Plan)',
-      '- **Route Verification Appendix** — the route-by-route real-world checks and corrections',
+      '- **Bus Schedule Workbook (Pretty Excel)** — Summary KPIs + full Route Plan',
+      '- **Route Verification Appendix** — the route-by-route desk-check ledger and corrections',
       '- **Master transit map** — interactive map with trunk / feeder / SSCL / regional layers',
       '- Plus technical CSV / GeoJSON files under the Downloads tab.',
     ].join('\n');
@@ -361,11 +374,13 @@ export function buildKashmirLocalReply(
   // Default overview
   return [
     '**Kashmir Valley Route Rationalisation — v3.4.5**',
+    `_${KASHMIR_PROTOTYPE_NOTE}_`,
     `- **${s.activeRoutes} active routes** (from ${nf(s.totalRouteRows)} legacy permits)`,
-    `- **${nf(s.totalFleetRequired)} buses** (${nf(s.hpvTotal)} large / ${nf(s.mpvTotal)} medium / ${nf(s.lpvTotal)} small), ~+67% over today`,
+    `- **${nf(s.totalFleetRequired)} buses** (${nf(s.hpvTotal)} large / ${nf(s.mpvTotal)} medium / ${nf(s.lpvTotal)} small), ~+${upliftPct(s.totalFleetRequired)}% over ${KASHMIR_BASELINE_NOTE}`,
     `- **${s.ssclBackboneRoutes} SSCL e-bus trunks** at 15-min headway, across all 10 districts`,
-    `- **${s.networkCoveragePercent.toFixed(1)}% coverage** (${nf(s.deduplicatedNetworkPopulation)} residents within 400 m)`,
-    `- Independently verified: **${VERIFICATION.pass} PASS / ${VERIFICATION.review} REVIEW / ${VERIFICATION.fail} FAIL**, distance error MAPE ${VERIFICATION.mapeBefore}% → ${VERIFICATION.mapeAfter}%`,
+    `- **${s.networkCoveragePercent.toFixed(1)}%** of residents live within 400 m straight-line of a planned route (${nf(s.deduplicatedNetworkPopulation)}); **${KASHMIR_COVERAGE_NETWORK_PERCENT}%** along the walking network`,
+    `- AI-assisted desk check: **${VERIFICATION.pass} pass / ${VERIFICATION.review} flagged for review / ${VERIFICATION.fail} flagged as failing**, distance error MAPE ${VERIFICATION.mapeBefore}% → ${VERIFICATION.mapeAfter}%`,
+    `- ${KASHMIR_OBSERVED_PACE_NOTE}`,
     '',
     'Ask me about a **specific route** (by name or code), a **district**, **fleet/buses**, **headways**, the **SSCL backbone**, **coverage**, **verification**, what the **GPS traces show**, or **downloads**.',
   ].join('\n');

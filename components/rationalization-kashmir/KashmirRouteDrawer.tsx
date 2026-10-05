@@ -8,8 +8,8 @@ import type { RationalizedRouteKashmir } from '@/lib/routeRationalizationKashmir
 import { getRouteMapHref } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
 /**
- * Everything about one route in a single panel: plan numbers, the independent
- * real-world verification verdict (v3.4.4 deep-dive), and the observed app-GPS
+ * Everything about one route in a single panel: plan numbers, the AI-assisted
+ * desk-check verdict (v3.4.4 deep-dive), and the observed app-GPS
  * evidence (fragment road coverage) — data that otherwise lives in five tabs.
  */
 
@@ -106,7 +106,7 @@ export default function KashmirRouteDrawer({
             <Row label="Fleet" value={`${route.fleetRequired} buses`} sub={mix} />
             <Row label="Route length" value={`${route.routeKm.toFixed(1)} km`} />
             <Row label="Round-trip cycle" value={`${Math.round(route.cycleTimeMin)} min`} />
-            <Row label="Pop. within 400 m" value={nf(route.populationServedRaw)} />
+            <Row label="Pop. within 400 m (straight-line)" value={nf(route.populationServedRaw)} />
             {(route.socialFlag || route.touristCorridor) && (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {route.socialFlag && <span className="rounded-full bg-teal-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-teal-800">Social-obligation (protected)</span>}
@@ -118,7 +118,7 @@ export default function KashmirRouteDrawer({
           {/* real-world verification */}
           <section>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.16em] text-emerald-700">
-              <ShieldCheck size={14} /> Real-world verification (deep-dive)
+              <ShieldCheck size={14} /> AI-assisted desk check
             </p>
             {vf ? (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
@@ -127,7 +127,7 @@ export default function KashmirRouteDrawer({
                 </span>
                 <p className="mt-2 text-xs font-semibold leading-5 text-slate-600">{vf.finding}</p>
                 {vf.service && vf.service !== 'nan' && (
-                  <p className="mt-2 text-xs font-semibold leading-5 text-slate-500"><span className="font-black text-slate-600">On the ground:</span> {vf.service}</p>
+                  <p className="mt-2 text-xs font-semibold leading-5 text-slate-500"><span className="font-black text-slate-600">Service found in desk research:</span> {vf.service}</p>
                 )}
                 {vf.sources && vf.sources !== 'nan' && (
                   <p className="mt-2 text-[10px] font-semibold italic text-slate-400">Sources: {vf.sources}</p>

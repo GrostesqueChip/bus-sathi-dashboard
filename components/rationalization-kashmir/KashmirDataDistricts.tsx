@@ -9,7 +9,7 @@ import type {
   RationalizedRouteKashmir,
   RouteRationalizationKashmirSummary,
 } from '@/lib/routeRationalizationKashmir';
-import { KASHMIR_CURRENT_FLEET } from '@/lib/kashmirServicePlans';
+import { KASHMIR_BASELINE_NOTE, KASHMIR_CURRENT_FLEET } from '@/lib/kashmirServicePlans';
 import { formatNumber, formatRouteType } from '@/components/rationalization-kashmir/KashmirCards';
 import { getRouteKey, getRouteMapHref } from '@/components/rationalization-kashmir/KashmirRouteUtils';
 
@@ -179,11 +179,11 @@ export default function KashmirDataDistricts({ routes, summary, onSelectRoute }:
         {/* Before / after fleet */}
         <ChartCard
           icon={TrendingUp}
-          title="Fleet: today vs the plan"
-          subtitle={`A +${growthPct}% step up from today's operations`}
+          title="Fleet: baseline vs the plan"
+          subtitle={`+${growthPct}% over ${KASHMIR_BASELINE_NOTE}`}
         >
           <div className="flex h-[230px] items-end gap-6 px-4 pb-2">
-            <FleetBar label="Today" value={fleetBefore} max={fleetAfter} tone="slate" caption="~600 buses" />
+            <FleetBar label="Baseline" value={fleetBefore} max={fleetAfter} tone="slate" caption={`${formatNumber(fleetBefore)} buses`} />
             <div className="mb-10 flex flex-col items-center text-emerald-600">
               <ArrowUpRight size={30} />
               <span className="text-sm font-black">+{growthPct}%</span>

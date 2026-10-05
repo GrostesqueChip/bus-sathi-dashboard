@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Bus Sathi | Command Center',
-  description: 'Official RTO Fleet Management Dashboard',
+  description: 'Bus Sathi — a research prototype of a route-rationalisation plan for Kashmir Division. Not an official government publication.',
   icons: {
     icon: '/logo.png', // This will pull the logo you already have in your public folder!
   },

@@ -19,10 +19,11 @@ editing `public/route-rationalization-kashmir/data/*` by hand.** See
 `E:\kash\CLAUDE.md` for the full per-build workflow, version history, and the
 conda/OSRM run requirements.
 
-## Current state (engine v3.3.6)
-- 207 active routes, 1,003 buses (HPV 84 / MPV 797 / LPV 122)
-- 342/342 routes carry real 12-char Route_Codes (0 TMP, 0 UNMATCHED)
-- Hero version pill + download links point at v3.3.6 artefacts
+## Current state (engine v3.4.5-geo)
+- 614 permits (+ 30 SSCL e-bus routes = 644 route records) → 157 corridors → 186 active routes, 1,011 buses (187 large / 754 medium / 70 small)
+- Every route carries a real 12-char Route_Code (0 TMP, 0 UNMATCHED)
+- Hero version pill + download links point at v3.4.5 artefacts
+- Public wording rule: this is a research prototype, not an official government publication; coverage is 35.2% straight-line / 24.2% along the walking network; the 186-route check is an AI-assisted desk check (93 pass / 88 review / 5 fail), not an independent verification; the CHALO comparison is a consistency check, not a validation. Shared wording constants live in `lib/kashmirServicePlans.ts`.
 - `lpvCount` IS read from CSV in the loader (was a past bug — don't regress)
 
 ## When bumping engine version

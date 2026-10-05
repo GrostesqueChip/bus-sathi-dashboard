@@ -12,12 +12,17 @@ import {
   Signpost,
   Users,
 } from 'lucide-react';
+import {
+  KASHMIR_BUSES_PER_100K_DIVISION,
+  KASHMIR_BUSES_PER_100K_NEAR_ROUTE,
+  KASHMIR_COVERAGE_NETWORK_PERCENT,
+} from '@/lib/kashmirServicePlans';
 
 const VERIFICATION_STATS = [
-  { value: '186', label: 'routes verified', detail: 'every active route checked against the real world' },
-  { value: '93 / 88 / 5', label: 'pass / review / fail', detail: 'corridors real; issues were distances, not routes' },
-  { value: '49', label: 'distances corrected', detail: 'wrong-coordinate / detour km replaced with verified road km' },
-  { value: '37.4% → 13.3%', label: 'distance error vs reality', detail: 'mean abs error after correction (median 6.3%)' },
+  { value: '186', label: 'routes desk-checked', detail: 'AI-assisted desk research against web sources; no field survey' },
+  { value: '93 / 88 / 5', label: 'pass / review / fail', detail: 'desk-check verdicts: 93 pass, 88 flagged for review, 5 flagged as failing' },
+  { value: '49', label: 'distances corrected', detail: 'wrong-coordinate / detour km replaced with web-sourced road km' },
+  { value: '37.4% → 13.3%', label: 'distance MAPE vs web-sourced km', detail: 'mean absolute error of planned km, before → after correction (median 6.3%)' },
 ];
 
 const LIMITATIONS = [
@@ -41,8 +46,8 @@ const LIMITATIONS = [
   },
   {
     icon: Users,
-    title: 'Demand is open-data, not ticket-measured',
-    body: 'Ridership is modelled from population (WorldPop) + points of interest + the published CHALO totals — no per-route AFC/ticketing feed was available.',
+    title: 'Demand is modelled, not ticket-measured',
+    body: 'Built from open population (WorldPop), street-network and points-of-interest data plus the permit register. Smart City e-bus (CHALO) ridership aggregates were used only as a consistency check, not a validation; no per-route ticketing feed was available.',
     fix: 'Sharpens when AFC ridership is shared.',
   },
   {
@@ -54,13 +59,13 @@ const LIMITATIONS = [
   {
     icon: Gauge,
     title: 'Coverage is measured division-wide',
-    body: 'The 35.2% walkshed coverage is against the full 6.58M Kashmir Division (much of it dispersed rural). Coverage of built-up settlement is substantially higher.',
-    fix: 'A built-up-area coverage view can be added on request.',
+    body: `35.2% of residents live within 400 m straight-line distance of a planned route; measured along the walking network the figure is ${KASHMIR_COVERAGE_NETWORK_PERCENT}%. Both are against the full 6.58M Kashmir Division (much of it dispersed rural).`,
+    fix: 'Treat the walking-network figure as the conservative one.',
   },
   {
     icon: Signpost,
     title: 'Map lines vs planning distance',
-    body: 'Drawn lines come from the road router between the verified endpoints. On ~16 corridors the router takes a longer path than the verified real road, so a line can read up to ~2× the listed km. The endpoints and the listed (verified) km are the authoritative figures.',
+    body: 'Drawn lines come from the road router between the desk-checked endpoints. On ~16 corridors the router takes a longer path than the web-sourced road km, so a line can read up to ~2× the listed km. The endpoints and the listed km are the authoritative figures.',
     fix: 'Tightens with the RTO stop register / road-network refresh.',
   },
 ];
@@ -68,18 +73,19 @@ const LIMITATIONS = [
 export default function KashmirAssurance() {
   return (
     <section className="space-y-6">
-      {/* Verification & benchmark highlight */}
+      {/* Desk-check & fleet-density highlight */}
       <div className="overflow-hidden rounded-[2rem] border border-emerald-200 bg-gradient-to-br from-white to-emerald-50/60 p-6 shadow-sm md:p-8">
         <div className="flex flex-col gap-2">
           <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
-            <BadgeCheck size={15} /> Independently verified
+            <BadgeCheck size={15} /> AI-assisted desk check
           </p>
-          <h2 className="text-2xl font-black text-slate-950 md:text-3xl">Checked route-by-route against the real world</h2>
+          <h2 className="text-2xl font-black text-slate-950 md:text-3xl">Desk-checked route by route against web sources</h2>
           <p className="max-w-4xl text-sm font-semibold leading-7 text-slate-600">
-            Every active route was verified against Google Maps, JKRTC timetables and district gazetteers — not just
-            against the model that produced it. Wrong-coordinate and detour distances were replaced with the verified
-            real road distance (each cited per route), and the fleet recomputed with the published formulas. A second,
-            independent blind audit reproduced the result (100% within-one-level agreement). A
+            186 routes desk-checked using AI-assisted desk research (an AI model searching web sources such as Google
+            Maps, JKRTC timetables and district gazetteers, with sources cited per route): 93 pass, 88 flagged for review,
+            5 flagged as failing. This is neither a field survey nor an independent audit. Wrong-coordinate and detour
+            distances were replaced with the web-sourced road distance (cited per route), and the fleet recomputed with
+            the published formulas. A
             network-integrity check confirms the routes also work as a <b>system</b>: 184 of 186 form one
             connected network with clear interchange hubs, redundancy is low, and only three tehsils
             (Gurez, Kokernag, Karnah) remain genuine coverage gaps.
@@ -96,16 +102,16 @@ export default function KashmirAssurance() {
           ))}
         </div>
 
-        {/* Benchmark strip */}
+        {/* Fleet-density strip */}
         <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-950 p-5 text-white sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <ShieldCheck size={22} className="mt-0.5 shrink-0 text-emerald-300" />
             <div>
-              <p className="text-sm font-black">Meets the national fleet benchmark</p>
+              <p className="text-sm font-black">Fleet density</p>
               <p className="mt-1 max-w-2xl text-xs font-semibold leading-5 text-slate-300">
-                At <span className="font-black text-white">43 buses per lakh served</span>, the plan clears the MoHUA
-                Service Level Benchmark (40–60/lakh). Today&apos;s ~600 buses sit at ~26/lakh (below standard) — the plan
-                moves Kashmir into the upper tier of Indian provision (cf. Bengaluru 0.52 buses/1,000).
+                <span className="font-black text-white">{KASHMIR_BUSES_PER_100K_DIVISION} buses per 100,000 residents</span> of the
+                Division ({KASHMIR_BUSES_PER_100K_NEAR_ROUTE} per 100,000 residents living near a route); national benchmarks are
+                defined for cities and are not directly comparable.
               </p>
             </div>
           </div>
@@ -127,7 +133,7 @@ export default function KashmirAssurance() {
           </p>
           <h2 className="text-2xl font-black text-slate-950">What this plan does not yet know — disclosed up front</h2>
           <p className="max-w-4xl text-sm font-semibold leading-7 text-slate-600">
-            Government work should be honest about its inputs. These are the open items in the current plan; each is
+            A plan should be honest about its inputs. These are the open items in the current plan; each is
             tabulated in the verification appendix and resolves once the RTO supplies the surveyed stop register and
             ridership data we have requested.
           </p>

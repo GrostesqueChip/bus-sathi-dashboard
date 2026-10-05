@@ -28,6 +28,8 @@ export default function KashmirBeforeAfter({ summary }: KashmirBeforeAfterProps)
   const reductionPercent = summary.totalRouteRows
     ? Math.round(((summary.totalRouteRows - summary.activeRoutes) / summary.totalRouteRows) * 100)
     : 0;
+  // totalRouteRows = permit records + the 30 SSCL e-bus routes added by the engine.
+  const permitCount = Math.max(0, summary.totalRouteRows - summary.ssclBackboneRoutes);
 
   return (
     <section
@@ -42,15 +44,15 @@ export default function KashmirBeforeAfter({ summary }: KashmirBeforeAfterProps)
           Before <span className="text-slate-500">→</span> After
         </h2>
         <p className="mt-2 max-w-3xl text-sm font-semibold leading-7 text-slate-200/85">
-          Today, {formatNumber(summary.totalRouteRows)} separate RTO permits overlap on the same corridors — some duplicated
-          38 and 42 times. The plan consolidates them into {formatNumber(summary.activeRoutes)} clean, coordinated routes.
+          Today, {formatNumber(permitCount)} separate RTO permits (plus {summary.ssclBackboneRoutes} Smart City e-bus routes) run on 157 distinct
+          corridors — some duplicated 38 and 42 times. The plan consolidates them into {formatNumber(summary.activeRoutes)} clean, coordinated routes.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 border-b border-slate-100 bg-slate-50/60 px-6 py-6 md:grid-cols-[1fr_auto_1fr] md:items-center md:px-8">
         <div className="rounded-[1.6rem] border border-rose-200 bg-rose-50/60 p-5">
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-rose-700">Before</p>
-          <p className="mt-2 text-5xl font-black text-rose-900">{formatNumber(summary.totalRouteRows)}</p>
+          <p className="mt-2 text-5xl font-black text-rose-900">{formatNumber(permitCount)}</p>
           <p className="text-sm font-bold text-rose-700">overlapping RTO permits</p>
           <ul className="mt-3 space-y-1.5 text-xs font-semibold leading-5 text-rose-900/85">
             <li>• 38 separate permits for Soura ↔ LD alone</li>
@@ -96,7 +98,7 @@ export default function KashmirBeforeAfter({ summary }: KashmirBeforeAfterProps)
         <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <BeforeAfterMapPanel
             label="Before"
-            count={summary.totalRouteRows}
+            count={permitCount}
             countNoun="overlapping permits"
             sublabel="Every existing RTO permit drawn as its own corridor"
             tone="rose"
@@ -126,8 +128,8 @@ export default function KashmirBeforeAfter({ summary }: KashmirBeforeAfterProps)
           <KeyStat
             icon={TrendingDown}
             value={`${reductionPercent}%`}
-            label="Fewer routes to manage"
-            detail={`Down from ${formatNumber(summary.totalRouteRows)} permits to ${formatNumber(summary.activeRoutes)} coordinated routes.`}
+            label="Fewer route records"
+            detail={`Down from ${formatNumber(summary.totalRouteRows)} route records (${formatNumber(permitCount)} permits + ${summary.ssclBackboneRoutes} e-bus routes) to ${formatNumber(summary.activeRoutes)}. Mostly a change of unit: 156 of the 157 permit corridors are retained.`}
             tone="emerald"
           />
           <KeyStat

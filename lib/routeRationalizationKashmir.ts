@@ -116,7 +116,7 @@ export interface RouteRationalizationKashmirDataset {
 }
 
 // v3.3.7: downloads are grouped by tier so the Kashmir section can surface the
-// one file the RTO actually needs (the pretty bus-schedule workbook) as a hero
+// main file (the pretty bus-schedule workbook) as a hero
 // CTA, keep the master workbook + map as secondary links, and tuck every
 // technical artefact (CSV / GeoJSON / logs) into a collapsed expander.
 export type KashmirFileTier = 'primary' | 'secondary' | 'technical';
@@ -145,16 +145,18 @@ const ROUTE_MAPS_DIR = path.join(PUBLIC_DIR, 'route_maps_kashmir');
 // denominator is the 10-district union: 6,584,762.
 const STUDY_AREA_POPULATION = 6_584_762;
 
-// Deduplicated network coverage — from the v3.4.3 engine (dissolved-union of all
-// active-route 400m walksheds vs the WorldPop raster — exact, not estimated):
+// Network coverage — from the engine (all active-route 400m straight-line
+// catchments vs the WorldPop raster, as the sum of the engine's apportioned
+// per-route populations. Paper: 35.5% straight-line union,
+// 24.2% along the walking network):
 //   "Deduplicated network population: 2,317,958 (35.20% of the 6,584,762 residents
 //    living in the Kashmir Division)".
 // v3.4.3 (system audit) also fixed reverse-direction double-counting: a route's
 // cycle time is a ROUND TRIP, so corridor consolidation is now UNDIRECTED —
 // "A→B" and "B→A" collapse to one bidirectional service (removed ~10 duplicate
 // pairs, e.g. Srinagar↔Kupwara). v3.4.5 counts: 186 active routes, 1,011 fleet
-// (187 HPV / 748 MPV / 69 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
-// rural lifelines demand-sized 35–50 (50-min hard max wait); fleet density ≈ 0.43 buses / 1000 served. (Earlier history: v3.3.8 fixed a 118-name
+// (187 HPV / 754 MPV / 70 LPV) — 32 trunk / 154 feeder; city headways 15/20/35,
+// rural lifelines demand-sized 35–50 (50-min hard max wait); fleet density ≈ 15.4 buses per 100,000 residents of the Division (43.6 near a route). (Earlier history: v3.3.8 fixed a 118-name
 // geocode collapse; v3.3.9 fixed 11 false SSCL trunks + a district-geocode
 // collapse; v3.4.0 rebuilt route codes geo-canonically; v3.4.4 applied the AI
 // route-by-route real-world verification — 48 distance corrections, fleet 1,044→1,004.)
@@ -171,7 +173,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── PRIMARY ── the one file the RTO needs for bus schedules ──────────────
   {
     label: 'Bus Schedule Workbook (Pretty Excel)',
-    description: 'The RTO submission file. A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.5 engine.',
+    description: 'The bus-schedule workbook (a research prototype; not an official government publication). A clean 2-sheet workbook — Summary KPIs and the full Route Plan (every route with headway, cycle time, fleet and HPV/MPV split). Regenerated live from the v3.4.5 engine.',
     href: `${PUBLIC_ROUTE}/Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx`,
     download: true,
     fileName: 'Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx',
@@ -180,7 +182,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   // ── SECONDARY ── kept one click away ──────────────────────────────────────
   {
     label: 'Route Verification Appendix (v3.4.5)',
-    description: 'Appendix R — independent route-by-route real-world verification of all 186 active routes (vs Google Maps / JKRTC / gazetteers): 93 PASS / 88 REVIEW / 5 FAIL, the 48 distance corrections applied, the deferred worklist, and the full per-route ledger with sources.',
+    description: 'Appendix R — AI-assisted desk check of all 186 active routes against web sources (Google Maps / JKRTC / gazetteers; not a field survey or independent audit): 93 pass / 88 flagged for review / 5 flagged as failing, the 48 distance corrections applied, the deferred worklist, and the full per-route ledger with sources.',
     href: `${PUBLIC_ROUTE}/Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx`,
     download: true,
     fileName: 'Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx',
@@ -196,7 +198,7 @@ export const KASHMIR_SOURCE_FILES: KashmirSourceFile[] = [
   },
   {
     label: 'Observed Ground-Truth Workbook (app GPS)',
-    description: 'What real buses measurably do — from the Bus Sathi app\'s driver GPS: observed stops coded in the plan\'s district-sector terminology (Tier-1 confirmed-pattern + Tier-2 rural candidates for field validation), the verified corridors, per-route road-driven evidence for all 186 plan routes, and the 2 unmatched local connectors. Aggregate and anonymised; partial-adoption caveats on every sheet.',
+    description: 'What real buses measurably do — from the Bus Sathi app\'s driver GPS: observed stops coded in the plan\'s district-sector terminology (Tier-1 confirmed-pattern + Tier-2 rural candidates for field validation), the observed corridors, per-route road-alignment evidence for all 186 plan routes, and the 2 unmatched local connectors. Aggregate and anonymised; partial-adoption caveats on every sheet.',
     href: `${PUBLIC_ROUTE}/Kashmir_Observed_GroundTruth_v1.xlsx`,
     download: true,
     fileName: 'Kashmir_Observed_GroundTruth_v1.xlsx',

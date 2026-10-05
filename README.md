@@ -18,7 +18,7 @@
 
 ## 🎯 Overview
 
-Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a data-driven system that transformed 613 legacy permits into an optimised, **independently real-world-verified 186-route network of 1,011 buses** serving 2.32M residents (35.2% of the 6.58M Kashmir Division) within walking distance — now **validated against real driver GPS** from the Bus Sathi app (3.8 M points, ~157 drivers) via the built-in **Reality Layer**.
+Bus Tracker Dashboard is a full-stack web platform that connects to a companion Android app, aggregating GPS trip data from bus operators to deliver actionable fleet intelligence. Beyond simple tracking, the platform includes a **Kashmir Valley Route Rationalisation Engine** — a research prototype of a route-rationalisation plan for Kashmir Division (**not an official government publication**). It organises 614 permit records (plus 30 Smart City e-bus routes) into a rationalised **186-route network of 1,011 buses**; 35.2% of the 6.58M Kashmir Division's residents live within 400 m straight-line distance of a planned route (24.2% measured along the walking network). The plan is **cross-checked against real driver GPS** from the Bus Sathi app (~157 drivers) via the built-in **Reality Layer**. At speeds observed in driver GPS the same service would need roughly 1,130–1,270 buses.
 
 > **📖 For detailed technical documentation on the Kashmir route rationalisation, see [`KASHMIR_HANDOVER.md`](./KASHMIR_HANDOVER.md)**
 
@@ -40,27 +40,28 @@ Bus Tracker Dashboard is a full-stack web platform that connects to a companion 
 - **Streaming responses** — OpenAI-powered answers streamed in real-time via the chat widget
 
 ### 🗺️ Kashmir Valley Route Rationalisation (v3.4.5)
-- **613 legacy permits → 186 active routes / 1,011 buses** (187 HPV / 754 MPV / 70 LPV) across all **10 districts** of the Kashmir Division — a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
-- **SSCL e-bus backbone** — exactly the 30 published CHALO trunk routes, 15-min headways
+- **614 permits (+ 30 e-bus routes) → 186 active routes / 1,011 buses** (187 HPV / 754 MPV / 70 LPV) across all **10 districts** of the Kashmir Division — a 3-tier hierarchy (Trunk / Feeder / SSCL Backbone)
+- **SSCL e-bus backbone** — exactly the 30 published CHALO trunk routes, 15-min headways; the plan is cross-checked against Srinagar Smart City e-bus ridership aggregates (a consistency check, not a validation)
 - **Headways** — city 15 / 20 / 35 min; long rural lifelines demand-sized with a **hard 50-min maximum wait** (35 / 40 / 45 / 50)
-- **Independently verified against the real world** — all 186 routes checked vs Google Maps / JKRTC / gazetteers (93 PASS / 88 REVIEW / 5 FAIL → **49 distance corrections** applied); plan-wide distance error cut **37.4% → 13.3%**
-- **🛰️ Reality Layer — validated against real driver GPS** — the [Bus Sathi Trace Intelligence](https://github.com/Princu-Babu/bus-sathi-trace-intelligence) project mined 3.8 M GPS points from ~157 real bus drivers into a measured ground-truth layer: first Srinagar bus speeds (~21 km/h moving / 12.5 km/h effective), 172/186 routes with road-level evidence, an observed stop inventory, and a measured-cycle correction that took the plan to v3.4.5. See the **Reality Layer** tab.
-- **Meets the national fleet benchmark** — 43 buses/lakh served, compliant with the MoHUA Service Level Benchmark (40–60/lakh)
-- **Coverage** — 2.32M residents within 400 m = **35.2%** of the 6.58M division (point-in-polygon)
-- **Route detail drawer** — click any route for its plan numbers, real-world verification verdict, and observed GPS evidence in one panel
+- **AI-assisted desk check** — 186 routes desk-checked using AI-assisted desk research against web sources (Google Maps / JKRTC / gazetteers): 93 pass, 88 flagged for review, 5 flagged as failing; not a field survey or an independent audit. **49 distance corrections** applied; distance error (MAPE) of planned km cut **37.4% → 13.3%**
+- **🛰️ Reality Layer — cross-checked against real driver GPS** — the [Bus Sathi Trace Intelligence](https://github.com/Princu-Babu/bus-sathi-trace-intelligence) project mined 3.8 M GPS points (2,526 recorded runs) from ~157 real bus drivers into a measured layer: first Srinagar bus speeds (~21 km/h moving / 12.5 km/h effective), 171 of 186 planned routes with at least half of their alignment observed in driver GPS, an observed stop inventory, and a measured-cycle correction that took the plan to v3.4.5. See the **Reality Layer** tab.
+- **Fleet density** — 15.4 buses per 100,000 residents of the Division (43.6 per 100,000 residents living near a route); national benchmarks are defined for cities and are not directly comparable
+- **Coverage** — **35.2%** of the 6.58M division's residents (2.32M) live within 400 m straight-line distance of a planned route; measured along the walking network the figure is **24.2%**
+- **Uplift** — +30% over a baseline of 777 buses (679 private buses holding a valid permit in March 2026 plus 98 Smart City e-buses; JKRTC buses not counted)
+- **Route detail drawer** — click any route for its plan numbers, AI-assisted desk-check verdict, and observed GPS evidence in one panel
 - **Interactive network explorer** — native Leaflet map (re-routed v3.4.5 geometry) + generated master transit HTML map + 186 per-route maps
 - **Stops & route-code register** — 143 canonical stops with district / tehsil / 12-char code, browsable on the page
 - **Departure-board timetables** — every route's headway expanded into actual per-terminus departure times (service day anchored on the measured operating day)
-- **Limitations disclosed up front** — village-coordinate approximations, name-unverifiable stops, demand modelled from open data (not AFC); the app-GPS layer is partial-adoption and never used to claim demand/frequency
+- **Limitations disclosed up front** — village-coordinate approximations, name-unverifiable stops, demand modelled, not ticket-measured (built from open population, street-network and points-of-interest data plus the permit register; five routes were later re-timed from driver GPS); the app-GPS layer is partial-adoption and never used to claim demand/frequency
 
 #### 📥 Kashmir downloadables (served from `public/route-rationalization-kashmir/`)
 
-The dashboard's Downloads section surfaces these; the **Bus Schedule (Pretty Excel)** is the hero file the RTO submits.
+The dashboard's Downloads section surfaces these; the **Bus Schedule (Pretty Excel)** is the hero file.
 
 | File | Purpose |
 |---|---|
-| `Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx` | ⭐ **Bus Schedule Workbook** — clean 2-sheet RTO submission: every route with headway, cycle time, fleet & HPV/MPV split |
-| `Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx` | **Route Verification Appendix** — every route's real-world check + the 49 corrections + deferred worklist + full ledger (4 sheets) |
+| `Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx` | ⭐ **Bus Schedule Workbook** — clean 2-sheet workbook: every route with headway, cycle time, fleet & HPV/MPV split |
+| `Kashmir_Route_Verification_Appendix_v3.4.5_RTO.xlsx` | **Route Verification Appendix** — every route's AI-assisted desk check + the 49 corrections + deferred worklist + full ledger (4 sheets) |
 | `Kashmir_Route_Frequency_Plan_v3.4.5_RTO.xlsx` | **RTO Master Workbook (9 sheets)** — full detail pack: cover, route plan, operator absorption/buyback, trunk/social/tourist sheets, calibration sources, limitations |
 | `Kashmir_Timetables_v1.xlsx` | **Route Timetables** — every route's headway expanded into per-terminus departure boards, one sheet per district (service day from the measured operating day) |
 | `Kashmir_Observed_GroundTruth_v1.xlsx` | 🛰️ **Observed Ground-Truth (app GPS)** — coded observed stops, corridor verdicts, per-route road-driven evidence, unmatched connectors (from the Bus Sathi trace-intelligence layer) |
@@ -188,7 +189,6 @@ BusTrackerAppDashboard-main/
 │       │   └── route_codes.json            # 186 routes decoded to origin→dest stops
 │       ├── Rationalised_Routes_Kashmir_v3.geojson
 │       ├── Master_Transit_Map_Kashmir_v3.html
-│       ├── before-after.html               # ⭐ Before & After standalone comparative map
 │       ├── Kashmir_Route_Frequency_Plan_v3.xlsx
 │       ├── Kashmir_Route_Frequency_Plan_v3.4.5_RTO.xlsx          # 9-sheet RTO master
 │       ├── Kashmir_Route_Frequency_Plan_v3.4.5_RTO_Pretty.xlsx   # ⭐ bus schedule (primary download)
@@ -329,12 +329,12 @@ The platform includes a comprehensive route rationalisation engine for the Kashm
 
 📖 **[`KASHMIR_HANDOVER.md`](./KASHMIR_HANDOVER.md)** — Complete technical specification, before/after analysis, route code system, and instructions for continuing development.
 
-**Quick Summary (v3.4.4):**
-- **Input:** 613 legacy bus permits from the RTO permit register
-- **Output:** 186 active routes (32 trunk — incl. 30 SSCL e-bus backbone — + 154 feeder); 1,004 buses (187 HPV / 748 MPV / 69 LPV)
-- **Method:** Composite Demand Index (CDI) scoring (population, POI, road quality, congestion) + OSRM road routing, then real-world per-route verification with audited distance corrections
-- **Coverage:** 2.32M residents (35.2%) of the 6.58M Kashmir Division, across all 10 districts
-- **Assurance:** 186/186 routes verified vs Google Maps / JKRTC; meets the MoHUA fleet benchmark (43 buses/lakh served); see the engine repo's `PROJECT_INDEX.md` for the full documentation set
+**Quick Summary (v3.4.5):**
+- **Input:** 614 permit records from the RTO permit register (plus 30 SSCL e-bus routes)
+- **Output:** 186 active routes (32 trunk — incl. 30 SSCL e-bus backbone — + 154 feeder); 1,011 buses (187 HPV / 754 MPV / 70 LPV). At speeds observed in driver GPS the same service would need roughly 1,130–1,270 buses.
+- **Method:** Composite Demand Index (CDI) scoring (population, POI, road quality, congestion) + OSRM road routing, then an AI-assisted per-route desk check with cited distance corrections
+- **Coverage:** 35.2% of the 6.58M Kashmir Division's residents (2.32M) live within 400 m straight-line distance of a planned route (24.2% along the walking network), across all 10 districts
+- **Desk check:** 186 routes desk-checked using AI-assisted desk research: 93 pass, 88 flagged for review, 5 flagged as failing. Fleet density: 15.4 buses per 100,000 residents of the Division (43.6 near a route); national benchmarks are defined for cities and are not directly comparable. See the engine repo's `PROJECT_INDEX.md` for the full documentation set
 
 ---
 
@@ -352,7 +352,7 @@ The platform includes a comprehensive route rationalisation engine for the Kashm
 
 ## 📜 License
 
-MIT
+Licence: to be confirmed
 
 ---
 

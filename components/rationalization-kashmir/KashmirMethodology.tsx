@@ -24,8 +24,8 @@ const PHASES: Phase[] = [
   {
     n: 2,
     icon: Users,
-    title: 'Score demand from open data',
-    body: 'Residents within a 400 m walk of each corridor (WorldPop raster) combine with 3-tier points of interest and a gender-aware boost into one Composite Demand Index — no proprietary GPS or ticketing feed needed.',
+    title: 'Score demand from open population and POI data',
+    body: 'Residents within 400 m (straight-line) of each corridor (WorldPop raster) combine with 3-tier points of interest and a gender-aware boost into one Composite Demand Index. Built from open population, street-network and points-of-interest data plus the permit register; five routes were later re-timed from driver GPS.',
     formula: 'CDI = f( population₄₀₀ₘ , POI tiers , road factor )',
     sources: 'WorldPop (Tatem, 2017) · walkshed (El-Geneidy et al.)',
   },
@@ -67,7 +67,7 @@ export default function KashmirMethodology() {
         </p>
         <h2 className="mt-2 text-2xl font-black tracking-tight md:text-3xl">From legacy permits to a sized network</h2>
         <p className="mt-2 max-w-3xl text-sm font-semibold leading-7 text-slate-200/85">
-          A transparent four-step pipeline. Each step uses published, reproducible methods and open data — the same engine
+          A transparent four-step pipeline. Each step uses published methods and open data (plus the permit register) — the same engine
           regenerates every workbook and map on this dashboard.
         </p>
       </div>
@@ -100,14 +100,14 @@ export default function KashmirMethodology() {
           })}
         </div>
 
-        {/* Calibration note */}
+        {/* Consistency-check note */}
         <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 sm:flex-row sm:items-center">
           <ClipboardCheck size={22} className="shrink-0 text-emerald-700" />
           <p className="text-sm font-semibold leading-6 text-slate-700">
-            <span className="font-black text-emerald-800">Calibration anchor:</span> the model is validated against CHALO’s
-            published ridership totals — <span className="font-black">11.6 million trips, May 2025 – Apr 2026, across the 30 SSCL
-            e-bus routes</span> — a one-time published-aggregate check (no per-trip GPS used). The engine blocks export unless 8 quality
-            checks pass.
+            <span className="font-black text-emerald-800">Consistency check:</span> the model is cross-checked against Srinagar Smart
+            City e-bus ridership aggregates (CHALO) — <span className="font-black">11.6 million trips, May 2025 – Apr 2026, across the 30 SSCL
+            e-bus routes</span>. This is a consistency check, not a validation: the calibration data and the comparison come from the same operator source.
+            The engine blocks export unless 8 quality checks pass.
           </p>
         </div>
 
@@ -117,9 +117,9 @@ export default function KashmirMethodology() {
           <p className="text-sm font-semibold leading-6 text-slate-700">
             <span className="font-black text-teal-800">Grounded against real GPS (v3.4.5):</span> the plan is cross-checked against
             the Bus&nbsp;Sathi app’s <span className="font-black">real driver GPS</span> — 2,526 cleaned service runs from ~157
-            drivers. This confirmed <span className="font-black">172 of 186 routes</span> are actually driven on the ground, re-anchored
-            5 core corridors to measured bus speeds, and <span className="font-black">redrew 15 route map lines</span> whose endpoint
-            pins were wrong. See the <span className="font-black">Reality Layer</span> tab. Adoption is partial (Srinagar-heavy), so
+            drivers. <span className="font-black">171 of 186 planned routes</span> have at least half of their alignment observed in driver GPS,
+            five core corridors were re-timed to measured bus speeds, and <span className="font-black">15 route map lines</span> whose endpoint
+            pins were wrong were redrawn. See the <span className="font-black">Reality Layer</span> tab. Adoption is partial (Srinagar-heavy), so
             this validates geometry and speeds — it does not measure demand or frequency.
           </p>
         </div>

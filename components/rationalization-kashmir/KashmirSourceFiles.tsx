@@ -32,8 +32,8 @@ export default function KashmirSourceFiles({ files, selectedRoute }: KashmirSour
           </p>
           <h2 className="mt-2 text-2xl font-black text-slate-950">Bus schedule &amp; supporting files</h2>
           <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-            Start with the bus-schedule workbook below. Everything else is one click away — kept tidy so the file the
-            RTO needs is never buried.
+            Start with the bus-schedule workbook below. Everything else is one click away — kept tidy so the main
+            file is never buried.
           </p>
         </div>
         {selectedRoute && selectedRoute.actionTaken !== 'MERGED_INTO_TRUNK' && (
@@ -48,7 +48,7 @@ export default function KashmirSourceFiles({ files, selectedRoute }: KashmirSour
         )}
       </div>
 
-      {/* PRIMARY — the bus-schedule workbook the RTO submits */}
+      {/* PRIMARY — the bus-schedule workbook */}
       {primary && (
         <a
           {...fileLinkProps(primary)}
