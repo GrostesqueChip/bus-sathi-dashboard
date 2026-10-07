@@ -28,8 +28,12 @@ async function setAdminClaim(email) {
   }
 }
 
-// Replace with your admin user's email
-const adminEmail = 'admin@gmail.com'; // CHANGE THIS!
+// Admin e-mail is supplied at run time (CLI argument or ADMIN_EMAIL env var)
+const adminEmail = process.argv[2] || process.env.ADMIN_EMAIL; // node setAdmin.js admin@example.com
+if (!adminEmail) {
+  console.error('Usage: node setAdmin.js <admin-email>   (or set ADMIN_EMAIL)');
+  process.exit(1);
+}
 
 setAdminClaim(adminEmail).then(() => {
   process.exit(0);

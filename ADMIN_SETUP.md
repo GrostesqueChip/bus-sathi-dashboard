@@ -17,7 +17,7 @@ First, create a user account that will be the admin:
 1. Go to [Firebase Console](https://console.firebase.google.com/project/bus-tracker-1c0bb/authentication/users)
 2. Click **Authentication** → **Users**
 3. Click **Add user**
-4. Enter admin email and password (e.g., `admin@bustracker.com`)
+4. Enter admin email and password (e.g., `admin@example.com`)
 5. Click **Add user**
 
 ### Step 2: Download Firebase Service Account Key
@@ -40,22 +40,18 @@ npm install firebase-admin
 ### Step 4: Set Admin Custom Claim
 
 1. Open `Dashboard/scripts/setAdmin.js`
-2. Change this line to your admin user's email:
-
-   ```javascript
-   const adminEmail = "admin@bustracker.com"; // Replace with your admin email
-   ```
+2. The email is passed at run time (CLI argument or `ADMIN_EMAIL` env var); nothing is hard-coded.
 
 3. Run the script:
 
    ```bash
    cd Dashboard/scripts
-   node setAdmin.js
+   node setAdmin.js admin@example.com
    ```
 
 4. You should see:
    ```
-   ✅ Admin claim set for user: admin@bustracker.com (uid...)
+   ✅ Admin claim set for user: admin@example.com (uid...)
    User must log out and log back in for changes to take effect.
    ```
 
@@ -131,8 +127,8 @@ service cloud.firestore {
 To grant admin access to additional users:
 
 1. Make sure the user exists in Firebase Authentication
-2. Edit `scripts/setAdmin.js` and change the email
-3. Run `node setAdmin.js` again
+2. Choose the new admin email
+3. Run `node setAdmin.js <email>` again
 4. The user must log out and log back in
 
 ---
@@ -233,7 +229,7 @@ Regular drivers using the Android app don't have the `admin` claim, so they can 
 | Action               | Command                                                                                            |
 | -------------------- | -------------------------------------------------------------------------------------------------- |
 | Install dependencies | `npm install firebase-admin`                                                                       |
-| Set admin claim      | `node scripts/setAdmin.js`                                                                         |
+| Set admin claim      | `node scripts/setAdmin.js <email>`|
 | Start dashboard      | `npm run dev`                                                                                      |
 | View Firebase rules  | [Console Link](https://console.firebase.google.com/project/bus-tracker-1c0bb/firestore/rules)      |
 | View users           | [Console Link](https://console.firebase.google.com/project/bus-tracker-1c0bb/authentication/users) |
@@ -248,3 +244,30 @@ If you encounter issues:
 2. Review Firebase Console for error messages
 3. Check browser console (F12) for detailed errors
 4. Verify all steps were completed in order
+
+
+## Client-side admin allow-list (hashed)
+
+`lib/authContext.tsx` also treats a signed-in user as admin if the SHA-256 of their
+lower-cased, trimmed e-mail is in `ADMIN_EMAIL_HASHES`. This keeps addresses out of the
+browser bundle but is **not access control**; enforce access with Firestore rules and the
+`admin` custom claim.
+
+To add an admin, compute the hash and append it to `ADMIN_EMAIL_HASHES`:
+
+```bash
+node -e "console.log(require('crypto').createHash('sha256').update('admin@example.com'.trim().toLowerCase()).digest('hex'))"
+```
+
+## Client-side admin allow-list (hashed)
+
+`lib/authContext.tsx` also treats a signed-in user as admin if the SHA-256 of their
+lower-cased, trimmed e-mail is in `ADMIN_EMAIL_HASHES`. This keeps addresses out of the
+browser bundle but is **not access control**; enforce access with Firestore rules and the
+`admin` custom claim.
+
+To add an admin, compute the hash and append it to `ADMIN_EMAIL_HASHES`:
+
+```bash
+node -e "console.log(require('crypto').createHash('sha256').update('admin@example.com'.trim().toLowerCase()).digest('hex'))"
+```
